@@ -22,7 +22,7 @@ def process_file(file_path, output_file_path, mode):
         case 1:
             print("[  ] Grouping data...")
             grouped = df.groupby("course")
-            process_grouped_data(grouped, output_file_path, "Grade", ["student name", "class"], "assignment name")
+            process_grouped_data(grouped, output_file_path, "Grade", ["student name", "class"], "item name")
         
         case 2:
             print("[  ] Grouping data...")
