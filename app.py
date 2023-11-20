@@ -4,7 +4,7 @@ import pandas as pd
 # Functions
 
 def process_grouped_data(grouped, output_file_path, value, index, column, sort = False):
-    print("[  ] Creating output file...")
+    print("[**] Creating output file...")
     with pd.ExcelWriter(output_file_path) as writer:
         for key, item in grouped:
             print(f"[  ] Processing {key}...")
@@ -12,8 +12,10 @@ def process_grouped_data(grouped, output_file_path, value, index, column, sort =
             shaped = item.pivot_table(value, index, column, sort = sort)
             shaped.to_excel(writer, sheet_name = key)
 
+    print("[OK] Processing complete!")
+
 def process_file(file_path, output_file_path, mode):
-    print("[  ] Processing source file...")
+    print("[..] Processing source file...")
     df = pd.read_csv(file_path)
 
     match mode:
