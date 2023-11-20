@@ -62,6 +62,9 @@ if (os.path.exists(output_file_path)):
     elif (overwrite == "n"):
         print("[ER] File not overwritten.")
         exit()
+    else:
+        print("[ER] Invalid input.")
+        exit()
 
 print("[OK] Creating file. Please wait...")
 process_file(source_file, output_file_path, mode)
