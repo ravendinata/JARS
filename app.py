@@ -3,6 +3,15 @@ import pandas as pd
 
 # Functions
 
+def process_grouped_data(grouped, output_file_path, value, index, column, sort = False):
+    print("[  ] Creating output file...")
+    with pd.ExcelWriter(output_file_path) as writer:
+        for key, item in grouped:
+            print(f"[  ] Processing {key}...")
+            item = grouped.get_group(key)
+            shaped = item.pivot_table(value, index, column, sort = sort)
+            shaped.to_excel(writer, sheet_name = key)
+
 def process_file(file_path, output_file_path, mode):
     print("[  ] Processing source file...")
     df = pd.read_csv(file_path)
@@ -11,30 +20,15 @@ def process_file(file_path, output_file_path, mode):
         case 1:
             print("[  ] Grouping data...")
             grouped = df.groupby("course")
-                
-            print("[  ] Creating output file...")
-            with pd.ExcelWriter(output_file_path) as writer:
-                for key, item in grouped:
-                    print(f"[  ] Processing {key}...")
-                    item = grouped.get_group(key)
-                    shaped = item.pivot_table('Grade', ["student name", "class"], "item name", sort = False)
-                    shaped.to_excel(writer, sheet_name = key)
+            process_grouped_data(grouped, output_file_path, "Grade", ["student name", "class"], "assignment name")
         
         case 2:
             print("[  ] Grouping data...")
             grouped = df.groupby("class")
-                
-            print("[  ] Creating output file...")
-            with pd.ExcelWriter(output_file_path) as writer:
-                for key, item in grouped:
-                    print(f"[  ] Processing {key}...")
-                    item = grouped.get_group(key)
-                    shaped = item.pivot_table('Grade', "student name", "course", sort = False)
-                    shaped.to_excel(writer, sheet_name = key)
+            process_grouped_data(grouped, output_file_path, "Grade", "student name", "course")
 
         case _:
-            print("[ER] Invalid report file type.")
-            exit()
+            raise ValueError("[ER] Invalid report file type.")
 
 # Main
 
@@ -63,8 +57,7 @@ if (os.path.exists(output_file_path)):
         print("[ER] File not overwritten.")
         exit()
     else:
-        print("[ER] Invalid input.")
-        exit()
+        raise ValueError("[ER] Invalid input.")
 
 print("[OK] Creating file. Please wait...")
 process_file(source_file, output_file_path, mode)
