@@ -1,6 +1,9 @@
 import openpyxl
 import os
+
 import pandas as pd
+
+from pathlib import Path
 
 # Functions
 
@@ -43,44 +46,42 @@ def process_file(file_path, output_file_path, mode):
     workbook.save(output_file_path)
     print("[OK] Metadata added!")
 
+def get_file_path():
+    file_path = input("\nEnter the source file path.\n(You don't need to remove the quotes (\"...\")): ")
+    file_path = file_path.strip('\"')
+    
+    if not Path(file_path).exists():
+        raise ValueError("Invalid file path.")
+    
+    return file_path
+
+def get_mode():
+    mode = int(input("\nWhat report file is this?\n1. Cohort All Assignment Grades\n2. Cohort All Final Grades\nPlease enter appropriate file type: "))
+    return mode
+
+def get_output_file_path(source_file):
+    output_file_path = input("\nEnter the output file path (Leave blank to use same name and path as input): ")
+    
+    if output_file_path == "":
+        output_file_path = source_file[:-4] + "_processed.xlsx"
+    if not output_file_path.endswith(".xlsx"):
+        output_file_path += ".xlsx"
+    
+    return output_file_path
+
+def check_overwrite(output_file_path):
+    if Path(output_file_path).exists():
+        overwrite = input("\nFile already exists. Do you want to overwrite the file? (y/n): ")
+        if overwrite.lower() != "y":
+            raise ValueError("File not overwritten.")
+
 # Main
 
-print("Enter the source file path")
-source_file = input("(You don't need to remove the quotes (\"...\")): ")
+source_file = get_file_path()
+mode = get_mode()
+output_file_path = get_output_file_path(source_file)
+check_overwrite(output_file_path)
 
-# Remove quotes from path if path contains quotes
-if (source_file[0] == "\"" and source_file[-1] == "\""):
-    source_file = source_file[1:-1]
-
-if (os.path.exists(source_file)):
-    print("[OK] Valid file path.")
-else:
-    print("[ER] Invalid file path.")
-    exit()
-
-print("\nWhat report file is this?\n1. Cohort All Assignment Grades\n2. Cohort All Final Grades")
-mode = int(input("Please enter appropriate file type: "))
-
-print("\nEnter the output file path")
-output_file_path = input("(Leave blank to use same name and path as input): ")
-
-if (output_file_path == ""):
-    output_file_path = source_file[:-4] + "_processed.xlsx"
-
-if (output_file_path[-5:] != ".xlsx"):
-    output_file_path += ".xlsx"
-
-if (os.path.exists(output_file_path)):
-    print("[??] File already exists.")
-    overwrite = input("\nDo you want to overwrite the file? (y/n): ")
-    if (overwrite == "y"):
-        print("[OK] Overwriting file.")
-    elif (overwrite == "n"):
-        print("[ER] File not overwritten.")
-        exit()
-    else:
-        raise ValueError("[ER] Invalid input.")
-
-print("[OK] Creating file. Please wait...")
+print(f"\n[  ] Operation started!")
 process_file(source_file, output_file_path, mode)
-print(f"[OK] File saved to {output_file_path}")
+print(f"[OK] Done. Output file saved at {output_file_path}")
