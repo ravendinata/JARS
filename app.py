@@ -38,7 +38,7 @@ def process_file(file_path, output_file_path, mode):
     workbook = openpyxl.load_workbook(output_file_path)
     workbook.properties.creator = "JAC Academic Reporting System (JARS)"
     workbook.properties.subject = "JARS Report"
-    workbook.properties.keywords = "JARS, Academic Report"
+    workbook.properties.keywords = "JARS; Academic Report"
     
     workbook.save(output_file_path)
     print("[OK] Metadata added!")
