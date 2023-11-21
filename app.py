@@ -45,7 +45,12 @@ def process_file(file_path, output_file_path, mode):
 
 # Main
 
-source_file = input("Enter the source file path: ")
+print("Enter the source file path")
+source_file = input("(You don't need to remove the quotes (\"...\")): ")
+
+# Remove quotes from path if path contains quotes
+if (source_file[0] == "\"" and source_file[-1] == "\""):
+    source_file = source_file[1:-1]
 
 if (os.path.exists(source_file)):
     print("[OK] Valid file path.")
@@ -53,10 +58,10 @@ else:
     print("[ER] Invalid file path.")
     exit()
 
-print("What report file is this?\n1. Cohort All Assignment Grades\n2. Cohort All Final Grades")
+print("\nWhat report file is this?\n1. Cohort All Assignment Grades\n2. Cohort All Final Grades")
 mode = int(input("Please enter appropriate file type: "))
 
-print("Enter the output file path")
+print("\nEnter the output file path")
 output_file_path = input("(Leave blank to use same name and path as input): ")
 
 if (output_file_path == ""):
@@ -67,7 +72,7 @@ if (output_file_path[-5:] != ".xlsx"):
 
 if (os.path.exists(output_file_path)):
     print("[??] File already exists.")
-    overwrite = input("Do you want to overwrite the file? (y/n): ")
+    overwrite = input("\nDo you want to overwrite the file? (y/n): ")
     if (overwrite == "y"):
         print("[OK] Overwriting file.")
     elif (overwrite == "n"):
