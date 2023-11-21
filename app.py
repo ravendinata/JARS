@@ -45,7 +45,11 @@ else:
 print("What report file is this?\n1. Cohort All Assignment Grades\n2. Cohort All Final Grades")
 mode = int(input("Please enter appropriate file type: "))
 
-output_file_path = input("Enter the output file path: ")
+print("Enter the output file path")
+output_file_path = input("(Leave blank to use same name and path as input): ")
+
+if (output_file_path == ""):
+    output_file_path = source_file[:-4] + "_processed.xlsx"
 
 if (output_file_path[-5:] != ".xlsx"):
     output_file_path += ".xlsx"
