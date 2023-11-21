@@ -1,3 +1,4 @@
+import openpyxl
 import os
 import pandas as pd
 
@@ -31,6 +32,16 @@ def process_file(file_path, output_file_path, mode):
 
         case _:
             raise ValueError("[ER] Invalid report file type.")
+        
+    # Metadata
+    print("[  ] Adding metadata...")
+    workbook = openpyxl.load_workbook(output_file_path)
+    workbook.properties.creator = "JAC Academic Reporting System (JARS)"
+    workbook.properties.subject = "JARS Report"
+    workbook.properties.keywords = "JARS, Academic Report"
+    
+    workbook.save(output_file_path)
+    print("[OK] Metadata added!")
 
 # Main
 
