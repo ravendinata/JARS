@@ -12,7 +12,7 @@ class Processor:
         print("[OK] Processor initialized!")
 
     # Public methods
-    def generate_xlsx(self):
+    def generate_xlsx(self, adjust_cell_widths: bool = True):
         print(f"[><] Source file path: {self.source_file_path}")
         print(f"[><] Output file path: {self.output_file_path}")
         print(f"[><] Mode: {self.mode}")
@@ -43,6 +43,21 @@ class Processor:
         
         workbook.save(self.output_file_path)
         print("[OK] Metadata added!")
+
+        if adjust_cell_widths:
+            self.adjust_cell_widths()
+
+    def adjust_cell_widths(self):
+        print("[  ] Adjusting cell widths...")
+        workbook = openpyxl.load_workbook(self.output_file_path)
+        
+        for sheet in workbook.worksheets:
+            for column_cells in sheet.columns:
+                length = max(len(str(cell.value)) for cell in column_cells)
+                sheet.column_dimensions[column_cells[0].column_letter].width = length + 2
+        
+        workbook.save(self.output_file_path)
+        print("[OK] Cell widths adjusted!")
     
     # Private methods
     def __split_to_sheet(self, grouped_data, value, index, column, sort = False):
