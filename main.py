@@ -17,8 +17,8 @@ class OutputDialog(ctk.CTkToplevel):
         self.attributes("-topmost", True)
 
         ctk.CTkLabel(self, text = content).grid(row = 0, column = 0, columnspan = 3, padx = 10, pady = 10)
-        ctk.CTkButton(self, text = "Open folder...", command = self.__open_folder).grid(row = 1, column = 0, padx = (10, 2), pady = 10, sticky = tk.E)
-        ctk.CTkButton(self, text = "Open file...", command = self.__open_file).grid(row = 1, column = 1, padx = 2, pady = 10, sticky = tk.EW)
+        ctk.CTkButton(self, text = "Open folder", command = self.__open_folder).grid(row = 1, column = 0, padx = (10, 2), pady = 10, sticky = tk.E)
+        ctk.CTkButton(self, text = "Open file", command = self.__open_file).grid(row = 1, column = 1, padx = 2, pady = 10, sticky = tk.EW)
         ctk.CTkButton(self, text = "OK", command = self.destroy).grid(row = 1, column = 2, padx = (2, 10), pady = 10, sticky = tk.W)
 
     def __open_file(self):
@@ -41,7 +41,7 @@ class ProcessorFrame(ctk.CTkFrame):
         # Sourcefile path
         self.lbl_source = ctk.CTkLabel(self, text = "Source file path:")
         self.txt_source_path = ctk.CTkEntry(self, width = 250)
-        self.btn_browse_source = ctk.CTkButton(self, text = "Browse...", width = 100, command = self.__browse_file)
+        self.btn_browse_source = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__browse_file)
 
         # Mode
         self.lbl_mode = ctk.CTkLabel(self, text="Report file type:")
@@ -50,7 +50,7 @@ class ProcessorFrame(ctk.CTkFrame):
         # Output file path
         self.lbl_output = ctk.CTkLabel(self, text = "Output file path:")
         self.txt_output_path = ctk.CTkEntry(self, width = 250)
-        self.btn_browse_output = ctk.CTkButton(self, text = "Browse...", width = 100, command = self.__save_file)
+        self.btn_browse_output = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__save_file)
 
         # Adjust cell widths checkbox
         self.adjust_cell_widths_var = tk.BooleanVar()
