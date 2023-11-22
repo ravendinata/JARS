@@ -1,9 +1,15 @@
-import constants
+import pathlib
 import processor
 import os
 
 import customtkinter as ctk
 import tkinter as tk
+
+def get_presets():
+    presets = []
+    for preset in pathlib.Path("presets").glob("*.json"):
+        presets.append(preset.stem)
+    return presets
 
 class OutputDialog(ctk.CTkToplevel):
     def __init__(self, master, title, file_path, content,**kwargs):
@@ -45,7 +51,7 @@ class ProcessorFrame(ctk.CTkFrame):
 
         # Mode
         self.lbl_mode = ctk.CTkLabel(self, text="Report file type:")
-        self.cmb_mode = ctk.CTkComboBox(self, values = list(constants.modes.keys()), width = 250)
+        self.cmb_mode = ctk.CTkComboBox(self, values = get_presets(), width = 250)
 
         # Output file path
         self.lbl_output = ctk.CTkLabel(self, text = "Output file path:")
@@ -89,7 +95,7 @@ class ProcessorFrame(ctk.CTkFrame):
     def __process(self):
         # Get values
         source_file = self.txt_source_path.get()
-        mode = constants.modes[self.cmb_mode.get()]
+        mode = self.cmb_mode.get()
         output_file_path = self.txt_output_path.get()
 
         # Process

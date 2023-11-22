@@ -1,13 +1,14 @@
+import interface
 import openpyxl
 import pandas as pd
 
 class Processor:
-    def __init__(self, source_file_path, output_file_path, mode):
+    def __init__(self, source_file_path, output_file_path, preset):
         print("[  ] Initializing processor...")
         
         self.source_file_path = source_file_path
         self.output_file_path = output_file_path
-        self.mode = mode
+        self.preset = interface.IPresetFile(preset)
         
         print("[OK] Processor initialized!")
 
@@ -15,35 +16,29 @@ class Processor:
     def generate_xlsx(self, adjust_cell_widths):
         print(f"[><] Source file path: {self.source_file_path}")
         print(f"[><] Output file path: {self.output_file_path}")
-        print(f"[><] Mode: {self.mode}")
+        print(f"[><] Preset: {self.preset}")
     
         print("[..] Processing source file...")
         df = pd.read_csv(self.source_file_path)
 
-        match self.mode:
-            case 1:
-                print("[  ] Grouping data...")
-                grouped = df.groupby("course")
-                self.__split_to_sheet(grouped, "Grade", ["student name", "class"], "item name")
-            
-            case 2:
-                print("[  ] Grouping data...")
-                grouped = df.groupby("class")
-                self.__split_to_sheet(grouped, "Grade", "student name", "course")
+        if self.preset.multisheet:
+            print("[  ] Grouping data...")
+            self.data = df.groupby(self.preset.group_by)
+            self.__split_to_sheet()
+        else:
+            self.data = df
+            self.__shape_and_export()
 
-            case _:
-                raise ValueError("[ER] Invalid report file type.")
-            
         # Metadata
         self.add_generic_metadata()
 
         if adjust_cell_widths:
             self.adjust_cell_widths()
 
-    def add_generic_metadata(self,\
-                             title = "",\
-                             creator = "JAC Academic Reporting System (JARS)",\
-                             subject = "JARS Report",\
+    def add_generic_metadata(self,
+                             title = "",
+                             creator = "JAC Academic Reporting System (JARS)",
+                             subject = "JARS Report",
                              keywords = "JARS; Academic Report"):
         print("[  ] Adding metadata...")
         workbook = openpyxl.load_workbook(self.output_file_path)
@@ -68,14 +63,21 @@ class Processor:
         print("[OK] Cell widths adjusted!")
     
     # Private methods
-    def __split_to_sheet(self, grouped_data, value, index, column, sort = False):
-        print("[**] Creating output file ...")
+    def __split_to_sheet(self):
+        print("[**] Creating output file...")
+
         with pd.ExcelWriter(self.output_file_path) as writer:
-            for key, item in grouped_data:
+            for key, item in self.data:
                 print(f"[  ] Processing {key}...")
-                item = grouped_data.get_group(key)
-                shaped = item.pivot_table(value, index, column, sort = sort)
-                shaped.to_excel(writer, sheet_name = key)
+                item = self.data.get_group(key)
+                shaped = item.pivot_table(self.preset.value, self.preset.index, self.preset.column, sort = self.preset.sort)
+                shaped.to_excel(writer, sheet_name = key, freeze_panes = self.preset.freeze_panes)
                 print(f"[OK] Sheet for {key} created!")
 
         print("[OK] Processing complete!")
+
+    def __shape_and_export(self):
+        print(f"[**] Creating output file...")
+        shaped = self.data.pivot_table(self.preset.value, self.preset.index, self.preset.column, sort = self.preset.sort)
+        shaped.to_excel(self.output_file_path, sheet_name = self.preset.preset_name, freeze_panes = self.preset.freeze_panes)
+        print(f"[OK] Sheet for {self.preset} created!")
