@@ -1,0 +1,12 @@
+{
+    "multisheet": false,
+    "group_by": "",
+    "value": "Grade",
+    "index": "course",
+    "column": "item name",
+    "sort": false,
+    "freeze_panes": {
+        "row": 1,
+        "column": 1
+    }
+}
