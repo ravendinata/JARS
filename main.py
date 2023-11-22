@@ -1,3 +1,4 @@
+import constants
 import processor
 import os
 
@@ -43,10 +44,8 @@ class ProcessorFrame(ctk.CTkFrame):
         self.btn_browse_source = ctk.CTkButton(self, text = "Browse...", width = 100, command = self.__browse_file)
 
         # Mode
-        self.mode_var = tk.IntVar()
         self.lbl_mode = ctk.CTkLabel(self, text="Report file type:")
-        self.rdo_mode_1 = ctk.CTkRadioButton(self, text = "Cohort All Assignment Grades", variable = self.mode_var, value = 1)
-        self.rdo_mode_2 = ctk.CTkRadioButton(self, text = "Cohort All Final Grades", variable = self.mode_var, value = 2)
+        self.cmb_mode = ctk.CTkComboBox(self, values = list(constants.modes.keys()), width = 250)
 
         # Output file path
         self.lbl_output = ctk.CTkLabel(self, text = "Output file path:")
@@ -67,8 +66,7 @@ class ProcessorFrame(ctk.CTkFrame):
         self.btn_browse_source.grid(row = 0, column = 2, sticky = tk.EW, padx = 2, pady = 2)
 
         self.lbl_mode.grid(row = 1, column = 0, sticky = tk.W, pady = 2)
-        self.rdo_mode_1.grid(row = 2, column = 0, columnspan = 2, sticky = tk.W, padx = 5, pady = 2)
-        self.rdo_mode_2.grid(row = 3, column = 0, columnspan = 2, sticky = tk.W, padx = 5, pady = 2)
+        self.cmb_mode.grid(row = 1, column = 1, columnspan = 2, sticky = tk.W, padx =  5, pady = 2)
 
         self.lbl_output.grid(row = 4, column = 0, sticky = tk.W, pady = 2)
         self.txt_output_path.grid(row = 4, column = 1, sticky = tk.W, padx =  5, pady = 2)
@@ -91,7 +89,7 @@ class ProcessorFrame(ctk.CTkFrame):
     def __process(self):
         # Get values
         source_file = self.txt_source_path.get()
-        mode = self.mode_var.get()
+        mode = constants.modes[self.cmb_mode.get()]
         output_file_path = self.txt_output_path.get()
 
         # Process
