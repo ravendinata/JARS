@@ -1,49 +1,7 @@
-import openpyxl
+import processor
 
-import pandas as pd
 import customtkinter as ctk
 import tkinter as tk
-
-from tkinter import filedialog, messagebox
-
-def process_grouped_data(grouped, output_file_path, value, index, column, sort = False):
-    print("[**] Creating output file...")
-    with pd.ExcelWriter(output_file_path) as writer:
-        for key, item in grouped:
-            print(f"[  ] Processing {key}...")
-            item = grouped.get_group(key)
-            shaped = item.pivot_table(value, index, column, sort = sort)
-            shaped.to_excel(writer, sheet_name = key)
-
-    print("[OK] Processing complete!")
-
-def process_file(file_path, output_file_path, mode):
-    print("[..] Processing source file...")
-    df = pd.read_csv(file_path)
-
-    match mode:
-        case 1:
-            print("[  ] Grouping data...")
-            grouped = df.groupby("course")
-            process_grouped_data(grouped, output_file_path, "Grade", ["student name", "class"], "item name")
-        
-        case 2:
-            print("[  ] Grouping data...")
-            grouped = df.groupby("class")
-            process_grouped_data(grouped, output_file_path, "Grade", "student name", "course")
-
-        case _:
-            raise ValueError("[ER] Invalid report file type.")
-        
-    # Metadata
-    print("[  ] Adding metadata...")
-    workbook = openpyxl.load_workbook(output_file_path)
-    workbook.properties.creator = "JAC Academic Reporting System (JARS)"
-    workbook.properties.subject = "JARS Report"
-    workbook.properties.keywords = "JARS; Academic Report"
-    
-    workbook.save(output_file_path)
-    print("[OK] Metadata added!")
 
 # UI functions
 
@@ -58,12 +16,16 @@ def save_file():
     txt_output_path.insert(0, file_path)  # Insert the file path into entry
 
 def process():
+    # Get values
     source_file = txt_source_path.get()
     mode = mode_var.get()
     output_file_path = txt_output_path.get()
+
+    # Process
+    proc = processor.Processor(source_file, output_file_path, mode)
+    
     try:
-        # check_overwrite(output_file_path)
-        process_file(source_file, output_file_path, mode)
+        proc.generate_xlsx()
         tk.messagebox.showinfo("Success", f"Done. Output file saved at {output_file_path}")
     except Exception as e:
         tk.messagebox.showerror("Error", str(e))
