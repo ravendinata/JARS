@@ -12,7 +12,7 @@ class Processor:
         print("[OK] Processor initialized!")
 
     # Public methods
-    def generate_xlsx(self, adjust_cell_widths: bool = True):
+    def generate_xlsx(self, adjust_cell_widths):
         print(f"[><] Source file path: {self.source_file_path}")
         print(f"[><] Output file path: {self.output_file_path}")
         print(f"[><] Mode: {self.mode}")
