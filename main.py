@@ -99,7 +99,8 @@ class ProcessorFrame(ctk.CTkFrame):
             proc.generate_xlsx(self.adjust_cell_widths_var.get())
             OutputDialog(self.master, "Processing completed!", output_file_path, f"Done. Output file saved at {output_file_path}")
         except Exception as e:
-            tk.messagebox.showerror("Error", str(e))
+            print(e)
+            tk.messagebox.showerror("Error Encountered!", f"Please check that you have selected the correct report type!\nError: {str(e)}")
 
 class Window(ctk.CTk):
     def __init__(self):
