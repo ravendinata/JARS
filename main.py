@@ -15,12 +15,17 @@ class OutputDialog(ctk.CTkToplevel):
         self.resizable(False, False)
         self.attributes("-topmost", True)
 
-        ctk.CTkLabel(self, text = content).grid(row = 0, column = 0, columnspan = 2, padx = 10, pady = 10)
-        ctk.CTkButton(self, text = "Open file...", command = self.__open_file).grid(row = 1, column = 0, padx = 2, pady = 10, sticky = tk.E)
-        ctk.CTkButton(self, text = "OK", command = self.destroy).grid(row = 1, column = 1, padx = 2, pady = 10, sticky = tk.W)
+        ctk.CTkLabel(self, text = content).grid(row = 0, column = 0, columnspan = 3, padx = 10, pady = 10)
+        ctk.CTkButton(self, text = "Open folder...", command = self.__open_folder).grid(row = 1, column = 0, padx = (10, 2), pady = 10, sticky = tk.E)
+        ctk.CTkButton(self, text = "Open file...", command = self.__open_file).grid(row = 1, column = 1, padx = 2, pady = 10, sticky = tk.EW)
+        ctk.CTkButton(self, text = "OK", command = self.destroy).grid(row = 1, column = 2, padx = (2, 10), pady = 10, sticky = tk.W)
 
     def __open_file(self):
         os.startfile(self.file_path)
+        self.destroy()
+
+    def __open_folder(self):
+        os.startfile(os.path.dirname(self.file_path))
         self.destroy()
 
 class ProcessorFrame(ctk.CTkFrame):
