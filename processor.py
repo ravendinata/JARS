@@ -35,17 +35,25 @@ class Processor:
                 raise ValueError("[ER] Invalid report file type.")
             
         # Metadata
-        print("[  ] Adding metadata...")
-        workbook = openpyxl.load_workbook(self.output_file_path)
-        workbook.properties.creator = "JAC Academic Reporting System (JARS)"
-        workbook.properties.subject = "JARS Report"
-        workbook.properties.keywords = "JARS; Academic Report"
-        
-        workbook.save(self.output_file_path)
-        print("[OK] Metadata added!")
+        self.add_generic_metadata()
 
         if adjust_cell_widths:
             self.adjust_cell_widths()
+
+    def add_generic_metadata(self,\
+                             title = "",\
+                             creator = "JAC Academic Reporting System (JARS)",\
+                             subject = "JARS Report",\
+                             keywords = "JARS; Academic Report"):
+        print("[  ] Adding metadata...")
+        workbook = openpyxl.load_workbook(self.output_file_path)
+        workbook.properties.title = title
+        workbook.properties.creator = creator
+        workbook.properties.subject = subject
+        workbook.properties.keywords = keywords
+        
+        workbook.save(self.output_file_path)
+        print("[OK] Metadata added!")
 
     def adjust_cell_widths(self):
         print("[  ] Adjusting cell widths...")
