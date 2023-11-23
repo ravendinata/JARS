@@ -8,14 +8,18 @@ class IPresetFile:
 
     Attributes:
         preset_name (str): The name of the preset file.
-        preset_json (dict): The preset file in JSON format.
-        index (str): The index of the source file.
-        column (str): The column of the source file.
-        value (str): The value of the source file.
-        multisheet (bool): Whether the output file should be multisheet.
-        group_by (str): The column to group by.
-        sort (str): The column to sort by.
-        freeze_panes (tuple): The row and column to freeze panes.
+        index (int): The index of the column to use as the index.
+        column (int): The index of the column to use as the column.
+        value (int): The index of the column to use as the value.
+        multisheet (bool): Whether to generate a multisheet file.
+        group_by (int): The index of the column to use as the group by column.
+        sort (bool): Whether to sort the data.
+        freeze_panes (tuple): The coordinates of the cell to freeze panes at.
+
+    Methods:
+        __init__(self, preset_name): Initialize the preset file.
+        __str__(self): Get the name of the preset file.
+        __repr__(self): Returns a string representation of the object.
     """
 
     def __init__(self, preset_name: str):
