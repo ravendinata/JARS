@@ -15,7 +15,7 @@ import pathlib
 import customtkinter as ctk
 import tkinter as tk
 
-import processor
+import processor.formatter as processor
 
 def get_presets():
     presets = []
