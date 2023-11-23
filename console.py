@@ -5,6 +5,9 @@ It is meant to be used in the command line as an alternative to the GUI applicat
 The console application is more suitable for batch processing of files by using a batch script.
 """
 
+__version__ = "1.0.0"
+__author__ = "Raven Limadinata"
+
 from pathlib import Path
 
 import processor
