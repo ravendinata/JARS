@@ -1,9 +1,21 @@
-import pathlib
-import processor
+"""
+This program is a GUI variant of the JARS program.
+
+It is meant to be used as a standalone application.
+The GUI application is only suitable for processing a single file at a time.
+But it is more user-friendly and easier to use than the console application.
+"""
+
+__version__ = "1.0.0"
+__author__ = "Raven Limadinata"
+
 import os
+import pathlib
 
 import customtkinter as ctk
 import tkinter as tk
+
+import processor
 
 def get_presets():
     presets = []
@@ -12,6 +24,25 @@ def get_presets():
     return presets
 
 class OutputDialog(ctk.CTkToplevel):
+    """
+    A custom message box for the report processor application.
+
+    This message box is displayed after the report processing is completed.
+    It displays the output file path and a message. It also provides buttons for opening the output file and the output folder.
+
+    Attributes:
+        file_path (str): The path of the output file.
+        content (str): The message to display.
+
+    Methods:
+        __init__(self, master, title, file_path, content, **kwargs): Initializes the OutputDialog.
+        __open_file(self): Opens the output file.
+        __open_folder(self): Opens the output folder.
+
+    TODO:
+        Move this class to a separate custom widget file ?
+    """
+
     def __init__(self, master, title, file_path, content,**kwargs):
         super().__init__(master, **kwargs)
 
@@ -28,14 +59,43 @@ class OutputDialog(ctk.CTkToplevel):
         ctk.CTkButton(self, text = "OK", command = self.destroy).grid(row = 1, column = 2, padx = (2, 10), pady = 10, sticky = tk.W)
 
     def __open_file(self):
+        """Opens the output file using the default program."""
         os.startfile(self.file_path)
         self.destroy()
 
     def __open_folder(self):
+        """Opens the output folder using the default program."""
         os.startfile(os.path.dirname(self.file_path))
         self.destroy()
 
 class ProcessorFrame(ctk.CTkFrame):
+    """
+    A custom frame for the report processor application.
+
+    This frame contains various widgets for selecting source file, report file type,
+    output file path, and other options. It also provides functions for browsing files,
+    saving files, and processing the report.
+
+    Attributes:
+        adjust_cell_widths_var (tk.BooleanVar): Variable for the "Auto adjust cell widths" checkbox.
+        btn_browse_source (ctk.CTkButton): Button for browsing the source file.
+        btn_browse_output (ctk.CTkButton): Button for browsing the output file path.
+        btn_process (ctk.CTkButton): Button for initiating the report processing.
+        chk_adjust_cell_widths (ctk.CTkCheckBox): Checkbox for enabling/disabling auto adjust cell widths.
+        cmb_mode (ctk.CTkComboBox): ComboBox for selecting the report file type.
+        lbl_source (ctk.CTkLabel): Label for the source file path.
+        lbl_mode (ctk.CTkLabel): Label for the report file type.
+        lbl_output (ctk.CTkLabel): Label for the output file path.
+        txt_source_path (ctk.CTkEntry): Entry field for entering the source file path.
+        txt_output_path (ctk.CTkEntry): Entry field for entering the output file path.
+
+    Methods:
+        __init__(self, master, **kwargs): Initializes the ProcessorFrame.
+        __browse_file(self): Opens a file dialog for browsing the source file.
+        __save_file(self): Opens a file dialog for saving the output file.
+        __process(self): Processes the report based on the selected options.
+    """
+
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
 
@@ -61,7 +121,7 @@ class ProcessorFrame(ctk.CTkFrame):
         # Adjust cell widths checkbox
         self.adjust_cell_widths_var = tk.BooleanVar()
         self.chk_adjust_cell_widths = ctk.CTkCheckBox(self, text = "Auto adjust cell widths", variable = self.adjust_cell_widths_var, onvalue = True, offvalue = False)
-        self.chk_adjust_cell_widths.select() # Turn on by default
+        self.chk_adjust_cell_widths.select()  # Turn on by default
 
         # Process button
         self.btn_process = ctk.CTkButton(self, text = "Process", width = 100, command = self.__process)
@@ -108,7 +168,7 @@ class ProcessorFrame(ctk.CTkFrame):
             print(e)
             tk.messagebox.showerror("Error Encountered!", f"Please check that you have selected the correct report type!\nError: {str(e)}")
 
-class Window(ctk.CTk):
+class Window(ctk.CTk): 
     def __init__(self):
         super().__init__()
 

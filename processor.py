@@ -3,7 +3,31 @@ import openpyxl
 import pandas as pd
 
 class Processor:
+    """
+    Processor class for JARS
+
+    This class is responsible for processing the CSV source file and generating the output XLSX file.
+
+    Attributes:
+        source_file_path (str): The path of the source file.
+        output_file_path (str): The path of the output file.
+        preset (interface.IPresetFile): The preset settings information.
+        data (pandas.DataFrame): The data from the source file.
+    """
+
     def __init__(self, source_file_path, output_file_path, preset):
+        """
+        Initialize the processor instance.
+
+        Args:
+            source_file_path (str): The path of the source file.
+            output_file_path (str): The path of the output file.
+            preset (interface.IPresetFile): The name of the preset file to use.
+
+        Returns:
+            Processor: The initialized processor instance.
+        """
+        
         print("[  ] Initializing processor...")
         
         self.source_file_path = source_file_path
@@ -14,6 +38,22 @@ class Processor:
 
     # Public methods
     def generate_xlsx(self, adjust_cell_widths):
+        """
+        Generate the output XLSX file from the source file data.
+
+        Using the data from the source file and the preset settings, generate the output XLSX file.
+        It first reads the source file into a pandas DataFrame, then shapes the data according to the preset settings.
+        If the preset settings indicate that the output file should be multisheet, it will split the data into multiple sheets.
+        Otherwise, it will shape the data into a single sheet. Then, it will export the data into an XLSX file.
+        It will also add a generic metadata to the XLSX file. And optionally adjust the cell widths.
+
+        Args:
+            adjust_cell_widths (bool): Whether to adjust cell widths.
+
+        Returns:
+            None
+        """
+        
         print(f"[><] Source file path: {self.source_file_path}")
         print(f"[><] Output file path: {self.output_file_path}")
         print(f"[><] Preset: {self.preset}")
@@ -40,6 +80,22 @@ class Processor:
                              creator = "JAC Academic Reporting System (JARS)",
                              subject = "JARS Report",
                              keywords = "JARS; Academic Report"):
+        """
+        Add generic metadata to the output XLSX file.
+
+        Injects generic metadata to the output XLSX file. The metadata includes the title, creator, subject, and keywords.
+        If the metadata is not provided, it will use the default values.
+        
+        Args:
+            title (str): The title of the XLSX file.
+            creator (str): The creator of the XLSX file.
+            subject (str): The subject of the XLSX file.
+            keywords (str): The keywords of the XLSX file.
+            
+        Returns:
+            None
+        """
+
         print("[  ] Adding metadata...")
         workbook = openpyxl.load_workbook(self.output_file_path)
         workbook.properties.title = title
@@ -51,6 +107,15 @@ class Processor:
         print("[OK] Metadata added!")
 
     def adjust_cell_widths(self):
+        """
+        Adjust the cell widths of the output XLSX file.
+
+        It will adjust the cell widths of all sheets in the XLSX file according to the content of the cells.
+
+        Returns:
+            None
+        """
+
         print("[  ] Adjusting cell widths...")
         workbook = openpyxl.load_workbook(self.output_file_path)
         
@@ -64,6 +129,16 @@ class Processor:
     
     # Private methods
     def __split_to_sheet(self):
+        """
+        Split the data into multiple sheets.
+
+        Using the preset settings, it will split the data into multiple sheets within the same XLSX file.
+        The split data is also shaped according to the preset settings. Then, it will export the data into an XLSX file.
+
+        Returns:
+            None
+        """
+
         print("[**] Creating output file...")
 
         with pd.ExcelWriter(self.output_file_path) as writer:
@@ -77,6 +152,15 @@ class Processor:
         print("[OK] Processing complete!")
 
     def __shape_and_export(self):
+        """
+        Shape the data and export it into an XLSX file.
+        
+        Using the preset settings, it will shape the data into a single sheet within a single XLSX file and export it.
+        
+        Returns:
+            None
+        """
+
         print(f"[**] Creating output file...")
         shaped = self.data.pivot_table(self.preset.value, self.preset.index, self.preset.column, sort = self.preset.sort)
         shaped.to_excel(self.output_file_path, sheet_name = self.preset.preset_name, freeze_panes = self.preset.freeze_panes)
