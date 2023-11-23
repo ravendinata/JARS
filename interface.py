@@ -24,21 +24,18 @@ class IPresetFile:
 
         Args:
             preset_name (str): The name of the preset file.
-
-        TODO:
-            Handle preset file using with statement.
         """
 
         self.preset_name = preset_name
-        self.preset_json = json.load(open(f'presets/{preset_name}.json'))
-        
-        self.index = self.preset_json["index"]
-        self.column = self.preset_json["column"]
-        self.value = self.preset_json["value"]
-        self.multisheet = self.preset_json["multisheet"]
-        self.group_by = self.preset_json["group_by"]
-        self.sort = self.preset_json["sort"]
-        self.freeze_panes = (self.preset_json["freeze_panes"]["row"], self.preset_json["freeze_panes"]["column"])
+        preset_data = json.load(open(f'presets/{preset_name}.json'))
+    
+        self.index = preset_data["index"]
+        self.column = preset_data["column"]
+        self.value = preset_data["value"]
+        self.multisheet = preset_data["multisheet"]
+        self.group_by = preset_data["group_by"]
+        self.sort = preset_data["sort"]
+        self.freeze_panes = (preset_data["freeze_panes"]["row"], preset_data["freeze_panes"]["column"])
 
     def __str__(self):
         """
