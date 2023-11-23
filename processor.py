@@ -1,6 +1,7 @@
-import interface
 import openpyxl
 import pandas as pd
+
+import interface
 
 class Processor:
     """
@@ -53,7 +54,7 @@ class Processor:
         Returns:
             None
         """
-        
+
         print(f"[><] Source file path: {self.source_file_path}")
         print(f"[><] Output file path: {self.output_file_path}")
         print(f"[><] Preset: {self.preset}")
