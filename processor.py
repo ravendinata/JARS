@@ -3,11 +3,11 @@ import pandas as pd
 
 import interface
 
-class Processor:
+class Formatter:
     """
-    Processor class for JARS
+    Report formatter class for JARS data processor
 
-    This class is responsible for processing the CSV source file and generating the output XLSX file.
+    This class is responsible for processing the database-like table structured CSV source file and generating the output XLSX file.
 
     Attributes:
         source_file_path (str): The path of the source file.

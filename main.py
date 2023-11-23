@@ -159,7 +159,7 @@ class ProcessorFrame(ctk.CTkFrame):
         output_file_path = self.txt_output_path.get()
 
         # Process
-        proc = processor.Processor(source_file, output_file_path, mode)
+        proc = processor.Formatter(source_file, output_file_path, mode)
         
         try:
             proc.generate_xlsx(self.adjust_cell_widths_var.get())
