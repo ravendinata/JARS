@@ -28,28 +28,40 @@ class Generator:
         self.grader_report_path = grader_report_path
         self.output_path = output_path
 
+        self.course_info = pd.read_excel(self.grader_report_path, sheet_name = "Course Information", index_col = 0, header = 0)
+        self.students = pd.read_excel(self.grader_report_path, sheet_name = "Student List", index_col = 0, header = 0)
         self.data_sna = pd.read_excel(self.grader_report_path, sheet_name = "Skills and Assessment", index_col = 0, header = 0)
         self.data_pd = pd.read_excel(self.grader_report_path, sheet_name = "Personal Development", index_col = 0, header = 0)
-        self.course_info = pd.read_excel(self.grader_report_path, sheet_name = "Course Information", index_col = 0, header = 0)
         self.__prepare_data()
 
         print("[OK] Report generator initialized!")
 
+    def get_course_info(self, item):
+        return self.course_info.loc[item, "Value"]
+    
+    def get_student_info(self, student, item):
+        return self.students.loc[student, item]
+    
     def get_grade_sna(self, student, assessment):
         return self.data_sna.loc[student, assessment]
     
     def get_grade_pd(self, student, item):
         return self.data_pd.loc[student, item]
     
-    def get_course_info(self, item):
-        return self.course_info.loc[item, "Value"]
+    def generate_all(self):
+        for student in self.students.index:
+            self.generate_for_student(student)
     
     def __prepare_data(self):
         # Strip whitespace from index
+        self.course_info.index = self.course_info.index.str.strip()
+        self.students.index = self.students.index.str.strip()
         self.data_sna.index = self.data_sna.index.str.strip()
         self.data_pd.index = self.data_pd.index.str.strip()
 
         # Strip whitespace from columns
+        self.course_info.columns = self.course_info.columns.str.strip()
+        self.students.columns = self.students.columns.str.strip()
         self.data_sna.columns = self.data_sna.columns.str.strip()
         self.data_pd.columns = self.data_pd.columns.str.strip()
 
@@ -229,4 +241,4 @@ class Generator:
         ak_table.cell(1, 1).text = "Signature"
         ak_table.cell(1, 2).text = "Date"
 
-        document.save(self.output_path)
+        document.save(f"{self.output_path}/{student_name}.docx")
