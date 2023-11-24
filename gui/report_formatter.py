@@ -125,7 +125,7 @@ class ReportFormatterFrame(ctk.CTkFrame):
         
         try:
             proc.generate_xlsx(self.adjust_cell_widths_var.get())
-            OutputDialog(self.master, "Processing completed!", output_file_path, f"Done. Output file saved at {output_file_path}")
+            OutputDialog(master = self.master, title = "Processing completed!", file_path = output_file_path, content = f"Done. Output file saved at {output_file_path}")
         except Exception as e:
             print(e)
             tk.messagebox.showerror("Error Encountered!", f"Please check that you have selected the correct report type!\nError: {str(e)}")

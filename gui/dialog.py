@@ -34,8 +34,13 @@ class OutputDialog(ctk.CTkToplevel):
         self.attributes("-topmost", True)
 
         ctk.CTkLabel(self, text = content).grid(row = 0, column = 0, columnspan = 3, padx = 10, pady = 10)
-        ctk.CTkButton(self, text = "Open folder", command = self.__open_folder).grid(row = 1, column = 0, padx = (10, 2), pady = 10, sticky = tk.E)
-        ctk.CTkButton(self, text = "Open file", command = self.__open_file).grid(row = 1, column = 1, padx = 2, pady = 10, sticky = tk.EW)
+
+        if file_path:
+            ctk.CTkButton(self, text = "Open folder", command = self.__open_folder).grid(row = 1, column = 0, padx = (10, 2), pady = 10, sticky = tk.E)
+        
+        if os.path.isfile(file_path):
+            ctk.CTkButton(self, text = "Open file", command = self.__open_file).grid(row = 1, column = 1, padx = 2, pady = 10, sticky = tk.EW)
+        
         ctk.CTkButton(self, text = "OK", command = self.destroy).grid(row = 1, column = 2, padx = (2, 10), pady = 10, sticky = tk.W)
 
     def __open_file(self):
@@ -45,5 +50,9 @@ class OutputDialog(ctk.CTkToplevel):
 
     def __open_folder(self):
         """Opens the output folder using the default program."""
-        os.startfile(os.path.dirname(self.file_path))
+        if os.path.isfile(self.file_path):
+            os.startfile(os.path.dirname(self.file_path))
+        else:
+            os.startfile(self.file_path)
+
         self.destroy()

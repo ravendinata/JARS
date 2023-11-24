@@ -128,6 +128,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
             proc.generate_for_student(student_name)
             self.__on_progress_update(1, 1, f"Done!")
+            output_file_path = f"{output_file_path}/{student_name}.docx"
 
         self.lbl_count.configure(text = "Done!")
         self.lbl_status_text.configure(text = "Report generation completed successfully.")
