@@ -4,6 +4,8 @@ from docx import Document
 from docx.shared import Cm, Pt
 from docx.enum.table import WD_TABLE_ALIGNMENT
 
+import processor.helper.document as document_helper
+
 class Generator:
     """
     Report generator class for JARS data processor
@@ -67,15 +69,9 @@ class Generator:
 
     def generate_for_student(self, student_name):
         document = Document()
-
-        # Page Setup (A4)
+        document = document_helper.setup_page(document, 'a4')
+        
         section = document.sections[0]
-        section.page_height = Cm(29.7)
-        section.page_width = Cm(21)
-        section.left_margin = Cm(2)
-        section.right_margin = Cm(2)
-        section.top_margin = Cm(2)
-        section.bottom_margin = Cm(2)
 
         header_content = section.header.paragraphs[0]
         header_content.alignment = WD_TABLE_ALIGNMENT.CENTER
