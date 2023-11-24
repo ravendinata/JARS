@@ -13,6 +13,7 @@ import customtkinter as ctk
 import tkinter as tk
 
 from gui.report_formatter import ReportFormatterWindow
+from gui.report_generator import ReportGeneratorWindow
 
 class LauncherFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -26,6 +27,7 @@ class LauncherFrame(ctk.CTkFrame):
         
         # Buttons
         self.btn_report_formatter = ctk.CTkButton(self, text = "Report Formatter", command = self.__open_report_formatter)
+        self.btn_report_generator = ctk.CTkButton(self, text = "Report Generator", command = self.__open_report_generator)
 
         # Exit button
         self.btn_exit = ctk.CTkButton(self, text = "Exit", command = self.master.destroy)
@@ -34,11 +36,17 @@ class LauncherFrame(ctk.CTkFrame):
         self.lbl_title.grid(row = 0, column = 0, columnspan = 2, padx = 10, pady = (5, 0))
         self.lbl_subtitle.grid(row = 1, column = 0, columnspan = 2, padx = 10, pady = (0, 10))
         self.lbl_prompt.grid(row = 2, column = 0, columnspan = 2, padx = 10, pady = 5)
+        
         self.btn_report_formatter.grid(row = 3, column = 0, padx = 2, pady = 5)
+        self.btn_report_generator.grid(row = 3, column = 1, padx = 2, pady = 5)
+        
         self.btn_exit.grid(row = 4, column = 0, columnspan = 2, padx = 2, pady = 5)
 
     def __open_report_formatter(self):
         ReportFormatterWindow(master = self.master)
+
+    def __open_report_generator(self):
+        ReportGeneratorWindow(master = self.master)
 
 class Window(ctk.CTk): 
     def __init__(self):
