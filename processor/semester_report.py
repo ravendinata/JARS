@@ -254,4 +254,53 @@ class Generator:
         ak_table.cell(1, 1).text = "Signature"
         ak_table.cell(1, 2).text = "Date"
 
+        # Legend Section
+        lg_header = document.add_paragraph()
+        lg_header.add_run("GRADING SYSTEM").bold = True
+        lg_header.paragraph_format.space_before = Pt(18)
+        lg_header.paragraph_format.space_after = Pt(0)
+
+        lg_table = document.add_table(rows = 6, cols = 4)
+        lg_table.style = "Table Grid"
+        lg_table.alignment = WD_TABLE_ALIGNMENT.CENTER
+        lg_table.autofit = False
+        lg_table.allow_autofit = False
+
+        lg_table.cell(0, 0).merge(lg_table.cell(0, 1)).text = "Skills and Assessment"
+        lg_table.cell(0, 0).paragraphs[0].runs[0].bold = True
+        lg_table.cell(0, 0).width = Cm(8.5)
+        lg_table.cell(0, 2).merge(lg_table.cell(0, 3)).text = "Personal Development"
+        lg_table.cell(0, 2).paragraphs[0].runs[0].bold = True
+        lg_table.cell(0, 2).width = Cm(8.5)
+
+        lg_table.cell(1, 0).text = "95-100"
+        lg_table.cell(1, 1).text = "A"
+        lg_table.cell(1, 2).text = "Excellent"
+        lg_table.cell(1, 3).text = "E"
+
+        lg_table.cell(2, 0).text = "85-95"
+        lg_table.cell(2, 1).text = "B"
+        lg_table.cell(2, 2).text = "Very Good"
+        lg_table.cell(2, 3).text = "VG"
+
+        lg_table.cell(3, 0).text = "75-85"
+        lg_table.cell(3, 1).text = "C"
+        lg_table.cell(3, 2).text = "Good"
+        lg_table.cell(3, 3).text = "G"
+
+        lg_table.cell(4, 0).text = "65-75"
+        lg_table.cell(4, 1).text = "D"
+        lg_table.cell(4, 2).text = "Satisfactory"
+        lg_table.cell(4, 3).text = "S"
+
+        lg_table.cell(5, 0).text = "Below 65"
+        lg_table.cell(5, 1).text = "E"
+        lg_table.cell(5, 2).text = "Needs Improvement"
+        lg_table.cell(5, 3).text = "NI"
+
+        for i in range(0, 6):
+            for j in range(0, 4):
+                lg_table.cell(i, j).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+                lg_table.cell(i, j).paragraphs[0].runs[0].font.size = Pt(9)
+
         document.save(f"{self.output_path}/{student_name}.docx")
