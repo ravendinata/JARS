@@ -15,11 +15,12 @@ import pathlib
 import customtkinter as ctk
 import tkinter as tk
 
+import config
 import processor.formatter as processor
 
 def get_presets():
     presets = []
-    for preset in pathlib.Path("presets").glob("*.json"):
+    for preset in pathlib.Path(config.get_config("report_parser_presets")).glob("*.json"):
         presets.append(preset.stem)
     return presets
 

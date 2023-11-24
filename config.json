@@ -1,0 +1,5 @@
+{
+    "logo_path": "resources/logo.png",
+    "report_parser_presets": "resources/report_parser_settings",
+    "page_presets": "resources/page_presets"
+}

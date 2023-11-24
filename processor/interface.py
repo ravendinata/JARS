@@ -1,5 +1,7 @@
 import json
 
+import config
+
 class IFormatterPresetFile:
     """
     Interface for presets file
@@ -31,7 +33,7 @@ class IFormatterPresetFile:
         """
 
         self.preset_name = preset_name
-        preset_data = json.load(open(f'presets/{preset_name}.json'))
+        preset_data = json.load(open(f"{config.get_config('report_parser_presets')}/{preset_name}.json"))
     
         self.index = preset_data["index"]
         self.column = preset_data["column"]

@@ -5,6 +5,7 @@ from docx.shared import Cm, Pt
 from docx.enum.table import WD_TABLE_ALIGNMENT
 
 import processor.helper.document as document_helper
+import config
 
 class Generator:
     """
@@ -76,7 +77,7 @@ class Generator:
         header_content = section.header.paragraphs[0]
         header_content.alignment = WD_TABLE_ALIGNMENT.CENTER
         logo_run = header_content.add_run()
-        logo_run.add_picture("Z:/Work/JAC/logo.png", width = Cm(5.56))
+        logo_run.add_picture(config.get_config("logo_path"), width = Cm(5.56))
         
         # Styles
         style = document.styles["Normal"]
