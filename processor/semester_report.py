@@ -35,6 +35,7 @@ class Generator:
         self.students = pd.read_excel(self.grader_report_path, sheet_name = "Student List", index_col = 0, header = 0)
         self.data_sna = pd.read_excel(self.grader_report_path, sheet_name = "Skills and Assessment", index_col = 0, header = 0)
         self.data_pd = pd.read_excel(self.grader_report_path, sheet_name = "Personal Development", index_col = 0, header = 0)
+        self.data_final_grades = pd.read_excel(self.grader_report_path, sheet_name = "Final Grades", index_col = 0, header = 0)
         self.__prepare_data()
 
         print("[OK] Report generator initialized!")
@@ -51,6 +52,9 @@ class Generator:
     def get_grade_pd(self, student, item):
         return self.data_pd.loc[student, item]
     
+    def get_final_grade(self, student, format):
+        return self.data_final_grades.loc[student, format]
+    
     def generate_all(self):
         for student in self.students.index:
             self.generate_for_student(student)
@@ -61,12 +65,20 @@ class Generator:
         self.students.index = self.students.index.str.strip()
         self.data_sna.index = self.data_sna.index.str.strip()
         self.data_pd.index = self.data_pd.index.str.strip()
+        self.data_final_grades.index = self.data_final_grades.index.str.strip()
 
         # Strip whitespace from columns
         self.course_info.columns = self.course_info.columns.str.strip()
         self.students.columns = self.students.columns.str.strip()
         self.data_sna.columns = self.data_sna.columns.str.strip()
         self.data_pd.columns = self.data_pd.columns.str.strip()
+        self.data_final_grades.columns = self.data_final_grades.columns.str.strip()
+
+        # Fill NaN values with 0
+        self.data_final_grades.fillna(0, inplace = True)
+
+        # Data type conversion
+        self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
 
     def generate_for_student(self, student_name):
         document = Document()
@@ -119,9 +131,9 @@ class Generator:
         
         ci_table.cell(2, 2).text = "Assessment"
         ci_table.cell(2, 2).paragraphs[0].runs[0].bold = True
-        ci_table.cell(2, 3).text = "100"
+        ci_table.cell(2, 3).text = str(self.get_final_grade(student_name, "Final Score"))
         ci_table.cell(2, 3).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-        ci_table.cell(2, 4).text = "A"
+        ci_table.cell(2, 4).text = self.get_final_grade(student_name, "Letter Grade")
         ci_table.cell(2, 4).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
 
         for i in range(0, 3):
