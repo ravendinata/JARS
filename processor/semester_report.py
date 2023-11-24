@@ -97,7 +97,9 @@ class Generator:
         font.name = "Calibri"
         font.size = Pt(11)
 
-        document.add_paragraph()
+        top_spacer = document.add_paragraph()
+        top_spacer.paragraph_format.space_before = Pt(0)
+        top_spacer.paragraph_format.space_after = Pt(0)
 
         # Course Information Section
         ci_table = document.add_table(rows = 3, cols = 5)
@@ -143,7 +145,7 @@ class Generator:
         # Subject Description Section
         sd_header = document.add_paragraph()
         sd_header.add_run("SUBJECT DESCRIPTION").bold = True
-        sd_header.paragraph_format.space_before = Pt(24)
+        sd_header.paragraph_format.space_before = Pt(18)
         sd_header.paragraph_format.space_after = Pt(0)
         
         sd_table = document.add_table(rows = 1, cols = 1)
@@ -151,6 +153,7 @@ class Generator:
         sd_table.alignment = WD_TABLE_ALIGNMENT.CENTER
         sd_table.autofit = False
         sd_table.allow_autofit = False
+        sd_table.rows[0].height = Cm(1.5)
         sd_table.cell(0, 0).text = self.get_course_info("Subject Description")
         sd_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
         sd_table.cell(0, 0).width = Cm(17)
@@ -158,7 +161,7 @@ class Generator:
         # Skills and Assessment Section
         sna_header = document.add_paragraph()
         sna_header.add_run("SKILLS AND ASSESSMENT").bold = True
-        sna_header.paragraph_format.space_before = Pt(24)
+        sna_header.paragraph_format.space_before = Pt(18)
         sna_header.paragraph_format.space_after = Pt(0)
         
         sna_table = document.add_table(rows = len(self.data_sna.columns), cols = 2)
@@ -177,7 +180,7 @@ class Generator:
         # Personal Development Section
         pd_header = document.add_paragraph()
         pd_header.add_run("PERSONAL DEVELOPMENT").bold = True
-        pd_header.paragraph_format.space_before = Pt(24)
+        pd_header.paragraph_format.space_before = Pt(18)
         pd_header.paragraph_format.space_after = Pt(0)
         
         pd_table = document.add_table(rows = len(self.data_pd.columns) + 1, cols = 6)
@@ -213,7 +216,7 @@ class Generator:
         # Teacher's Comments Section
         tc_header = document.add_paragraph()
         tc_header.add_run("TEACHER'S COMMENTS").bold = True
-        tc_header.paragraph_format.space_before = Pt(24)
+        tc_header.paragraph_format.space_before = Pt(18)
         tc_header.paragraph_format.space_after = Pt(0)
 
         tc_table = document.add_table(rows = 1, cols = 1)
@@ -222,13 +225,14 @@ class Generator:
         tc_table.autofit = False
         tc_table.allow_autofit = False
         tc_table.cell(0, 0).text = "Student is a hardworking and diligent student. She is always willing to help her peers and is a good role model for her classmates."
+        tc_table.rows[0].height = Cm(2)
         tc_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
         tc_table.cell(0, 0).width = Cm(17)
 
         # Acknowledgement Section
         ak_header = document.add_paragraph()
         ak_header.add_run("ACKNOWLEDGEMENT").bold = True
-        ak_header.paragraph_format.space_before = Pt(24)
+        ak_header.paragraph_format.space_before = Pt(18)
         ak_header.paragraph_format.space_after = Pt(0)
 
         ak_table = document.add_table(rows = 2, cols = 3)
