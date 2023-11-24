@@ -1,6 +1,6 @@
 import json
 
-class IPresetFile:
+class IFormatterPresetFile:
     """
     Interface for presets file
 

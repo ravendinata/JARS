@@ -33,7 +33,7 @@ class Formatter:
         
         self.source_file_path = source_file_path
         self.output_file_path = output_file_path
-        self.preset = interface.IPresetFile(preset)
+        self.preset = interface.IFormatterPresetFile(preset)
         
         print("[OK] Processor initialized!")
 
