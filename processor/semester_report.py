@@ -4,8 +4,9 @@ from docx import Document
 from docx.shared import Cm, Pt
 from docx.enum.table import WD_TABLE_ALIGNMENT
 
-import processor.helper.document as document_helper
 import config
+import processor.helper.document as document_helper
+import processor.helper.comment_generator as cgen
 
 class Generator:
     """
@@ -57,6 +58,7 @@ class Generator:
     
     def generate_all(self):
         for student in self.students.index:
+            print(f"Generating report for {student}…")
             self.generate_for_student(student)
     
     def __prepare_data(self):
@@ -224,8 +226,11 @@ class Generator:
         tc_table.alignment = WD_TABLE_ALIGNMENT.CENTER
         tc_table.autofit = False
         tc_table.allow_autofit = False
-        tc_table.cell(0, 0).text = "Student is a hardworking and diligent student. She is always willing to help her peers and is a good role model for her classmates."
         tc_table.rows[0].height = Cm(2)
+        tc_table.cell(0, 0).text = cgen.CommentGenerator(student_name = student_name, 
+                                                         short_name = self.get_student_info(student_name, "Short Name"),
+                                                         gender = self.get_student_info(student_name, "Gender")
+                                                         ).generate_comment()
         tc_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
         tc_table.cell(0, 0).width = Cm(17)
 
