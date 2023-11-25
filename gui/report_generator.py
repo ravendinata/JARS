@@ -1,9 +1,6 @@
-import pathlib
-
 import customtkinter as ctk
 import tkinter as tk
 
-import config
 import processor.semester_report as processor
 from gui.dialog import OutputDialog
 
