@@ -56,19 +56,6 @@ class Generator:
     def get_final_grade(self, student, format):
         return self.data_final_grades.loc[student, format]
     
-    def generate_all(self, callback = None):
-        job_count = len(self.students.index)
-        
-        for i, student in enumerate(self.students.index):
-            status_message = f"Generating report for {student}…"
-            callback(i, job_count, status_message)
-            print(f"Progress: {i / job_count * 100}%")
-            print(status_message)
-            self.generate_for_student(student)
-        
-        callback(job_count, job_count, "Done!")
-        print(f"Progress: 100%")
-    
     def __prepare_data(self):
         # Strip whitespace from index
         self.course_info.index = self.course_info.index.str.strip()
@@ -89,6 +76,19 @@ class Generator:
 
         # Data type conversion
         self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
+
+    def generate_all(self, callback = None):
+        job_count = len(self.students.index)
+        
+        for i, student in enumerate(self.students.index):
+            status_message = f"Generating report for {student}…"
+            callback(i, job_count, status_message)
+            print(f"Progress: {i / job_count * 100}%")
+            print(status_message)
+            self.generate_for_student(student)
+        
+        callback(job_count, job_count, "Done!")
+        print(f"Progress: 100%")
 
     def generate_for_student(self, student_name):
         document = Document()
