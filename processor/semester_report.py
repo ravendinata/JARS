@@ -303,22 +303,22 @@ class Generator:
         lg_table.cell(1, 2).text = "Excellent"
         lg_table.cell(1, 3).text = "E"
 
-        lg_table.cell(2, 0).text = "85-95"
+        lg_table.cell(2, 0).text = "85-94"
         lg_table.cell(2, 1).text = "B"
         lg_table.cell(2, 2).text = "Very Good"
         lg_table.cell(2, 3).text = "VG"
 
-        lg_table.cell(3, 0).text = "75-85"
+        lg_table.cell(3, 0).text = "75-84"
         lg_table.cell(3, 1).text = "C"
         lg_table.cell(3, 2).text = "Good"
         lg_table.cell(3, 3).text = "G"
 
-        lg_table.cell(4, 0).text = "65-75"
+        lg_table.cell(4, 0).text = "40-74"
         lg_table.cell(4, 1).text = "D"
         lg_table.cell(4, 2).text = "Satisfactory"
         lg_table.cell(4, 3).text = "S"
 
-        lg_table.cell(5, 0).text = "Below 65"
+        lg_table.cell(5, 0).text = "Below 40"
         lg_table.cell(5, 1).text = "E"
         lg_table.cell(5, 2).text = "Needs Improvement"
         lg_table.cell(5, 3).text = "NI"
