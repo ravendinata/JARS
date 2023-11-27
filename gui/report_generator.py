@@ -92,7 +92,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
     # UI functions
     def __browse_file(self):
         """Opens a file dialog for browsing the source file."""
-        file_path = ctk.filedialog.askopenfilename(title = "Select Grader Report File", defaultextension = ".xlsx", filetypes =[("Microsoft Excel Document", "*.xlsx")])
+        file_path = ctk.filedialog.askopenfilename(title = "Select Grader Report File", defaultextension = ".xlsm", filetypes =[("Microsoft Excel Macro-Enabled Document", "*.xlsm"), ("Microsoft Excel Document", "*.xlsx")])
         self.txt_source_path.delete(0, tk.END)
         self.txt_source_path.insert(0, file_path)
 
