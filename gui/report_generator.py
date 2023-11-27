@@ -36,7 +36,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.btn_browse_source = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__browse_file)
 
         # Output file path
-        self.lbl_output = ctk.CTkLabel(self, text = "Output File:")
+        self.lbl_output = ctk.CTkLabel(self, text = "Output Folder:")
         self.txt_output_path = ctk.CTkEntry(self, width = 250)
         self.btn_browse_output = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__save_file)
 
