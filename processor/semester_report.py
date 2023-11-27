@@ -252,7 +252,7 @@ class Generator:
                                                          gender = self.get_student_info(student_name, "Gender"),
                                                          comment_mapping = self.data_comment_mapping,
                                                          student_result = student_sna,
-                                                         student_final_grade = self.get_final_grade(student_name, "Final Score")
+                                                         letter_grade = self.get_final_grade(student_name, "Letter Grade")
                                                         ).generate_comment()
         tc_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
         tc_table.cell(0, 0).width = Cm(17)

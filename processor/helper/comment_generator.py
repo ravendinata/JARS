@@ -1,13 +1,13 @@
 import nltk
 
 class CommentGenerator:
-    def __init__(self, student_name, short_name, gender, comment_mapping, student_result, student_final_grade):
+    def __init__(self, student_name, short_name, gender, comment_mapping, student_result, letter_grade):
         self._student_name = student_name
         self._short_name = short_name
         self._gender = gender
         self._comment_mapping = comment_mapping
         self._student_result = student_result
-        self._student_final_grade = student_final_grade
+        self._letter_grade = letter_grade
 
         self._comment_mapping = self._comment_mapping.fillna("")
 
@@ -15,8 +15,8 @@ class CommentGenerator:
         pronoun = "he" if self._gender == "M" else "she"
         adjective = "his" if self._gender == "M" else "her"
 
-        sentence_intro = self._comment_mapping.loc["Intro", self.__map_final_score_to_grade(self._student_final_grade)]
-        sentence_closing = self._comment_mapping.loc["Closing", self.__map_final_score_to_grade(self._student_final_grade)]
+        sentence_intro = self._comment_mapping.loc["Intro", self._letter_grade]
+        sentence_closing = self._comment_mapping.loc["Closing", self._letter_grade]
 
         positive_sentences, negative_sentences = self.__collect_comments()
         positive_comments = ""
@@ -95,18 +95,6 @@ class CommentGenerator:
                         positive_sentences.append(comment)
 
         return positive_sentences, negative_sentences
-
-    def __map_final_score_to_grade(self, final_score):
-        if final_score >= 95:
-            return "A"
-        elif final_score >= 85:
-            return "B"
-        elif final_score >= 75:
-            return "C"
-        elif final_score >= 40:
-            return "D"
-        else:
-            return "E"
 
 # TEST
 
