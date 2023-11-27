@@ -37,6 +37,7 @@ class Generator:
         self.data_sna = pd.read_excel(self.grader_report_path, sheet_name = "Skills and Assessment", index_col = 0, header = 0)
         self.data_pd = pd.read_excel(self.grader_report_path, sheet_name = "Personal Development", index_col = 0, header = 0)
         self.data_final_grades = pd.read_excel(self.grader_report_path, sheet_name = "Final Grades", index_col = 0, header = 0)
+        self.data_comment_mapping = pd.read_excel(self.grader_report_path, sheet_name = "Comment Mapping", index_col = 0, header = 0)
         self.__prepare_data()
 
         print("[OK] Report generator initialized!")
@@ -63,6 +64,7 @@ class Generator:
         self.data_sna.index = self.data_sna.index.str.strip()
         self.data_pd.index = self.data_pd.index.str.strip()
         self.data_final_grades.index = self.data_final_grades.index.str.strip()
+        self.data_comment_mapping.index = self.data_comment_mapping.index.str.strip()
 
         # Strip whitespace from columns
         self.course_info.columns = self.course_info.columns.str.strip()
@@ -70,6 +72,7 @@ class Generator:
         self.data_sna.columns = self.data_sna.columns.str.strip()
         self.data_pd.columns = self.data_pd.columns.str.strip()
         self.data_final_grades.columns = self.data_final_grades.columns.str.strip()
+        self.data_comment_mapping.columns = self.data_comment_mapping.columns.str.strip()
 
         # Fill NaN values with 0
         self.data_final_grades.fillna(0, inplace = True)
@@ -179,6 +182,8 @@ class Generator:
         sna_table.alignment = WD_TABLE_ALIGNMENT.CENTER
         sna_table.autofit = False
         sna_table.allow_autofit = False
+
+        student_sna = {}
         
         for i, assessment in enumerate(self.data_sna.columns):
             sna_table.cell(i, 0).text = assessment
@@ -186,6 +191,7 @@ class Generator:
             sna_table.cell(i, 1).text = str(self.get_grade_sna(student_name, assessment))
             sna_table.cell(i, 1).width = Cm(2)
             sna_table.cell(i, 1).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+            student_sna[assessment] = self.get_grade_sna(student_name, assessment)
 
         # Personal Development Section
         pd_header = document.add_paragraph()
@@ -237,8 +243,11 @@ class Generator:
         tc_table.rows[0].height = Cm(2)
         tc_table.cell(0, 0).text = cgen.CommentGenerator(student_name = student_name, 
                                                          short_name = self.get_student_info(student_name, "Short Name"),
-                                                         gender = self.get_student_info(student_name, "Gender")
-                                                         ).generate_comment()
+                                                         gender = self.get_student_info(student_name, "Gender"),
+                                                         comment_mapping = self.data_comment_mapping,
+                                                         student_result = student_sna,
+                                                         student_final_grade = self.get_final_grade(student_name, "Final Score")
+                                                        ).generate_comment()
         tc_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
         tc_table.cell(0, 0).width = Cm(17)
 
