@@ -19,44 +19,10 @@ class CommentGenerator:
         sentence_closing = self._comment_mapping.loc["Closing", self._letter_grade]
 
         positive_sentences, negative_sentences = self.__collect_comments()
-        positive_comments = ""
-        negative_comments = ""
-        
-        if (len(positive_sentences) > 3):
-            positive_comments = f"{positive_sentences[0]}. "
-            positive_comments += ", ".join(positive_sentences[1:-2])
-            positive_comments = " ".join([positive_comments, ", and ", positive_sentences[-2]])
-            positive_comments = positive_comments.replace("also", "")
-            positive_comments += f". {positive_sentences[-1]}"
-        elif (len(positive_sentences) == 3):
-            positive_comments = f"{positive_sentences[0]}, and {positive_sentences[1]}"
-            positive_comments = positive_comments.replace("also", "")
-            positive_comments = ". ".join([positive_comments, positive_sentences[2]])
-        elif (len(positive_sentences) == 2):
-            positive_comments = f"{positive_sentences[0]}, and {positive_sentences[1]}"
-            positive_comments = positive_comments.replace("also", "", 1)
-        elif (len(positive_sentences) == 1):
-            positive_comments = positive_sentences[0]
-            positive_comments = positive_comments.replace("also", "")
+        positive_text = self.__assemble_positive_comments(positive_sentences)
+        negative_text = self.__assemble_negative_comments(negative_sentences)
 
-        if (len(negative_sentences) > 3):
-            negative_comments = f"{negative_sentences[0]}. "
-            negative_comments += ", ".join(negative_sentences[1:-2])
-            negative_comments = " ".join([negative_comments, ", and ", negative_sentences[-2]])
-            negative_comments = negative_comments.replace("also", "")
-            negative_comments += f". Further, {negative_sentences[-1]}"
-        elif (len(negative_sentences) == 3):
-            negative_comments = f"{negative_sentences[0]}, and {negative_sentences[1]}"
-            negative_comments = negative_comments.replace("also", "", 1)
-            negative_comments = ". ".join([negative_comments, negative_sentences[2]])
-        elif (len(negative_sentences) == 2):
-            negative_comments = f"{negative_sentences[0]}, and {negative_sentences[1]}"
-            negative_comments = negative_comments.replace("also", "", 1)
-        elif (len(negative_sentences) == 1):
-            negative_comments = negative_sentences[0]
-            negative_comments = negative_comments.replace("also", "")
-
-        text = ". ".join([sentence_intro, positive_comments, negative_comments, sentence_closing])
+        text = ". ".join([sentence_intro, positive_text, negative_text, sentence_closing])
 
         comment = text.format(short_name = self._short_name, pronoun = pronoun, adjective = adjective)
         comment = self.__format_comment(comment)
@@ -103,3 +69,47 @@ class CommentGenerator:
                         positive_sentences.append(comment)
 
         return positive_sentences, negative_sentences
+    
+    def __assemble_positive_comments(self, positive_sentences):
+        positive_comments = ""
+
+        if (len(positive_sentences) > 3):
+            positive_comments = f"{positive_sentences[0]}. "
+            positive_comments += ", ".join(positive_sentences[1:-2])
+            positive_comments = " ".join([positive_comments, ", and ", positive_sentences[-2]])
+            positive_comments = positive_comments.replace("also", "")
+            positive_comments += f". {positive_sentences[-1]}"
+        elif (len(positive_sentences) == 3):
+            positive_comments = f"{positive_sentences[0]}, and {positive_sentences[1]}"
+            positive_comments = positive_comments.replace("also", "")
+            positive_comments = ". ".join([positive_comments, positive_sentences[2]])
+        elif (len(positive_sentences) == 2):
+            positive_comments = f"{positive_sentences[0]}, and {positive_sentences[1]}"
+            positive_comments = positive_comments.replace("also", "", 1)
+        elif (len(positive_sentences) == 1):
+            positive_comments = positive_sentences[0]
+            positive_comments = positive_comments.replace("also", "")
+        
+        return positive_comments
+    
+    def __assemble_negative_comments(self, negative_sentences):
+        negative_comments = ""
+
+        if (len(negative_sentences) > 3):
+            negative_comments = f"{negative_sentences[0]}. "
+            negative_comments += ", ".join(negative_sentences[1:-2])
+            negative_comments = " ".join([negative_comments, ", and ", negative_sentences[-2]])
+            negative_comments = negative_comments.replace("also", "")
+            negative_comments += f". Further, {negative_sentences[-1]}"
+        elif (len(negative_sentences) == 3):
+            negative_comments = f"{negative_sentences[0]}, and {negative_sentences[1]}"
+            negative_comments = negative_comments.replace("also", "", 1)
+            negative_comments = ". ".join([negative_comments, negative_sentences[2]])
+        elif (len(negative_sentences) == 2):
+            negative_comments = f"{negative_sentences[0]}, and {negative_sentences[1]}"
+            negative_comments = negative_comments.replace("also", "", 1)
+        elif (len(negative_sentences) == 1):
+            negative_comments = negative_sentences[0]
+            negative_comments = negative_comments.replace("also", "")
+
+        return negative_comments
