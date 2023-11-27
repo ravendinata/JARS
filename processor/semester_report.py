@@ -85,12 +85,15 @@ class Generator:
         
         for i, student in enumerate(self.students.index):
             status_message = f"Generating report for {student}…"
-            callback(i, job_count, status_message)
+            if callback is not None:
+                callback(i, job_count, status_message)
             print(f"Progress: {i / job_count * 100}%")
             print(status_message)
             self.generate_for_student(student)
         
-        callback(job_count, job_count, "Done!")
+        if callback is not None:
+            callback(job_count, job_count, "Done!")
+        
         print(f"Progress: 100%")
 
     def generate_for_student(self, student_name):
