@@ -7,7 +7,6 @@ import pandas as pd
 import openpyxl
 import language_tool_python as ltp
 
-import language_tool_master as ltm
 from comment_generator import CommentGenerator
 
 help_text = """
@@ -44,7 +43,7 @@ Note:
 The script will generate comments for all possible combinations of grades for each criteria.
 """
 
-def run(source_file_path, output_file_path):
+def run(source_file_path, output_file_path, ltm):
     tool = ltm.get_tool()
     comment_mapping = pd.read_excel(source_file_path, sheet_name = "Comment Mapping", index_col = 0, header = 0)
     result = pd.DataFrame(columns = ["FG", "Pos", "Neg", "Comment", "Language Issue", "Possible Correction"])
@@ -121,6 +120,8 @@ def run(source_file_path, output_file_path):
     print(f"[  ] Done.")
 
 def main(argv):
+    import language_tool_master as ltm
+
     source_file_path = ""
     output_file_path = ""
 
@@ -145,7 +146,7 @@ def main(argv):
         print("comment_generator.py -s <source_file_path> -o <output_file_path>")
         sys.exit(2)
 
-    run(source_file_path, output_file_path)
+    run(source_file_path, output_file_path, ltm)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
