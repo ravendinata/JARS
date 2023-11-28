@@ -46,7 +46,6 @@ class OutputDialog(ctk.CTkToplevel):
     def __open_file(self):
         """Opens the output file using the default program."""
         os.startfile(self.file_path)
-        self.destroy()
 
     def __open_folder(self):
         """Opens the output folder using the default program."""
@@ -54,5 +53,3 @@ class OutputDialog(ctk.CTkToplevel):
             os.startfile(os.path.dirname(self.file_path))
         else:
             os.startfile(self.file_path)
-
-        self.destroy()
