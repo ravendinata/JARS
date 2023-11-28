@@ -11,7 +11,13 @@ class CommentGenerator:
 
         self._comment_mapping = self._comment_mapping.fillna("")
 
-    def generate_comment(self, probe = False):
+    def generate_comment(self, probe = False, autocorrect = False, ltm = None):
+        if ltm is None:
+            try:
+                import processor.helper.language_tool_master as ltm
+            except ImportError:
+                raise ImportError("LanguageTool is not installed. Please install LanguageTool to use this feature.")
+
         pronoun = "he" if self._gender == "M" else "she"
         adjective = "his" if self._gender == "M" else "her"
 
@@ -26,6 +32,11 @@ class CommentGenerator:
 
         comment = text.format(short_name = self._short_name, pronoun = pronoun, adjective = adjective)
         comment = self.__format_comment(comment)
+
+        if autocorrect:
+            tool = ltm.get_tool()
+            if tool.check(comment):
+                comment = tool.correct(comment)
 
         if probe:
             return comment, len(positive_sentences), len(negative_sentences)

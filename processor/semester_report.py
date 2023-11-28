@@ -83,7 +83,7 @@ class Generator:
         # Remove unnecessary columns
         self.data_sna = self.data_sna.drop(columns = ["Inflated Grade", "Averaged Grade", "Student Final Grade", "Sanity Check"])
 
-    def generate_all(self, callback = None):
+    def generate_all(self, autocorrect = True, callback = None):
         job_count = len(self.students.index)
         
         for i, student in enumerate(self.students.index):
@@ -92,14 +92,14 @@ class Generator:
                 callback(i, job_count, status_message)
             print(f"Progress: {i / job_count * 100}%")
             print(status_message)
-            self.generate_for_student(student)
+            self.generate_for_student(student_name = student, autocorrect = autocorrect)
         
         if callback is not None:
             callback(job_count, job_count, "Done!")
         
         print(f"Progress: 100%")
 
-    def generate_for_student(self, student_name):
+    def generate_for_student(self, student_name, autocorrect = True):
         document = Document()
         document = document_helper.setup_page(document, 'a4')
         
@@ -253,7 +253,7 @@ class Generator:
                                                          comment_mapping = self.data_comment_mapping,
                                                          student_result = student_sna,
                                                          letter_grade = self.get_final_grade(student_name, "Letter Grade")
-                                                        ).generate_comment()
+                                                        ).generate_comment(autocorrect = autocorrect)
         tc_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
         tc_table.cell(0, 0).width = Cm(17)
 
