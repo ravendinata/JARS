@@ -5,7 +5,6 @@ import sys
 
 import pandas as pd
 import openpyxl
-import language_tool_python as ltp
 
 help_text = """
 HELP PAGE
@@ -68,7 +67,6 @@ def run(source_file_path, output_file_path, ltm, CommentGenerator):
 
     # Check grammar of comments
     print(f"[  ] Checking grammar of comments…")
-    tool = ltp.LanguageTool('en-UK')
     for index, row in result.iterrows():
         matches = tool.check(row["Comment"])
         for match in matches:
