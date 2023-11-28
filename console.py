@@ -8,94 +8,78 @@ The console application is more suitable for batch processing of files by using 
 __version__ = "1.0.0"
 __author__ = "Raven Limadinata"
 
-from pathlib import Path
+import getopt
+import sys
 
-import processor
+import console.report_formatter as report_formatter
+import console.report_generator as report_generator
 
-def get_file_path():
-    """
-    Prompts the user to enter the source file path and returns it.
+help_text = """
+HELP PAGE
+=========
+This script is a console application for the JARS program.
 
-    Returns:
-        str: The source file path entered by the user.
-    """
+=========
+USAGE
+=========
+Format:
+main.py -i --help
+main.py -i --help
+main.py -t <tool_name> --help
 
-    file_path = input("\nEnter the source file path.\n(You don't need to remove the quotes (\"...\")): ")
-    file_path = file_path.strip('\"')
-    
-    if not Path(file_path).exists():
-        raise ValueError("Invalid file path.")
-    
-    return file_path
+Options:
+-h, --help
+    Displays this help page.
+-i, --interactive
+    Starts the interactive mode.
+-t, --tool <tool_name>
+    Specifies the tool to run.
+    Example:
+        --tool report_formatter
+        or
+        --tool report_generator
+Tip: Use the -h or --help option to display the help page for the specified tool.
+Note: Pass the arguments for the specified tool after the tool name.
 
-def get_output_file_path(source_file):
-    """
-    Prompts the user to enter the output file path and returns it.
+Example:
+main.py -t report_generator -s C:/Users/John Doe/Desktop/Grader Report P1A Art Sample.xlsm -o C:/Users/John Doe/Desktop/Test Result.xlsx -a --all
+"""
 
-    Args:
-        source_file (str): The path of the source file.
+def interactive():
+    print("JARS Report Processor\nJAC Academic Reporting System | Version 1.0.0")
+    print("\nSelect a tool to open:\n1. Report Formatter\n2. Report Generator")
+    tool = int(input("Please enter appropriate tool number: "))
 
-    Returns:
-        str: The output file path entered by the user.
-    """
+    if tool == 1:
+        report_formatter.run()
+    elif tool == 2:
+        report_generator.run()
 
-    output_file_path = input("\nEnter the output file path (Leave blank to use same name and path as input): ")
-    
-    if output_file_path == "":
-        output_file_path = source_file[:-4] + "_processed.xlsx"
-    if not output_file_path.endswith(".xlsx"):
-        output_file_path += ".xlsx"
-    
-    return output_file_path
+    input("\nPress Enter to exit…")
 
-def check_overwrite(output_file_path):
-    """
-    Checks if the output file already exists and prompts the user for confirmation to overwrite it.
+short_args = "hit:"
+long_args = ["help", "interactive", "tool="]
 
-    Args:
-        output_file_path (str): The path of the output file.
+def main(argv):
+    try:
+        opts, args = getopt.getopt(argv, short_args + report_formatter.short_args + report_generator.short_args, 
+                                   long_args + report_formatter.long_args + report_generator.long_args)
+    except getopt.GetoptError:
+        print("Error! Invalid argument(s).")
+        print("main.py -t <tool_name> -i --help")
+        sys.exit(2)
 
-    Raises:
-        ValueError: If the user chooses not to overwrite the file.
-    """
+    for opt, arg in opts:
+        if opt in ("-h", "--help"):
+            print(help_text)
+            sys.exit()
+        elif opt in ("-i", "--interactive"):
+            interactive()
+        elif opt in ("-t", "--tool"):
+            if arg == "report_formatter":
+                report_formatter.main(sys.argv[3:])
+            elif arg == "report_generator":
+                report_generator.main(sys.argv[3:])
 
-    if Path(output_file_path).exists():
-        overwrite = input("\nFile already exists. Do you want to overwrite the file? (y/n): ")
-        if overwrite.lower() != "y":
-            raise ValueError("File not overwritten.")
-
-def get_mode():
-    """
-    Prompts the user to enter the report file type and returns the corresponding mode.
-
-    Returns:
-        int: The mode representing the report file type.
-    """
-
-    mode = int(input("\nWhat report file is this?\n1. Cohort All Assignment Grades\n2. Cohort All Final Grades\nPlease enter appropriate file type: "))
-    return mode
-
-def get_adjust_cell_widths():
-    """
-    Prompts the user to choose whether to auto adjust cell widths and returns the corresponding boolean value.
-
-    Returns:
-        bool: True if the user chooses to auto adjust cell widths, False otherwise.
-    """
-
-    adjust_cell_widths = input("\nDo you want to auto adjust cell widths? (y/n): ")
-    if adjust_cell_widths.lower() == "y":
-        return True
-    else:
-        return False
-
-# Main
-source_file = get_file_path()
-mode = get_mode()
-output_file_path = get_output_file_path(source_file)
-check_overwrite(output_file_path)
-
-print(f"\n[  ] Operation started!")
-proc = processor.Processor(source_file, output_file_path, mode)
-proc.generate_xlsx(adjust_cell_widths = get_adjust_cell_widths())
-print(f"[OK] Done. Output file saved at {output_file_path}")
+if __name__ == "__main__":
+    main(sys.argv[1:])
