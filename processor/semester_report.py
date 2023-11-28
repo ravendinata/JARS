@@ -90,7 +90,7 @@ class Generator:
             status_message = f"Generating report for {student}…"
             if callback is not None:
                 callback(i, job_count, status_message)
-            print(f"Progress: {i / job_count * 100}%")
+            print(f"Progress: {round(i / job_count * 100, 2)}%")
             print(status_message)
             self.generate_for_student(student_name = student, autocorrect = autocorrect)
         
