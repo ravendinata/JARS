@@ -54,6 +54,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_student_name = ctk.CTkLabel(self, text = "Student Name:")
         self.txt_student_name = ctk.CTkEntry(self, width = 250, state = tk.DISABLED)
 
+        # Options section
+        self.lbl_options = ctk.CTkLabel(self, text = "Options:")
+
+        # Autocorrect switch button
+        self.autocorrect_var = tk.IntVar()
+        self.switch_autocorrect = ctk.CTkSwitch(self, text = "Autocorrect", variable = self.autocorrect_var, onvalue = 1, offvalue = 0)
+
         # Generate button
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
         self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, command = self.__test_source)
@@ -84,16 +91,19 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         self.lbl_student_name.grid(row = 4, column = 0, sticky = tk.W, pady = 2)
         self.txt_student_name.grid(row = 4, column = 1, sticky = tk.W, padx =  5, pady = 2)
-
-        self.lbl_progress.grid(row = 5, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 5, column = 2, sticky = tk.EW, padx = 2, pady = 0)
-
-        self.lbl_status.grid(row = 6, column = 0, sticky = tk.W, pady = 0)
-        self.lbl_status_text.grid(row = 6, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
         
-        self.btn_process.grid(row = 7, column = 2, sticky = tk.EW, padx = 2, pady = 2)
-        self.btn_test_source.grid(row = 7, column = 1, sticky = tk.E, padx = 2, pady = 2)
+        self.lbl_options.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
+        self.switch_autocorrect.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 2)
+
+        self.lbl_progress.grid(row = 6, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 6, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+
+        self.lbl_status.grid(row = 7, column = 0, sticky = tk.W, pady = 0)
+        self.lbl_status_text.grid(row = 7, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+
+        self.btn_test_source.grid(row = 8, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 8, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
         
 
     # UI functions
@@ -124,13 +134,15 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         output_file_path = self.txt_output_path.get()
         mode = self.mode_var.get()
         proc = processor.Generator(source_file, output_file_path)
+
+        autocorrect = True if self.autocorrect_var.get() == 1 else False
         
         if mode == "all":
-            proc.generate_all(callback = self.__on_progress_update)
+            proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect)
         elif mode == "student":
             student_name = self.txt_student_name.get()
             self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
-            proc.generate_for_student(student_name)
+            proc.generate_for_student(student_name = student_name, autocorrect = autocorrect)
             self.__on_progress_update(1, 1, f"Done!")
             output_file_path = f"{output_file_path}/{student_name}.docx"
 
