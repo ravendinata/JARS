@@ -54,6 +54,7 @@ class Window(ctk.CTk):
 
         # Root window setup
         self.title("JARS Report Processor")
+        self.eval("tk::PlaceWindow . center")
 
         self.processor_frame = LauncherFrame(master = self)
         self.processor_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = 10)
