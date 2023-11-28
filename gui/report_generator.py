@@ -1,3 +1,5 @@
+import os
+
 import customtkinter as ctk
 import tkinter as tk
 
@@ -132,6 +134,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """Processes the report based on the selected options."""
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
+
+        if not self.__test_paths(source_file, output_file_path):
+            return
+
         mode = self.mode_var.get()
         proc = processor.Generator(source_file, output_file_path)
 
@@ -154,6 +160,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """Tests the source file using the comment generator test suite"""
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
+        
+        if not self.__test_paths(source_file, output_file_path):
+            return
+
         file_name = source_file.split("/")[-1].split(".")[0]
         output_file_path = f"{output_file_path}/CGen_Test_{file_name}.xlsx"
         
@@ -165,6 +175,18 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         OutputDialog(master = self.master, title = "Comment Generator Test Complete", file_path = output_file_path, content = "Comment generator test completed successfully.")
         self.lbl_status_text.configure(text = "Comment generator test completed successfully.")
         tk.Misc.update_idletasks(self)
+
+    def __test_paths(self, source_path, out_path):
+        """Tests if the source and output paths are valid."""
+        if not os.path.isfile(source_path):
+            tk.messagebox.showerror("Error", "Please select a valid source file.")
+            return False
+        
+        if not os.path.isdir(out_path):
+            tk.messagebox.showerror("Error", "Please select a valid output folder.")
+            return False
+        
+        return True
 
     def __on_progress_update(self, current, total, status_message):
         """Updates the progress bar."""
