@@ -2,7 +2,10 @@ import customtkinter as ctk
 import tkinter as tk
 
 import processor.semester_report as processor
+import processor.helper.comment_generator_test as cgen_test
+import processor.helper.language_tool_master as ltm
 from gui.dialog import OutputDialog
+from processor.helper.comment_generator import CommentGenerator
 
 class ReportGeneratorWindow(ctk.CTkToplevel):
     def __init__(self, master, **kwargs):
@@ -53,6 +56,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         # Generate button
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
+        self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, command = self.__test_source)
+        self.btn_test_source.configure(fg_color = "grey")
 
         # Progress tracker
         self.lbl_progress = ctk.CTkLabel(self, text = "Progress:")
@@ -88,6 +93,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_status_text.grid(row = 6, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
         
         self.btn_process.grid(row = 7, column = 2, sticky = tk.EW, padx = 2, pady = 2)
+        self.btn_test_source.grid(row = 7, column = 1, sticky = tk.E, padx = 2, pady = 2)
+        
 
     # UI functions
     def __browse_file(self):
@@ -130,6 +137,22 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_count.configure(text = "Done!")
         self.lbl_status_text.configure(text = "Report generation completed successfully.")
         OutputDialog(master = self.master, title = "Report Generation Complete", file_path = output_file_path, content = "Report generation completed successfully.")
+
+    def __test_source(self):
+        """Tests the source file using the comment generator test suite"""
+        source_file = self.txt_source_path.get()
+        output_file_path = self.txt_output_path.get()
+        file_name = source_file.split("/")[-1].split(".")[0]
+        output_file_path = f"{output_file_path}/CGen_Test_{file_name}.xlsx"
+        
+        self.lbl_status_text.configure(text = "Running comment generator test suite. Please wait…")
+        tk.Misc.update_idletasks(self)
+        
+        cgen_test.run(source_file_path = source_file, output_file_path = output_file_path, ltm = ltm, CommentGenerator = CommentGenerator)
+        
+        OutputDialog(master = self.master, title = "Comment Generator Test Complete", file_path = output_file_path, content = "Comment generator test completed successfully.")
+        self.lbl_status_text.configure(text = "Comment generator test completed successfully.")
+        tk.Misc.update_idletasks(self)
 
     def __on_progress_update(self, current, total, status_message):
         """Updates the progress bar."""
