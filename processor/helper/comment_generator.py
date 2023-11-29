@@ -46,8 +46,10 @@ class CommentGenerator:
     def __format_comment(self, comment):
         words = nltk.word_tokenize(comment)
 
+        conjunctions = ["Moreover", "However", "Further", "Also", "Besides", "Additionally", "Furthermore", "In addition", "In addition to", "In addition", "Though", "On the other hand"]
+
         for word in words:
-            if word == "Moreover" or word == "However":
+            if word in conjunctions:
                 if words[words.index(word) - 1] == ",":
                     words[words.index(word) - 1] = "."
                 elif words[words.index(word) - 1] == "and":
