@@ -81,7 +81,9 @@ class Generator:
         self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
 
         # Remove unnecessary columns
-        self.data_sna = self.data_sna.drop(columns = ["Normalized Grade", "Student Final Grade", "Sanity Check", "Add item…"])
+        unwanted_columns = ["Normalized Grade", "Student Final Grade", "Sanity Check", "Add item…"]
+        unwanted_columns += [column for column in self.data_sna.columns if column.startswith("Unnamed")]
+        self.data_sna = self.data_sna.drop(columns = unwanted_columns)
 
     def generate_all(self, autocorrect = True, callback = None):
         job_count = len(self.students.index)
