@@ -1,2 +1,7 @@
 # Ignored DIRs
 __pycache__
+build/
+dist/
+
+# Ignored Files
+*.spec
