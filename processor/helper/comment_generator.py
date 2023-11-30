@@ -44,7 +44,7 @@ class CommentGenerator:
             return comment
         
     def __format_comment(self, comment):
-        words = nltk.word_tokenize(comment)
+        words = nltk.word_tokenize(text = comment, language = "english")
 
         conjunctions = ["Moreover", "However", "Further", "Also", "Besides", "Additionally", "Furthermore", "In addition", "In addition to", "In addition", "Though", "On the other hand"]
 
@@ -58,7 +58,7 @@ class CommentGenerator:
 
         sentences = " ".join(words)
         sentences = sentences.replace(" .", ".").replace("..", ".").replace(",.", ".").replace(" ,", ",").replace("  ", " ").replace(" !", "!")
-        sentences = nltk.sent_tokenize(sentences)
+        sentences = nltk.sent_tokenize(text = sentences, language = "english")
         formatted = [sentence[0].upper() + sentence[1:] for sentence in sentences]
         
         return " ".join(formatted)
