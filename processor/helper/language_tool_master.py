@@ -1,4 +1,5 @@
 import language_tool_python as ltp
+import os
 
 _tool = None
 
@@ -20,6 +21,13 @@ def get_tool():
     global _tool
     if _tool is None:
         print("[  ] LanguageTool instance not found. Creating new instance…")
+        print(f"[  ] Looking for Language Tool server files in {os.environ.get('LTP_PATH')}…")
+        
+        if os.environ.get('LTP_PATH') is None:
+            print("[  ] Language Tool server files not found. Downloading server files…")
+        else:
+            print("[OK] Server files downloaded.")
+
         _tool = ltp.LanguageTool('en-GB', config = {"cacheSize": 1000, "pipelineCaching": True, "maxCheckThreads": 20})
     
     print("[OK] LanguageTool instance found.")
