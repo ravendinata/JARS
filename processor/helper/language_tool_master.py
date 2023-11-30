@@ -20,7 +20,7 @@ def get_tool():
     global _tool
     if _tool is None:
         print("[  ] LanguageTool instance not found. Creating new instance…")
-        _tool = ltp.LanguageTool('en-UK', config = {"cacheSize": 1000, "pipelineCaching": True, "maxCheckThreads": 20})
+        _tool = ltp.LanguageTool('en-GB', config = {"cacheSize": 1000, "pipelineCaching": True, "maxCheckThreads": 20})
     
     print("[OK] LanguageTool instance found.")
     return _tool
