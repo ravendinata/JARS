@@ -2,9 +2,20 @@ import language_tool_python as ltp
 
 _tool = None
 
+def check_java():
+    import shutil
+    if shutil.which("java"):
+        return True
+    else:
+        print("It seems like you are trying to a feature from Language Tools. Languages Tools need Java but Java is not installed. Please install Java to use this feature.")
+        return False    
+
 def get_tool():
     """Returns a LanguageTool object."""
     print("[  ] Looking for LanguageTool instance…")
+
+    if not check_java:
+        return
     
     global _tool
     if _tool is None:
