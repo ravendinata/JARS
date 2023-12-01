@@ -1,7 +1,35 @@
 import nltk
 
 class CommentGenerator:
+    """
+    Generates a comment based on the student's result and the comment mapping.
+
+    Attributes:
+        student_name (str): The student's name.
+        short_name (str): The student's short name.
+        gender (str): The student's gender.
+        comment_mapping (pandas.DataFrame): The comment mapping.
+        student_result (dict): The student's result.
+        letter_grade (str): The student's letter grade.
+    
+    Methods:
+        Public:
+        generate_comment(self, probe = False, autocorrect = False, ltm = None): Generates a comment based on the student's result and the comment mapping.
+        
+        Private:
+        __format_comment(self, comment): Formats the comment.
+        __collect_comments(self): Collects the comments from the comment mapping.
+        __assemble_positive_comments(self, positive_sentences): Assembles the positive comments.
+        __assemble_negative_comments(self, negative_sentences): Assembles the negative comments.
+    """
+
     def __init__(self, student_name, short_name, gender, comment_mapping, student_result, letter_grade):
+        """
+        Initialize the CommentGenerator instance.
+        
+        Args:
+            Follows the class attributes.
+        """
         self._student_name = student_name
         self._short_name = short_name
         self._gender = gender
@@ -11,7 +39,25 @@ class CommentGenerator:
 
         self._comment_mapping = self._comment_mapping.fillna("")
 
+    # TODO: Change return type to proper dictionary type ?
     def generate_comment(self, probe = False, autocorrect = False, ltm = None):
+        """
+        Generates a comment based on the student's result and the comment mapping.
+
+        Args:
+            probe (bool): Whether the caller want's to 'probe' into the process by returning the number of positive and negative comments.
+            autocorrect (bool): Whether to autocorrect the comment using LanguageTool.
+            ltm (module): The LanguageTool Instance Manager module. This is to inject the module to the class. 
+                          If not specified, the class will try to import the module itself
+        
+        Returns:
+            str: The generated comment.
+            int: The number of positive comments. (Only if probe is True)
+            int: The number of negative comments. (Only if probe is True)
+
+        Raises:
+            ImportError: If the LanguageTool module is not installed.
+        """
         if ltm is None:
             try:
                 import processor.helper.language_tool_master as ltm
@@ -44,6 +90,17 @@ class CommentGenerator:
             return comment
         
     def __format_comment(self, comment):
+        """
+        Formats the comment by capitalizing the first letter of each sentence and removing unnecessary spaces;
+        Combines sentences that are separated by conjunctions;
+        Fixes conjunctions that are placed after commas.
+        
+        Args:
+            comment (str): The comment to format.
+
+        Returns:
+            str: The formatted comment.
+        """
         words = nltk.word_tokenize(text = comment, language = "english")
 
         conjunctions = ["Moreover", "However", "Further", "Also", "Besides", "Additionally", "Furthermore", "In addition", "In addition to", "In addition", "Though", "On the other hand"]
@@ -64,6 +121,17 @@ class CommentGenerator:
         return " ".join(formatted)
     
     def __collect_comments(self):
+        """
+        Collects the comments from the comment mapping.
+        
+        The function will collect the comments from the comment mapping based on the student's result.
+        It will also separate the comments into positive and negative comments by recognizing the existence
+        of the word "However" in the comments.
+
+        Returns:
+            list: The list of positive comments.
+            list: The list of negative comments.
+        """
         positive_sentences = []
         negative_sentences = []
         negative_count = 0
@@ -84,6 +152,18 @@ class CommentGenerator:
         return positive_sentences, negative_sentences
     
     def __assemble_positive_comments(self, positive_sentences):
+        """
+        Assembles the positive comments.
+
+        The function will assemble the positive comments into a single string.
+        It will also remove unnecessary occurrences of the word "also" in the comments.
+
+        Args:
+            positive_sentences (list): The list of positive comments.
+
+        Returns:
+            str: The assembled positive comments.
+        """
         positive_comments = ""
 
         if (len(positive_sentences) > 3):
@@ -106,6 +186,18 @@ class CommentGenerator:
         return positive_comments
     
     def __assemble_negative_comments(self, negative_sentences):
+        """
+        Assembles the negative comments.
+
+        The function will assemble the negative comments into a single string.
+        It will also remove unnecessary occurrences of the word "also" in the comments.
+
+        Args:
+            negative_sentences (list): The list of negative comments.
+
+        Returns:
+            str: The assembled negative comments.
+        """
         negative_comments = ""
 
         if (len(negative_sentences) > 3):
