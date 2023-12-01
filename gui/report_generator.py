@@ -31,6 +31,51 @@ class ReportGeneratorWindow(ctk.CTkToplevel):
             self.master.deiconify()
 
 class ReportGeneratorFrame(ctk.CTkFrame):
+    """
+    A custom frame for the report processor application.
+
+    This frame contains various widgets for selecting source file, report file type,
+    output file path, and other options. It also provides functions for browsing files,
+    saving files, and processing the report.
+
+    Attributes:
+        Buttons:
+        btn_browse_source (ctk.CTkButton): Button for browsing the source file.
+        btn_browse_output (ctk.CTkButton): Button for browsing the output file path.
+        btn_process (ctk.CTkButton): Button for initiating the report processing.
+
+        Labels:
+        lbl_source (ctk.CTkLabel): Label for the source file path.
+        lbl_output (ctk.CTkLabel): Label for the output file path.
+        lbl_generate (ctk.CTkLabel): Label for the generate option.
+        lbl_student_name (ctk.CTkLabel): Label for the student name entry.
+        lbl_options (ctk.CTkLabel): Label for the options section.
+        lbl_progress (ctk.CTkLabel): Label for the progress tracker.
+        lbl_count (ctk.CTkLabel): Label for the progress count.
+        lbl_status (ctk.CTkLabel): Label for the status section.
+        lbl_status_text (ctk.CTkLabel): Label for the status text.
+
+        Text fields:
+        txt_source_path (ctk.CTkEntry): Entry field for entering the source file path.
+        txt_output_path (ctk.CTkEntry): Entry field for entering the output file path.
+        txt_student_name (ctk.CTkEntry): Entry field for entering the student name.
+        
+        progress_bar (ctk.CTkProgressBar): Progress bar for tracking the progress.
+
+        mode_var (tk.StringVar): Variable for the generate option.
+
+    Methods:
+        __init__(self, master, **kwargs): Initializes the ProcessorFrame.
+        __browse_file(self): Opens a file dialog for browsing the source file.
+        __save_file(self): Opens a file dialog for saving the output file.
+        __opt_all_selected(self): Disables the student name entry when the generate all option is selected.
+        __opt_student_selected(self): Enables the student name entry when the generate for student option is selected.
+        __process(self): Processes the report based on the selected options.
+        __test_source(self): Tests the source file using the comment generator test suite
+        __test_paths(self, source_path, out_path): Tests if the source and output paths are valid.
+        __on_progress_update(self, current, total, status_message): Updates the progress bar.
+    """
+
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
 
@@ -131,7 +176,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_student_name.focus_set()
 
     def __process(self):
-        """Processes the report based on the selected options."""
+        """
+        Processes the report based on the selected options.
+        
+        It runs the report processor based on the selected options. It will run the report processor
+        for all students if the generate all option is selected. It will run the report processor for
+        a single student if the generate for student option is selected.
+        """
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
 
@@ -157,7 +208,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         OutputDialog(master = self.master, title = "Report Generation Complete", file_path = output_file_path, content = "Report generation completed successfully.")
 
     def __test_source(self):
-        """Tests the source file using the comment generator test suite"""
+        """
+        Tests the source file using the comment generator test suite.
+        It runs the comment generator test suite on the source file and saves the result to an Excel file.
+        """
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
         
@@ -176,8 +230,14 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_status_text.configure(text = "Comment generator test completed successfully.")
         tk.Misc.update_idletasks(self)
 
+    # TODO: Refactor this function not to use arguments but to use the values from the entry fields instead.
     def __test_paths(self, source_path, out_path):
-        """Tests if the source and output paths are valid."""
+        """
+        Tests if the source and output paths are valid.
+
+        Returns:
+            bool: True if the paths are valid, False otherwise.
+        """
         if not os.path.isfile(source_path):
             tk.messagebox.showerror("Error", "Please select a valid source file.")
             return False
@@ -189,7 +249,17 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         return True
 
     def __on_progress_update(self, current, total, status_message):
-        """Updates the progress bar."""
+        """
+        CALLBACK: Updates the progress bar and other progress indicators.      
+        
+        This is a callback function for the report processor. It is called when the report processor updates its progress.
+        It updates the progress bar and the progress count label.
+
+        Args:
+            current (int): The current progress.
+            total (int): The total progress. Or, the value in which progress is 100%.
+            status_message (str): The status message to display.
+        """
         progress = current / total
         
         self.progress_bar.set(progress)
