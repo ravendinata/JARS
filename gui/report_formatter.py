@@ -37,17 +37,23 @@ class ReportFormatterFrame(ctk.CTkFrame):
     saving files, and processing the report.
 
     Attributes:
-        adjust_cell_widths_var (tk.BooleanVar): Variable for the "Auto adjust cell widths" checkbox.
+        Buttons:
         btn_browse_source (ctk.CTkButton): Button for browsing the source file.
         btn_browse_output (ctk.CTkButton): Button for browsing the output file path.
         btn_process (ctk.CTkButton): Button for initiating the report processing.
-        chk_adjust_cell_widths (ctk.CTkCheckBox): Checkbox for enabling/disabling auto adjust cell widths.
-        cmb_mode (ctk.CTkComboBox): ComboBox for selecting the report file type.
+        
+        Labels:
         lbl_source (ctk.CTkLabel): Label for the source file path.
         lbl_mode (ctk.CTkLabel): Label for the report file type.
         lbl_output (ctk.CTkLabel): Label for the output file path.
+        
+        Text Fields:
         txt_source_path (ctk.CTkEntry): Entry field for entering the source file path.
         txt_output_path (ctk.CTkEntry): Entry field for entering the output file path.
+        
+        adjust_cell_widths_var (tk.BooleanVar): Variable for the "Auto adjust cell widths" checkbox.
+        chk_adjust_cell_widths (ctk.CTkCheckBox): Checkbox for enabling/disabling auto adjust cell widths.
+        cmb_mode (ctk.CTkComboBox): ComboBox for selecting the report file type.
 
     Methods:
         __init__(self, master, **kwargs): Initializes the ProcessorFrame.
