@@ -79,6 +79,7 @@ class Generator:
 
         # Data type conversion
         self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
+        self.data_pd = self.data_pd.astype(int)
 
         # Remove unnecessary columns
         unwanted_columns = ["Normalized Grade", "Student Final Grade", "Sanity Check", "Add item…"]
@@ -230,8 +231,8 @@ class Generator:
             pd_table.cell(i + 1, 0).text = item
             pd_table.cell(i + 1, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
             pd_table.cell(i + 1, 0).width = Cm(12)
-            pd_table.cell(i + 1, self.get_grade_pd(student_name, item)).text = "✔"
-            pd_table.cell(i + 1, self.get_grade_pd(student_name, item)).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+            pd_table.cell(i + 1, int(self.get_grade_pd(student_name, item))).text = "✔"
+            pd_table.cell(i + 1, int(self.get_grade_pd(student_name, item))).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             
         for i in range(1, len(self.data_pd.columns) + 1):
             for j in range(1, 6):
