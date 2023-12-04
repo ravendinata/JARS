@@ -92,13 +92,13 @@ class Generator:
             if format == "Final Score":
                 print(colored(
                     f"Warning: {student} has no final score! Please check the grader report. "
-                    "Due to this, the final score will be set to 0 to prevent software errors.", 
+                    "Due to this, the final score will be left blank to prevent software errors.", 
                     "red"
                 ))
             elif format == "Letter Grade":
                 print(colored(
                     f"Warning: {student} has no letter grade! Please check the grader report. "
-                    "Due to this, the letter grade will be set to X to prevent software errors.", 
+                    "Due to this, the letter grade will be left blank to X to prevent software errors.", 
                     "red"
                 ))
             data = str(" ")
