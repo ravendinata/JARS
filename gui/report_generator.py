@@ -112,6 +112,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
         self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, command = self.__test_source)
         self.btn_test_source.configure(fg_color = "grey")
+        self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 100, command = self.__validate)
+        self.btn_validate.configure(fg_color = "grey")
 
         # Progress tracker
         self.lbl_progress = ctk.CTkLabel(self, text = "Progress:")
@@ -150,6 +152,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_status_text.grid(row = 7, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
 
         self.btn_test_source.grid(row = 8, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 8, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
         self.btn_process.grid(row = 8, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
         
 
@@ -229,6 +232,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         OutputDialog(master = self.master, title = "Comment Generator Test Complete", file_path = output_file_path, content = "Comment generator test completed successfully.")
         self.lbl_status_text.configure(text = "Comment generator test completed successfully.")
         tk.Misc.update_idletasks(self)
+
+    def __validate(self):
+        source_file = self.txt_source_path.get()
+        output_file_path = self.txt_output_path.get() + "/validation.txt"
+        proc = processor.Generator(source_file, output_file_path)
+        self.lbl_count.configure(text = "Done!")
+        self.lbl_status_text.configure(text = "Validation completed. Check console/terminal for details.")
 
     # TODO: Refactor this function not to use arguments but to use the values from the entry fields instead.
     def __test_paths(self, source_path, out_path):
