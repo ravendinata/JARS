@@ -4,4 +4,5 @@ nltk
 openpyxl
 pandas
 python_docx
+termcolor
 tk
