@@ -154,6 +154,6 @@ def main(argv):
     if generate_all:
         proc.generate_all(autocorrect = autocorrect, force = force)
     else:
-        proc.generate_for_student(student_name = student_name, autocorrect = autocorrect)
+        proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force)
 
     ltm.close_tool()
