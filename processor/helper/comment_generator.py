@@ -140,7 +140,7 @@ class CommentGenerator:
         for key, value in self._student_result.items():
             if key in self._comment_mapping.index and value in self._comment_mapping.columns:
                 comment = self._comment_mapping.loc[key, value]
-                if comment != "":
+                if len(comment) > 0 and comment != "nan":
                     if comment.startswith("However"):
                         if negative_count == 0:
                             negative_sentences.append(comment)
