@@ -1,4 +1,5 @@
 import nltk
+from termcolor import colored
 
 class CommentGenerator:
     """
@@ -67,8 +68,8 @@ class CommentGenerator:
         pronoun = "he" if self._gender == "M" else "she"
         adjective = "his" if self._gender == "M" else "her"
 
-        sentence_intro = self._comment_mapping.loc["Intro", self._letter_grade]
-        sentence_closing = self._comment_mapping.loc["Closing", self._letter_grade]
+        sentence_intro = self._comment_mapping.loc["Intro", self._letter_grade] if self._letter_grade != " " else ""
+        sentence_closing = self._comment_mapping.loc["Closing", self._letter_grade] if self._letter_grade != " " else ""
 
         positive_sentences, negative_sentences = self.__collect_comments()
         positive_text = self.__assemble_positive_comments(positive_sentences)
@@ -137,7 +138,7 @@ class CommentGenerator:
         negative_count = 0
 
         for key, value in self._student_result.items():
-            if key in self._comment_mapping.index:
+            if key in self._comment_mapping.index and value in self._comment_mapping.columns:
                 comment = self._comment_mapping.loc[key, value]
                 if comment != "":
                     if comment.startswith("However"):
@@ -148,6 +149,8 @@ class CommentGenerator:
                             negative_sentences.append(comment.replace("However,", ""))
                     else:
                         positive_sentences.append(comment)
+            else:
+                print(colored(f"Info: Grade '{value}' is not found in the comment mapping possibly due to incomplete skills and assessment grading. Skipping this comment.", "yellow"))
 
         return positive_sentences, negative_sentences
     

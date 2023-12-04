@@ -1,4 +1,5 @@
 import pandas as pd
+from termcolor import colored
 
 from docx import Document
 from docx.shared import Cm, Pt
@@ -32,13 +33,19 @@ class Generator:
         self.grader_report_path = grader_report_path
         self.output_path = output_path
 
-        self.course_info = pd.read_excel(self.grader_report_path, sheet_name = "Course Information", index_col = 0, header = 0)
-        self.students = pd.read_excel(self.grader_report_path, sheet_name = "Student List", index_col = 0, header = 0)
+        self.course_info = pd.read_excel(self.grader_report_path, sheet_name = "Course Information", index_col = 0, header = 0, nrows = 7)
+        self.students = pd.read_excel(self.grader_report_path, sheet_name = "Student List", index_col = 0, header = 0, usecols = "A:C")
         self.data_sna = pd.read_excel(self.grader_report_path, sheet_name = "Skills and Assessment", index_col = 0, header = 0)
         self.data_pd = pd.read_excel(self.grader_report_path, sheet_name = "Personal Development", index_col = 0, header = 0)
-        self.data_final_grades = pd.read_excel(self.grader_report_path, sheet_name = "Final Grades", index_col = 0, header = 0)
+        self.data_final_grades = pd.read_excel(self.grader_report_path, sheet_name = "Final Grades", index_col = 0, header = 0, usecols = "A,H:I")
         self.data_comment_mapping = pd.read_excel(self.grader_report_path, sheet_name = "Comment Mapping", index_col = 0, header = 0)
+        
         self.__prepare_data()
+        self.__data_valid = self.validate()
+        if not self.__data_valid:
+            print(colored("\n"
+                f"Attention: There are missing values in the grader report! Please check the grader report again and make sure all data is filled.",
+                "white", "on_red"), "\n")
 
         print("[OK] Report generator initialized!")
 
@@ -48,16 +55,74 @@ class Generator:
     def get_student_info(self, student, item):
         return self.students.loc[student, item]
     
-    def get_grade_sna(self, student, assessment):
-        return self.data_sna.loc[student, assessment]
+    def get_grade_sna(self, student, assessment, raw = False):
+        data = self.data_sna.loc[student, assessment]
+
+        if raw:
+            return data
+        
+        if data == "X":
+            print(colored(f"Warning: {student} has no grade for {assessment}! Please check the grader report.", "red"))
+            return ""
+        else:
+            return data
     
-    def get_grade_pd(self, student, item):
-        return self.data_pd.loc[student, item]
+    def get_grade_pd(self, student, item, raw = False):
+        data = self.data_pd.loc[student, item]
+
+        if raw:
+            return data
+        
+        if data == 0:
+            print(colored(
+                f"Warning: {student} has no grade for {item}! Please check the grader report. "
+                "Due to this, the grade will be set to NI to prevent software errors.", 
+                "red"))
+            return 1
+        else:
+            return data
     
-    def get_final_grade(self, student, format):
-        return self.data_final_grades.loc[student, format]
+    def get_final_grade(self, student, format, raw = False):
+        data = self.data_final_grades.loc[student, format]
+
+        if raw:
+            return data
+
+        if data == 0:
+            if format == "Final Score":
+                print(colored(
+                    f"Warning: {student} has no final score! Please check the grader report. "
+                    "Due to this, the final score will be set to 0 to prevent software errors.", 
+                    "red"
+                ))
+            elif format == "Letter Grade":
+                print(colored(
+                    f"Warning: {student} has no letter grade! Please check the grader report. "
+                    "Due to this, the letter grade will be set to X to prevent software errors.", 
+                    "red"
+                ))
+            data = str(" ")
+        
+        return data
     
     def __prepare_data(self):
+        # Remove NaN rows
+        self.course_info.dropna(inplace = True)
+        self.students.dropna(inplace = True)
+
+        # Fill NaN values with default values
+        self.data_final_grades.fillna(0, inplace = True)
+        self.data_pd.fillna(0, inplace = True)
+        self.data_sna.fillna("X", inplace = True)
+
+        # Data type conversion
+        self.course_info = self.course_info.astype(str)
+        self.students = self.students.astype(str)
+        self.data_pd = self.data_pd.astype(int)
+        self.data_sna = self.data_sna.astype(str)
+        self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
+        self.data_comment_mapping = self.data_comment_mapping.astype(str)
+
         # Strip whitespace from index
         self.course_info.index = self.course_info.index.str.strip()
         self.students.index = self.students.index.str.strip()
@@ -74,19 +139,60 @@ class Generator:
         self.data_final_grades.columns = self.data_final_grades.columns.str.strip()
         self.data_comment_mapping.columns = self.data_comment_mapping.columns.str.strip()
 
-        # Fill NaN values with 0
-        self.data_final_grades.fillna(0, inplace = True)
-
-        # Data type conversion
-        self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
-        self.data_pd = self.data_pd.astype(int)
-
         # Remove unnecessary columns
         unwanted_columns = ["Normalized Grade", "Student Final Grade", "Sanity Check", "Add item…"]
         unwanted_columns += [column for column in self.data_sna.columns if column.startswith("Unnamed")]
         self.data_sna = self.data_sna.drop(columns = unwanted_columns)
 
-    def generate_all(self, autocorrect = True, callback = None):
+    def validate(self):
+        print("[  ] Validating data...")
+        valid = True
+        count = 0
+
+        print(f"Course Info:\n{self.course_info}\n")
+        print(f"Student List:\n{self.students}\n")
+
+        # Check if all course information is filled
+        for item in self.course_info.index:
+            if str(self.get_course_info(item)) is "": # Check if the value is empty
+                count += 1
+                valid = False
+                print(colored(f"Warning [{count}]: Course information {item} is not filled! Please check the grader report.", "red"))
+
+        # Check if all students have a final grade
+        for student in self.students.index:
+            if self.get_final_grade(student, "Final Score", raw = True) == 0:
+                count += 1
+                valid = False
+                print(colored(f"Warning [{count}]: {student} has no final score! Please check the grader report.", "red"))
+
+        # Check if all students have a letter grade
+        for student in self.students.index:
+            if self.get_final_grade(student, "Letter Grade", raw = True) == 0:
+                count += 1
+                valid = False
+                print(colored(f"Warning [{count}]: {student} has no letter grade! Please check the grader report.", "red"))
+
+        # Check if all students have a grade for each SNA
+        for student in self.students.index:
+            for assessment in self.data_sna.columns:
+                if self.get_grade_sna(student, assessment, raw = True) == "X":
+                    count += 1
+                    valid = False
+                    print(colored(f"Warning [{count}]: {student} has no grade for goal '{assessment}'! Please check the grader report.", "red"))
+
+        # Check if all students have a grade for each PD item
+        for student in self.students.index:
+            for item in self.data_pd.columns:
+                if self.get_grade_pd(student, item, raw = True) == 0:
+                    count += 1
+                    valid = False
+                    print(colored(f"Warning [{count}]: {student} has no grade for personal development item '{item}'! Please check the grader report.", "red"))
+
+        print(colored(f"Validation Pass: {valid}", "red" if not valid else "green"), "\n", colored(f"Warnings: {count}\n", "yellow") if not valid else "")
+        return valid
+
+    def generate_all(self, autocorrect = True, callback = None, force = False):
         job_count = len(self.students.index)
         
         for i, student in enumerate(self.students.index):
@@ -95,14 +201,22 @@ class Generator:
                 callback(i, job_count, status_message)
             print(f"Progress: {round(i / job_count * 100, 2)}%")
             print(status_message)
-            self.generate_for_student(student_name = student, autocorrect = autocorrect)
+            self.generate_for_student(student_name = student, autocorrect = autocorrect, force = force)
         
         if callback is not None:
             callback(job_count, job_count, "Done!")
         
         print(f"Progress: 100%")
 
-    def generate_for_student(self, student_name, autocorrect = True):
+    def generate_for_student(self, student_name, autocorrect = True, force = False):
+        # Prepare data
+        if not self.__data_valid and not force:
+            print(f"[  ] Grader report incomplete. Aborting process...")
+            return
+        
+        str_letter_grade = str(self.get_final_grade(student_name, "Letter Grade"))
+        str_final_score = str(self.get_final_grade(student_name, "Final Score"))
+
         document = Document()
         document = document_helper.setup_page(document, 'a4')
         
@@ -155,9 +269,9 @@ class Generator:
         
         ci_table.cell(2, 2).text = "Assessment"
         ci_table.cell(2, 2).paragraphs[0].runs[0].bold = True
-        ci_table.cell(2, 3).text = str(self.get_final_grade(student_name, "Final Score"))
+        ci_table.cell(2, 3).text = str_final_score
         ci_table.cell(2, 3).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-        ci_table.cell(2, 4).text = self.get_final_grade(student_name, "Letter Grade")
+        ci_table.cell(2, 4).text =str_letter_grade
         ci_table.cell(2, 4).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
 
         for i in range(0, 3):
@@ -195,12 +309,12 @@ class Generator:
         student_sna = {}
         
         for i, assessment in enumerate(self.data_sna.columns):
+            student_sna[assessment] = self.get_grade_sna(student_name, assessment)
             sna_table.cell(i, 0).text = assessment
             sna_table.cell(i, 0).width = Cm(15)
-            sna_table.cell(i, 1).text = str(self.get_grade_sna(student_name, assessment))
+            sna_table.cell(i, 1).text = str(student_sna[assessment])
             sna_table.cell(i, 1).width = Cm(2)
             sna_table.cell(i, 1).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
-            student_sna[assessment] = self.get_grade_sna(student_name, assessment)
 
         # Personal Development Section
         pd_header = document.add_paragraph()
@@ -231,8 +345,9 @@ class Generator:
             pd_table.cell(i + 1, 0).text = item
             pd_table.cell(i + 1, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
             pd_table.cell(i + 1, 0).width = Cm(12)
-            pd_table.cell(i + 1, int(self.get_grade_pd(student_name, item))).text = "✔"
-            pd_table.cell(i + 1, int(self.get_grade_pd(student_name, item))).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
+            pd_grade = int(self.get_grade_pd(student_name, item))
+            pd_table.cell(i + 1, pd_grade).text = "✔"
+            pd_table.cell(i + 1, pd_grade).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             
         for i in range(1, len(self.data_pd.columns) + 1):
             for j in range(1, 6):
@@ -255,7 +370,7 @@ class Generator:
                                                          gender = self.get_student_info(student_name, "Gender"),
                                                          comment_mapping = self.data_comment_mapping,
                                                          student_result = student_sna,
-                                                         letter_grade = self.get_final_grade(student_name, "Letter Grade")
+                                                         letter_grade = str_letter_grade,
                                                         ).generate_comment(autocorrect = autocorrect)
         tc_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
         tc_table.cell(0, 0).width = Cm(17)
