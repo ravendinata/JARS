@@ -107,10 +107,10 @@ class Generator:
     
     def __prepare_data(self):
         # Remove NaN rows
-        self.course_info.dropna(inplace = True)
         self.students.dropna(inplace = True)
 
         # Fill NaN values with default values
+        self.course_info.fillna("", inplace = True)
         self.data_final_grades.fillna(0, inplace = True)
         self.data_pd.fillna(0, inplace = True)
         self.data_sna.fillna("X", inplace = True)
@@ -157,7 +157,7 @@ class Generator:
             if str(self.get_course_info(item)) is "": # Check if the value is empty
                 count += 1
                 valid = False
-                print(colored(f"Warning [{count}]: Course information {item} is not filled! Please check the grader report.", "red"))
+                print(colored(f"Warning [{count}]: Course information '{item}' is not filled! Please check the grader report.", "red"))
 
         # Check if all students have a final grade
         for student in self.students.index:
