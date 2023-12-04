@@ -109,14 +109,15 @@ def run():
 
     ltm.close_tool()
 
-short_args = "hs:o:a"
-long_args = ["help", "source=", "output=", "autocorrect", "all", "student="]
+short_args = "hs:o:af"
+long_args = ["help", "source=", "output=", "autocorrect", "all", "student=", "force"]
 
 def main(argv):
     source_file_path = ""
     output_file_path = ""
     autocorrect = False
     generate_all = False
+    force = False
 
     print(f"Argument List: {argv}")
 
@@ -141,6 +142,8 @@ def main(argv):
             generate_all = True
         elif opt in ("--student"):
             student_name = arg
+        elif opt in ("-f", "--force"):
+            force = True
 
     if source_file_path == "" or output_file_path == "":
         print("Error! No output and/or source file path specified.")
@@ -149,7 +152,7 @@ def main(argv):
 
     proc = processor.Generator(source_file_path, output_file_path)
     if generate_all:
-        proc.generate_all(autocorrect = autocorrect)
+        proc.generate_all(autocorrect = autocorrect, force = force)
     else:
         proc.generate_for_student(student_name = student_name, autocorrect = autocorrect)
 
