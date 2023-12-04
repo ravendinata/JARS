@@ -55,9 +55,13 @@ Options:
     Note: This option is only available if the --all option is not specified.
     Example:
         --student "John Doe"
+-f, --force
+    Specifies whether to force the program to proceed with the operation even if invalid data is detected in the source file.
 
 Example:
-report_generator.py -s C:/Users/John Doe/Desktop/Grader Report P1A Art Sample.xlsm -o C:/Users/John Doe/Desktop/Test Result.xlsx -a --all
+report_generator.py -s "C:/Grader Report P1A Art Sample.xlsm" -o "C:/Reports" -a --student "John Doe" --force
+or
+console.py -t report_generator -s "C:/Grader Report.xlsm" -o "C:/Reports" -a --all
 """
 
 def get_mode():

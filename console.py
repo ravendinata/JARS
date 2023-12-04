@@ -42,7 +42,7 @@ Tip: Use the -h or --help option to display the help page for the specified tool
 Note: Pass the arguments for the specified tool after the tool name.
 
 Example:
-main.py -t report_generator -s C:/Users/John Doe/Desktop/Grader Report P1A Art Sample.xlsm -o C:/Users/John Doe/Desktop/Test Result.xlsx -a --all
+console.py -t report_generator -s "C:/Grader Report.xlsm" -o "C:/Reports" -a --all
 """
 
 def interactive():

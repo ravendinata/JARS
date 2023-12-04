@@ -47,7 +47,9 @@ Options:
     Specifies whether to auto adjust cell widths.
 
 Example:
-report_formatter.py -s C:/Users/John Doe/Desktop/Report.csv -o C:/Users/John Doe/Desktop/Formatted Report.xlsx -p C:/Users/John Doe/Desktop/Report Profile.json -w
+report_formatter.py -s "C:/Report.csv" -o "C:/Formatted Report.xlsx" -p "Cohort All Assignment Grades" -w
+or
+console.py -t report_formatter -s "C:/Report.csv" -o "C:/Formatted Report.xlsx" -p "Cohort All Assignment Grades" -w
 """
 
 def get_report_profile():
