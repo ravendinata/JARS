@@ -20,9 +20,10 @@ class Generator:
 
         Args:
             output_path (str): The path of the output file.
+            grader_report (GraderReport): The grader report instance. Should be initialized before passing to this class.
 
         Returns:
-            Generator: The initialized generator instance.
+            Generator: The report initialized generator instance.
         """
 
         print("[  ] Initializing generator...")
@@ -31,6 +32,15 @@ class Generator:
         print("[OK] Report generator initialized!")
 
     def generate_all(self, autocorrect = True, callback = None, force = False):
+        """
+        Generates reports for all students in the grader report.
+        This function basically calls generate_for_student() for each student in the grader report.
+        
+        Args:
+            autocorrect (bool): Whether to autocorrect the generated comments or not.
+            callback (function): The callback function to be called after each student is processed.
+            force (bool): Whether to force the generation process or not. This will ignore the data validation errors.
+        """
         job_count = len(self.grader_report.students.index)
         
         for i, student in enumerate(self.grader_report.students.index):
@@ -47,14 +57,24 @@ class Generator:
         print(f"Progress: 100%")
 
     def generate_for_student(self, student_name, autocorrect = True, force = False):
-        # Prepare data
+        """
+        Generates a report for a specific student.
+        
+        Args:
+            student_name (str): The name of the student.
+            autocorrect (bool): Whether to autocorrect the generated comments or not.
+            force (bool): Whether to force the generation process or not. This will ignore the data validation errors.
+        """
+        # Validate data
         if not self.grader_report.data_valid and not force:
             print(f"[  ] Grader report incomplete. Aborting process...")
             return
         
+        # Prepare data
         str_letter_grade = str(self.grader_report.get_final_grade(student_name, "Letter Grade"))
         str_final_score = str(self.grader_report.get_final_grade(student_name, "Final Score"))
 
+        # Initialize comment generator
         comment_generator = cgen.CommentGenerator(student_name = student_name, 
                                                   short_name = self.grader_report.get_student_info(student_name, "Short Name"),
                                                   gender = self.grader_report.get_student_info(student_name, "Gender"),
@@ -63,23 +83,25 @@ class Generator:
                                                   letter_grade = str_letter_grade,
                                                  )
 
-        # Document processing
+        # Document processing begins
         document = Document()
-        document = document_helper.setup_page(document, 'a4')
+        document = document_helper.setup_page(document, 'a4') # Setup page size to A4
         
+        # Sections and headers setup
         section = document.sections[0]
-
         header_content = section.header.paragraphs[0]
         header_content.alignment = WD_TABLE_ALIGNMENT.CENTER
         logo_run = header_content.add_run()
         logo_run.add_picture(config.get_config("logo_path"), width = Cm(5.56))
         
-        # Styles
+        # Default style setup (font, etc.)
         style = document.styles["Normal"]
         font = style.font
         font.name = "Calibri"
         font.size = Pt(11)
 
+        # CONTENT STARTS HERE
+        # Top spacer
         top_spacer = document.add_paragraph()
         top_spacer.paragraph_format.space_before = Pt(0)
         top_spacer.paragraph_format.space_after = Pt(0)
@@ -183,12 +205,12 @@ class Generator:
         pd_table_header[4].text = "VG"
         pd_table_header[5].text = "E"
 
-        for i in range(0, 6):
+        for i in range(0, 6): # Setup table header layout
             pd_table_header[i].paragraphs[0].runs[0].bold = True
             pd_table_header[i].paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             pd_table_header[i].width = Cm(1) if i != 0 else Cm(12)
 
-        for i, item in enumerate(self.grader_report.data_pd.columns):
+        for i, item in enumerate(self.grader_report.data_pd.columns): # Setup table body (items)
             pd_table.cell(i + 1, 0).text = item
             pd_table.cell(i + 1, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
             pd_table.cell(i + 1, 0).width = Cm(12)
@@ -196,9 +218,9 @@ class Generator:
             pd_table.cell(i + 1, pd_grade).text = "✔"
             pd_table.cell(i + 1, pd_grade).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             
-        for i in range(1, len(self.grader_report.data_pd.columns) + 1):
-            for j in range(1, 6):
-                pd_table.cell(i, j).width = Cm(1)
+        for i in range(1, len(self.grader_report.data_pd.columns) + 1): # For each cell in row
+            for j in range(1, 6):                                       # and in each column
+                pd_table.cell(i, j).width = Cm(1)                       # set width to 1cm
 
         # Teacher's Comments Section
         tc_header = document.add_paragraph()
@@ -228,9 +250,8 @@ class Generator:
         ak_table.autofit = False
         ak_table.allow_autofit = False
 
-        # Adjust row height
         for row in ak_table.rows:
-            row.height = Cm(1)
+            row.height = Cm(1) # Set row height to 1cm
 
         ak_table.cell(0, 0).paragraphs[0].add_run("Teacher:").bold = True
         ak_table.cell(0, 0).add_paragraph(self.grader_report.get_course_info("Teacher"))
@@ -285,9 +306,12 @@ class Generator:
         lg_table.cell(5, 2).text = "Needs Improvement"
         lg_table.cell(5, 3).text = "NI"
 
-        for i in range(0, 6):
+        for i in range(0, 6): # Adjust cell formatting for legend table
             for j in range(0, 4):
                 lg_table.cell(i, j).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
                 lg_table.cell(i, j).paragraphs[0].runs[0].font.size = Pt(9)
 
+        # CONTENT ENDS HERE
+        # Document processing ends
+        # Save document. The output file will be named as the student's name.
         document.save(f"{self.output_path}/{student_name}.docx")
