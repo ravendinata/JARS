@@ -74,10 +74,16 @@ class Generator:
         student_sna = {}
         str_letter_grade = str(self.grader_report.get_final_grade(student_name, "Letter Grade"))
         str_final_score = str(self.grader_report.get_final_grade(student_name, "Final Score"))
+        count_sna = len(self.grader_report.data_sna.columns)
 
         # Document processing begins
         document = Document()
         document = document_helper.setup_page(document, 'a4') # Setup page size to A4
+
+        # Spacing setup
+        section_spacing = Pt(18)
+        if count_sna > 6:
+            section_spacing = Pt(12)
         
         # Sections and headers setup
         section = document.sections[0]
@@ -142,7 +148,7 @@ class Generator:
         # Subject Description Section
         sd_header = document.add_paragraph()
         sd_header.add_run("SUBJECT DESCRIPTION").bold = True
-        sd_header.paragraph_format.space_before = Pt(18)
+        sd_header.paragraph_format.space_before = Pt(12)
         sd_header.paragraph_format.space_after = Pt(0)
         
         sd_table = document.add_table(rows = 1, cols = 1)
@@ -158,10 +164,10 @@ class Generator:
         # Skills and Assessment Section
         sna_header = document.add_paragraph()
         sna_header.add_run("SKILLS AND ASSESSMENT").bold = True
-        sna_header.paragraph_format.space_before = Pt(18)
+        sna_header.paragraph_format.space_before = section_spacing
         sna_header.paragraph_format.space_after = Pt(0)
         
-        sna_table = document.add_table(rows = len(self.grader_report.data_sna.columns), cols = 2)
+        sna_table = document.add_table(rows = count_sna, cols = 2)
         sna_table.style = "Table Grid"
         sna_table.alignment = WD_TABLE_ALIGNMENT.CENTER
         sna_table.autofit = False
@@ -178,7 +184,7 @@ class Generator:
         # Personal Development Section
         pd_header = document.add_paragraph()
         pd_header.add_run("PERSONAL DEVELOPMENT").bold = True
-        pd_header.paragraph_format.space_before = Pt(18)
+        pd_header.paragraph_format.space_before = section_spacing
         pd_header.paragraph_format.space_after = Pt(0)
         
         pd_table = document.add_table(rows = len(self.grader_report.data_pd.columns) + 1, cols = 6)
@@ -224,7 +230,7 @@ class Generator:
         
         tc_header = document.add_paragraph()
         tc_header.add_run("TEACHER'S COMMENTS").bold = True
-        tc_header.paragraph_format.space_before = Pt(18)
+        tc_header.paragraph_format.space_before = section_spacing
         tc_header.paragraph_format.space_after = Pt(0)
 
         tc_table = document.add_table(rows = 1, cols = 1)
@@ -240,7 +246,7 @@ class Generator:
         # Acknowledgement Section
         ak_header = document.add_paragraph()
         ak_header.add_run("ACKNOWLEDGEMENT").bold = True
-        ak_header.paragraph_format.space_before = Pt(18)
+        ak_header.paragraph_format.space_before = section_spacing
         ak_header.paragraph_format.space_after = Pt(0)
 
         ak_table = document.add_table(rows = 2, cols = 3)
