@@ -77,13 +77,14 @@ class CommentGenerator:
 
         text = ". ".join([sentence_intro, positive_text, negative_text, sentence_closing])
 
-        comment = text.format(short_name = self._short_name, pronoun = pronoun, adjective = adjective)
-        comment = self.__format_comment(comment)
-
+        comment = text.format(short_name = "VDC", pronoun = pronoun, adjective = adjective)
         if autocorrect:
             tool = ltm.get_tool()
             if tool.check(comment):
                 comment = tool.correct(comment)
+                
+        comment = comment.replace("VDC", self._short_name)
+        comment = self.__format_comment(comment)
 
         if probe:
             return comment, len(positive_sentences), len(negative_sentences)
