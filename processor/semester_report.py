@@ -82,8 +82,15 @@ class Generator:
 
         # Spacing setup
         section_spacing = Pt(18)
+        subject_description_spacing = Pt(12)
+
         if count_sna > 6:
             section_spacing = Pt(12)
+        if count_sna > 8:
+            section_spacing = Pt(10)
+        if count_sna > 9:
+            subject_description_spacing = Pt(8)
+            section_spacing = Pt(8)
         
         # Sections and headers setup
         section = document.sections[0]
@@ -148,7 +155,7 @@ class Generator:
         # Subject Description Section
         sd_header = document.add_paragraph()
         sd_header.add_run("SUBJECT DESCRIPTION").bold = True
-        sd_header.paragraph_format.space_before = Pt(12)
+        sd_header.paragraph_format.space_before = subject_description_spacing
         sd_header.paragraph_format.space_after = Pt(0)
         
         sd_table = document.add_table(rows = 1, cols = 1)
@@ -270,7 +277,7 @@ class Generator:
         # Legend Section
         lg_header = document.add_paragraph()
         lg_header.add_run("GRADING SYSTEM").bold = True
-        lg_header.paragraph_format.space_before = Pt(18)
+        lg_header.paragraph_format.space_before = section_spacing
         lg_header.paragraph_format.space_after = Pt(0)
 
         lg_table = document.add_table(rows = 6, cols = 4)
