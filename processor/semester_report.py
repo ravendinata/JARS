@@ -71,17 +71,9 @@ class Generator:
             return
         
         # Prepare data
+        student_sna = {}
         str_letter_grade = str(self.grader_report.get_final_grade(student_name, "Letter Grade"))
         str_final_score = str(self.grader_report.get_final_grade(student_name, "Final Score"))
-
-        # Initialize comment generator
-        comment_generator = cgen.CommentGenerator(student_name = student_name, 
-                                                  short_name = self.grader_report.get_student_info(student_name, "Short Name"),
-                                                  gender = self.grader_report.get_student_info(student_name, "Gender"),
-                                                  comment_mapping = self.grader_report.data_comment_mapping,
-                                                  student_result = student_sna,
-                                                  letter_grade = str_letter_grade,
-                                                 )
 
         # Document processing begins
         document = Document()
@@ -174,8 +166,6 @@ class Generator:
         sna_table.alignment = WD_TABLE_ALIGNMENT.CENTER
         sna_table.autofit = False
         sna_table.allow_autofit = False
-
-        student_sna = {}
         
         for i, assessment in enumerate(self.grader_report.data_sna.columns):
             student_sna[assessment] = self.grader_report.get_grade_sna(student_name, assessment)
@@ -223,6 +213,15 @@ class Generator:
                 pd_table.cell(i, j).width = Cm(1)                       # set width to 1cm
 
         # Teacher's Comments Section
+        # Initialize comment generator
+        comment_generator = cgen.CommentGenerator(student_name = student_name, 
+                                                  short_name = self.grader_report.get_student_info(student_name, "Short Name"),
+                                                  gender = self.grader_report.get_student_info(student_name, "Gender"),
+                                                  comment_mapping = self.grader_report.data_comment_mapping,
+                                                  student_result = student_sna,
+                                                  letter_grade = str_letter_grade,
+                                                 )
+        
         tc_header = document.add_paragraph()
         tc_header.add_run("TEACHER'S COMMENTS").bold = True
         tc_header.paragraph_format.space_before = Pt(18)
