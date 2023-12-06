@@ -4,14 +4,14 @@ from termcolor import colored
 class GraderReport:
     def __init__(self, grader_report_path):
         """
-        Initialize the generator instance.
+        Initialize the grader report instance.
 
         Args:
             grader_report_path (str): The path of the grader report.
             output_path (str): The path of the output file.
 
         Returns:
-            Generator: The initialized generator instance.
+            Generator: The initialized grader report instance.
         """
 
         print("[  ] Initializing generator...")
@@ -34,13 +34,45 @@ class GraderReport:
 
         print("[OK] Report generator initialized!")
 
+    # Getters
     def get_course_info(self, item):
+        """
+        Get course information.
+
+        Args:
+            item (str): The course information item to get.
+
+        Returns:
+            str: The value of the course information item.
+        """
         return self.course_info.loc[item, "Value"]
     
     def get_student_info(self, student, item):
+        """
+        Get student information.
+        
+        Args:
+            student (str): The student to get. Must be the student's full name.
+            item (str): The student information item to get.
+            
+        Returns:
+            str: The value of the student information item.
+        """
         return self.students.loc[student, item]
     
     def get_grade_sna(self, student, assessment, raw = False):
+        """
+        Get student grade for SNA. This method will return an empty string if the student has no grade for the SNA
+        to prevent software errors when force generating the report.
+        
+        Args:
+            student (str): The student to get. Must be the student's full name.
+            assessment (str): The assessment to get.
+            raw (bool): Whether to return the raw value or not.
+            
+        Returns:
+            str: The value of the student grade for the SNA.
+        """
         data = self.data_sna.loc[student, assessment]
 
         if raw:
@@ -53,6 +85,18 @@ class GraderReport:
             return data
     
     def get_grade_pd(self, student, item, raw = False):
+        """
+        Get student grade for PD. This method will return 1 if the student has no grade for the PD item
+        to prevent software errors when force generating the report.
+
+        Args:
+            student (str): The student to get. Must be the student's full name.
+            item (str): The PD item to get.
+            raw (bool): Whether to return the raw value or not.
+
+        Returns:
+            str: The value of the student grade for the PD item.
+        """
         data = self.data_pd.loc[student, item]
 
         if raw:
@@ -68,6 +112,18 @@ class GraderReport:
             return data
     
     def get_final_grade(self, student, format, raw = False):
+        """
+        Get student final grade. This method will return 0 if the student has no final grade
+        to prevent software errors when force generating the report.
+        
+        Args:
+            student (str): The student to get. Must be the student's full name.
+            format (str): The format to get. Can be either "Final Score" or "Letter Grade".
+            raw (bool): Whether to return the raw value or not.
+        
+        Returns:
+            str: The value of the student final grade.
+        """
         data = self.data_final_grades.loc[student, format]
 
         if raw:
@@ -90,46 +146,14 @@ class GraderReport:
         
         return data
     
-    def __prepare_data(self):
-        # Remove NaN rows
-        self.students.dropna(inplace = True)
-
-        # Fill NaN values with default values
-        self.course_info.fillna("", inplace = True)
-        self.data_final_grades.fillna(0, inplace = True)
-        self.data_pd.fillna(0, inplace = True)
-        self.data_sna.fillna("X", inplace = True)
-
-        # Data type conversion
-        self.course_info = self.course_info.astype(str)
-        self.students = self.students.astype(str)
-        self.data_pd = self.data_pd.astype(int)
-        self.data_sna = self.data_sna.astype(str)
-        self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
-        self.data_comment_mapping = self.data_comment_mapping.astype(str)
-
-        # Strip whitespace from index
-        self.course_info.index = self.course_info.index.str.strip()
-        self.students.index = self.students.index.str.strip()
-        self.data_sna.index = self.data_sna.index.str.strip()
-        self.data_pd.index = self.data_pd.index.str.strip()
-        self.data_final_grades.index = self.data_final_grades.index.str.strip()
-        self.data_comment_mapping.index = self.data_comment_mapping.index.str.strip()
-
-        # Strip whitespace from columns
-        self.course_info.columns = self.course_info.columns.str.strip()
-        self.students.columns = self.students.columns.str.strip()
-        self.data_sna.columns = self.data_sna.columns.str.strip()
-        self.data_pd.columns = self.data_pd.columns.str.strip()
-        self.data_final_grades.columns = self.data_final_grades.columns.str.strip()
-        self.data_comment_mapping.columns = self.data_comment_mapping.columns.str.strip()
-
-        # Remove unnecessary columns
-        unwanted_columns = ["Normalized Grade", "Student Final Grade", "Sanity Check", "Add item…"]
-        unwanted_columns += [column for column in self.data_sna.columns if column.startswith("Unnamed")]
-        self.data_sna = self.data_sna.drop(columns = unwanted_columns)
-
+    # Public methods
     def validate(self):
+        """
+        Validate the data in the grader report. This method will print warnings if there are missing values in the grader report.
+        
+        Returns:
+            bool: Whether the data is valid or not.
+        """
         print("[  ] Validating data...")
         valid = True
         count = 0
@@ -177,3 +201,46 @@ class GraderReport:
         self.data_valid = valid
         print(colored(f"Validation Pass: {valid}", "red" if not valid else "green"), "\n", colored(f"Warnings: {count}\n", "yellow") if not valid else "")
         return valid
+    
+    # Private methods
+    def __prepare_data(self):
+        """
+        Prepare the data for the generator. This method will remove NaN values and strip whitespace from the data.
+        """
+        # Remove NaN rows
+        self.students.dropna(inplace = True)
+
+        # Fill NaN values with default values
+        self.course_info.fillna("", inplace = True)
+        self.data_final_grades.fillna(0, inplace = True)
+        self.data_pd.fillna(0, inplace = True)
+        self.data_sna.fillna("X", inplace = True)
+
+        # Data type conversion
+        self.course_info = self.course_info.astype(str)
+        self.students = self.students.astype(str)
+        self.data_pd = self.data_pd.astype(int)
+        self.data_sna = self.data_sna.astype(str)
+        self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
+        self.data_comment_mapping = self.data_comment_mapping.astype(str)
+
+        # Strip whitespace from index
+        self.course_info.index = self.course_info.index.str.strip()
+        self.students.index = self.students.index.str.strip()
+        self.data_sna.index = self.data_sna.index.str.strip()
+        self.data_pd.index = self.data_pd.index.str.strip()
+        self.data_final_grades.index = self.data_final_grades.index.str.strip()
+        self.data_comment_mapping.index = self.data_comment_mapping.index.str.strip()
+
+        # Strip whitespace from columns
+        self.course_info.columns = self.course_info.columns.str.strip()
+        self.students.columns = self.students.columns.str.strip()
+        self.data_sna.columns = self.data_sna.columns.str.strip()
+        self.data_pd.columns = self.data_pd.columns.str.strip()
+        self.data_final_grades.columns = self.data_final_grades.columns.str.strip()
+        self.data_comment_mapping.columns = self.data_comment_mapping.columns.str.strip()
+
+        # Remove unnecessary columns
+        unwanted_columns = ["Normalized Grade", "Student Final Grade", "Sanity Check", "Add item…"]
+        unwanted_columns += [column for column in self.data_sna.columns if column.startswith("Unnamed")]
+        self.data_sna = self.data_sna.drop(columns = unwanted_columns)
