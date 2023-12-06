@@ -115,7 +115,7 @@ class CommentGenerator:
                     words[words.index(word) - 1] = "."
 
         sentences = " ".join(words)
-        sentences = sentences.replace(" .", ".").replace("..", ".").replace(",.", ".").replace(" ,", ",").replace("  ", " ").replace(" !", "!")
+        sentences = sentences.replace(" .", ".").replace("..", ".").replace(",.", ".").replace(" ,", ",").replace("  ", " ").replace(" !", "!").replace(" '", "'")
         sentences = nltk.sent_tokenize(text = sentences, language = "english")
         formatted = [sentence[0].upper() + sentence[1:] for sentence in sentences]
         
