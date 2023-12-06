@@ -115,7 +115,7 @@ class CommentGenerator:
                     words[words.index(word) - 1] = "."
 
         sentences = " ".join(words)
-        sentences = sentences.replace(" .", ".").replace("..", ".").replace(",.", ".").replace(" ,", ",").replace("  ", " ").replace(" !", "!").replace(" '", "'")
+        sentences = sentences.replace(" .", ".").replace("..", ".").replace(",.", ".").replace(" ,", ",").replace("  ", " ").replace(" !", "!").replace(" '", "'").replace(".,", ".")
         sentences = nltk.sent_tokenize(text = sentences, language = "english")
         formatted = [sentence[0].upper() + sentence[1:] for sentence in sentences]
         
@@ -169,7 +169,31 @@ class CommentGenerator:
         """
         positive_comments = ""
 
-        if (len(positive_sentences) > 3):
+        if (len(positive_sentences) > 5):
+            positive_comments = f"{positive_sentences[0]}, and {positive_sentences[1]}. "
+            remaining_sentences = len(positive_sentences) - 3
+            for i in range(2, len(positive_sentences) - 2):
+                if remaining_sentences == 3:
+                    positive_comments = positive_comments.replace("also", "")
+                    positive_comments += f". In addition, {positive_sentences[i]}. "
+                    positive_comments += f"{positive_sentences[i+1]}, and {positive_sentences[i + 2].replace('also', '')}."
+                    break
+                elif remaining_sentences == 2:
+                    positive_comments = positive_comments.replace("also", "")
+                    positive_comments += f". In addition, {positive_sentences[i]}, and {positive_sentences[i + 1]}."
+                    break
+                elif remaining_sentences == 1:
+                    positive_comments = positive_comments.replace("also", "")
+                    positive_comments += f". {positive_sentences[i]}."
+                    break
+                elif i % 3 == 1:
+                    positive_comments = " ".join([positive_comments, ", and ", positive_sentences[i]])
+                    remaining_sentences -= 1
+                elif remaining_sentences > 3:
+                    positive_comments += f", {positive_sentences[i]}"
+                    remaining_sentences -= 1
+            positive_comments += f". {positive_sentences[-1]}"
+        elif (len(positive_sentences) > 3):
             positive_comments = f"{positive_sentences[0]}. "
             positive_comments += ", ".join(positive_sentences[1:-2])
             positive_comments = " ".join([positive_comments, ", and ", positive_sentences[-2]])
@@ -203,7 +227,31 @@ class CommentGenerator:
         """
         negative_comments = ""
 
-        if (len(negative_sentences) > 3):
+        if (len(negative_sentences) > 5):
+            negative_comments = f"{negative_sentences[0]}, and {negative_sentences[1]}. "
+            remaining_sentences = len(negative_sentences) - 3
+            for i in range(2, len(negative_sentences) - 2):
+                if remaining_sentences == 3:
+                    negative_comments = negative_comments.replace("also", "")
+                    negative_comments += f". Besides, {negative_sentences[i]}. "
+                    negative_comments += f"{negative_sentences[i+1]}, and {negative_sentences[i + 2].replace('also', '')}."
+                    break
+                elif remaining_sentences == 2:
+                    negative_comments = negative_comments.replace("also", "")
+                    negative_comments += f". Besides, {negative_sentences[i]}, and {negative_sentences[i + 1]}."
+                    break
+                elif remaining_sentences == 1:
+                    negative_comments = negative_comments.replace("also", "")
+                    negative_comments += f". {negative_sentences[i]}."
+                    break
+                elif i % 3 == 1:
+                    negative_comments = " ".join([negative_comments, ", and ", negative_sentences[i]])
+                    remaining_sentences -= 1
+                elif remaining_sentences > 3:
+                    negative_comments += f", {negative_sentences[i]}"
+                    remaining_sentences -= 1
+            negative_comments += f". {negative_sentences[-1]}"
+        elif (len(negative_sentences) > 3):
             negative_comments = f"{negative_sentences[0]}. "
             negative_comments += ", ".join(negative_sentences[1:-2])
             negative_comments = " ".join([negative_comments, ", and ", negative_sentences[-2]])
