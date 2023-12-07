@@ -80,7 +80,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
 
-        # Define widgets
+        """
+        WIDGETS SETUP
+        """
         # Grader report file path
         self.lbl_source = ctk.CTkLabel(self, text = "Grader Report File:")
         self.txt_source_path = ctk.CTkEntry(self, width = 250)
@@ -114,6 +116,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.autocorrect_var = tk.IntVar()
         self.switch_autocorrect = ctk.CTkSwitch(self, text = "Autocorrect", variable = self.autocorrect_var, onvalue = 1, offvalue = 0)
 
+        # Force generation switch button
+        self.force_var = tk.IntVar()
+        self.switch_force = ctk.CTkSwitch(self, text = "Force Generate", variable = self.force_var, onvalue = 1, offvalue = 0)
+
         # Generate button
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
         self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, command = self.__test_source)
@@ -130,8 +136,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         # Status section
         self.lbl_status = ctk.CTkLabel(self, text = "Status:")
         self.lbl_status_text = ctk.CTkLabel(self, width = 300, justify = "left", anchor = tk.W, text = "Idle")
-
-        # Layout
+        
+        """
+        GUI LAYOUTING
+        """
         self.lbl_source.grid(row = 0, column = 0, sticky = tk.W, pady = 2)
         self.txt_source_path.grid(row = 0, column = 1, sticky = tk.W, padx =  5, pady = 2)
         self.btn_browse_source.grid(row = 0, column = 2, sticky = tk.EW, padx = 2, pady = 2)
@@ -146,6 +154,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         self.lbl_generate.grid(row = 3, column = 0, sticky = tk.W, pady = 2)
         self.rdo_generate_all.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        
         self.rdo_generate_student.grid(row = 4, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
         self.lbl_student_name.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
@@ -153,17 +162,19 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         self.lbl_options.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
         self.switch_autocorrect.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        
+        self.switch_force.grid(row = 7, column = 1, sticky = tk.W, padx = 5, pady = 2)
 
-        self.lbl_progress.grid(row = 7, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 7, column = 1, sticky = tk.W, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 7, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+        self.lbl_progress.grid(row = 8, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 8, column = 1, sticky = tk.W, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 8, column = 2, sticky = tk.EW, padx = 2, pady = 0)
 
-        self.lbl_status.grid(row = 8, column = 0, sticky = tk.W, pady = 0)
-        self.lbl_status_text.grid(row = 8, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_status.grid(row = 9, column = 0, sticky = tk.W, pady = 0)
+        self.lbl_status_text.grid(row = 9, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
 
-        self.btn_test_source.grid(row = 9, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 9, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 9, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_test_source.grid(row = 10, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 10, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 10, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
         
 
     # UI functions
@@ -214,13 +225,14 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False
+        force = True if self.force_var.get() == 1 else False
         
         if mode == "all":
-            proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect)
+            proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force)
         elif mode == "student":
             student_name = self.txt_student_name.get()
             self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
-            proc.generate_for_student(student_name = student_name, autocorrect = autocorrect)
+            proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force)
             self.__on_progress_update(1, 1, f"Done!")
             output_file_path = f"{output_file_path}/{student_name}.docx"
 
