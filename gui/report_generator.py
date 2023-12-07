@@ -90,6 +90,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_output_path = ctk.CTkEntry(self, width = 250)
         self.btn_browse_output = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__save_file)
 
+        # Signature file path
+        self.lbl_signature = ctk.CTkLabel(self, text = "Signature File:")
+        self.txt_signature_path = ctk.CTkEntry(self, width = 250, placeholder_text = "Leave blank to not include signature")
+        self.btn_browse_signature = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__browse_signature)
+
         # Generate all or generate for student
         self.mode_var = tk.StringVar()
         self.lbl_generate = ctk.CTkLabel(self, text = "Generate:")
@@ -134,26 +139,30 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_output_path.grid(row = 1, column = 1, sticky = tk.W, padx =  5, pady = 2)
         self.btn_browse_output.grid(row = 1, column = 2, sticky = tk.EW, padx = 2, pady = 2)
 
-        self.lbl_generate.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
-        self.rdo_generate_all.grid(row = 2, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.rdo_generate_student.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.lbl_signature.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
+        self.txt_signature_path.grid(row = 2, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.btn_browse_signature.grid(row = 2, column = 2, sticky = tk.EW, padx = 2, pady = 2)
 
-        self.lbl_student_name.grid(row = 4, column = 0, sticky = tk.W, pady = 2)
-        self.txt_student_name.grid(row = 4, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        
-        self.lbl_options.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
-        self.switch_autocorrect.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.lbl_generate.grid(row = 3, column = 0, sticky = tk.W, pady = 2)
+        self.rdo_generate_all.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.rdo_generate_student.grid(row = 4, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.lbl_progress.grid(row = 6, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 6, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+        self.lbl_student_name.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
+        self.txt_student_name.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.lbl_status.grid(row = 7, column = 0, sticky = tk.W, pady = 0)
-        self.lbl_status_text.grid(row = 7, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_options.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
+        self.switch_autocorrect.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.btn_test_source.grid(row = 8, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 8, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 8, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.lbl_progress.grid(row = 7, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 7, column = 1, sticky = tk.W, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 7, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+
+        self.lbl_status.grid(row = 8, column = 0, sticky = tk.W, pady = 0)
+        self.lbl_status_text.grid(row = 8, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+
+        self.btn_test_source.grid(row = 9, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 9, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 9, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
         
 
     # UI functions
@@ -162,6 +171,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         file_path = ctk.filedialog.askopenfilename(title = "Select Grader Report File", defaultextension = ".xlsm", filetypes =[("Microsoft Excel Macro-Enabled Document", "*.xlsm"), ("Microsoft Excel Document", "*.xlsx")])
         self.txt_source_path.delete(0, tk.END)
         self.txt_source_path.insert(0, file_path)
+
+    def __browse_signature(self):
+        """Opens a file dialog for browsing the signature file."""
+        file_path = ctk.filedialog.askopenfilename(title = "Select Signature File", defaultextension = ".png", filetypes =[("Portable Network Graphics", "*.png"), ("Joint Photographic Experts Group", "*.jpg *.jpeg")])
+        self.txt_signature_path.delete(0, tk.END)
+        self.txt_signature_path.insert(0, file_path)
 
     def __save_file(self):
         """Opens a file dialog for saving the output file."""
