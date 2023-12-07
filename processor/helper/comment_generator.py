@@ -151,7 +151,7 @@ class CommentGenerator:
                     else:
                         positive_sentences.append(comment)
             else:
-                print(colored(f"Info: Grade '{value}' is not found in the comment mapping possibly due to incomplete skills and assessment grading. Skipping this comment.", "yellow"))
+                print(colored(f"Info: Grade '{value}' or Goal '{key}' is not found in the comment mapping possibly due to incomplete skills and assessment grading. Skipping this comment.", "yellow"))
 
         return positive_sentences, negative_sentences
     
