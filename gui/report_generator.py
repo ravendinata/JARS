@@ -202,14 +202,15 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         for all students if the generate all option is selected. It will run the report processor for
         a single student if the generate for student option is selected.
         """
+        if not self.__test_paths():
+            return
+        
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
-
-        if not self.__test_paths(source_file, output_file_path):
-            return
+        signature_file = self.txt_signature_path.get() if self.txt_signature_path.get() != "" else None
 
         gr = grader_report.GraderReport(source_file)
-        proc = processor.Generator(output_file_path, gr)
+        proc = processor.Generator(output_file_path, gr, signature_file)
 
         mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False
@@ -232,12 +233,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         Tests the source file using the comment generator test suite.
         It runs the comment generator test suite on the source file and saves the result to an Excel file.
         """
+        if not self.__test_paths():
+            return
+        
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
-        
-        if not self.__test_paths(source_file, output_file_path):
-            return
-
         file_name = source_file.split("/")[-1].split(".")[0]
         output_file_path = f"{output_file_path}/CGen_Test_{file_name}.xlsx"
         
@@ -257,20 +257,23 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_count.configure(text = "Done!")
         self.lbl_status_text.configure(text = "Validation completed. Check console/terminal for details.")
 
-    # TODO: Refactor this function not to use arguments but to use the values from the entry fields instead.
-    def __test_paths(self, source_path, out_path):
+    def __test_paths(self):
         """
         Tests if the source and output paths are valid.
 
         Returns:
             bool: True if the paths are valid, False otherwise.
         """
-        if not os.path.isfile(source_path):
+        if not os.path.isfile(self.txt_source_path.get()):
             tk.messagebox.showerror("Error", "Please select a valid source file.")
             return False
         
-        if not os.path.isdir(out_path):
+        if not os.path.isdir(self.txt_output_path.get()):
             tk.messagebox.showerror("Error", "Please select a valid output folder.")
+            return False
+        
+        if not os.path.isfile(self.txt_signature_path.get()):
+            tk.messagebox.showerror("Error", "Please select a valid signature file.")
             return False
         
         return True
