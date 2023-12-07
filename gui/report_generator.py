@@ -4,6 +4,7 @@ import customtkinter as ctk
 import tkinter as tk
 
 import processor.semester_report as processor
+import processor.grader_report as grader_report
 import processor.helper.comment_generator_test as cgen_test
 import processor.helper.language_tool_master as ltm
 from gui.dialog import OutputDialog
@@ -192,9 +193,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         if not self.__test_paths(source_file, output_file_path):
             return
 
-        mode = self.mode_var.get()
-        proc = processor.Generator(source_file, output_file_path)
+        gr = grader_report.GraderReport(source_file)
+        proc = processor.Generator(output_file_path, gr)
 
+        mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False
         
         if mode == "all":
