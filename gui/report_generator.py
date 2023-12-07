@@ -284,7 +284,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             tk.messagebox.showerror("Error", "Please select a valid output folder.")
             return False
         
-        if not os.path.isfile(self.txt_signature_path.get()):
+        if not os.path.isfile(self.txt_signature_path.get()) and self.txt_signature_path.get() != "":
             tk.messagebox.showerror("Error", "Please select a valid signature file.")
             return False
         
