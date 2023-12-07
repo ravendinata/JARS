@@ -2,6 +2,7 @@ import os
 
 import customtkinter as ctk
 import tkinter as tk
+import tktooltip as tktip
 
 import processor.semester_report as processor
 import processor.grader_report as grader_report
@@ -136,6 +137,24 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         # Status section
         self.lbl_status = ctk.CTkLabel(self, text = "Status:")
         self.lbl_status_text = ctk.CTkLabel(self, width = 300, justify = "left", anchor = tk.W, text = "Idle")
+
+        # Tooltips
+        tooltip_font = ("Arial", 16)
+        tooltips = {
+            self.btn_browse_source: "Browse for the grader report file.",
+            self.btn_browse_output: "Browse for the output folder.",
+            self.btn_browse_signature: "Browse for your digitized signature image file.",
+            self.rdo_generate_all: "Generate reports for all students.",
+            self.rdo_generate_student: "Generate report for a single student. Fill in the student name field to specify the student.",
+            self.switch_autocorrect: "Enable this to automatically correct the comment grammar and spelling errors.",
+            self.switch_force: "Enable this to force generate the reports and disregard grader report errors.",
+            self.btn_process: "Start generating the reports.",
+            self.btn_test_source: "Create a validation list of all possible comment combinations and dumps it into an Excel file",
+            self.btn_validate: "Validate the grader report for errors."
+        }
+
+        for widget, message in tooltips.items():
+            tktip.ToolTip(widget, message, font = tooltip_font)
         
         """
         GUI LAYOUTING

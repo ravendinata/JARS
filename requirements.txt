@@ -52,6 +52,8 @@ termcolor==2.4.0
     # via -r requirements.in
 tk==0.1.0
     # via -r requirements.in
+tkinter-tooltip==2.1.0
+    # via -r requirements.in
 tqdm==4.66.1
     # via
     #   language-tool-python
