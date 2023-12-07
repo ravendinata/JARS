@@ -14,7 +14,7 @@ class Generator:
     This class is responsible for generating a standardized DOCX file from a templated XLSX grader report.
     """
 
-    def __init__(self, output_path, grader_report: GraderReport):
+    def __init__(self, output_path, grader_report: GraderReport, signature_path = None):
         """
         Initialize the generator instance.
 
@@ -29,6 +29,7 @@ class Generator:
         print("[  ] Initializing generator...")
         self.output_path = output_path
         self.grader_report = grader_report
+        self.signature_path = signature_path
         print("[OK] Report generator initialized!")
 
     def generate_all(self, autocorrect = True, callback = None, force = False):
@@ -268,6 +269,8 @@ class Generator:
         ak_table.cell(0, 0).paragraphs[0].add_run("Teacher:").bold = True
         ak_table.cell(0, 0).add_paragraph(self.grader_report.get_course_info("Teacher"))
         ak_table.cell(0, 1).text = "Signature"
+        if self.signature_path is not None:
+            ak_table.cell(0, 2).paragraphs[0].add_run().add_picture(self.signature_path, height = Cm(1.5))
         ak_table.cell(0, 3).text = "Date"
         ak_table.cell(0, 0).width = Cm(4)
         ak_table.cell(0, 1).width = Cm(2)
