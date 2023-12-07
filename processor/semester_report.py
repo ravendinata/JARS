@@ -256,23 +256,32 @@ class Generator:
         ak_header.paragraph_format.space_before = section_spacing
         ak_header.paragraph_format.space_after = Pt(0)
 
-        ak_table = document.add_table(rows = 2, cols = 3)
+        ak_table = document.add_table(rows = 2, cols = 4)
         ak_table.style = "Table Grid"
         ak_table.alignment = WD_TABLE_ALIGNMENT.CENTER
         ak_table.autofit = False
         ak_table.allow_autofit = False
 
         for row in ak_table.rows:
-            row.height = Cm(1) # Set row height to 1cm
+            row.height = Cm(1.5) # Set row height to 1cm
 
         ak_table.cell(0, 0).paragraphs[0].add_run("Teacher:").bold = True
         ak_table.cell(0, 0).add_paragraph(self.grader_report.get_course_info("Teacher"))
         ak_table.cell(0, 1).text = "Signature"
-        ak_table.cell(0, 2).text = "Date"
+        ak_table.cell(0, 3).text = "Date"
+        ak_table.cell(0, 0).width = Cm(4)
+        ak_table.cell(0, 1).width = Cm(2)
+        ak_table.cell(0, 2).width = Cm(7)
+        ak_table.cell(0, 3).width = Cm(4)
+        document_helper.set_cell_border(ak_table.cell(0, 1), end = {"sz": 1, "val": "none"})
+        document_helper.set_cell_border(ak_table.cell(0, 2), start = {"sz": 1, "val": "none"})
 
         ak_table.cell(1, 0).paragraphs[0].add_run("Parent:").bold = True
-        ak_table.cell(1, 1).text = "Signature"
-        ak_table.cell(1, 2).text = "Date"
+        ak_table.cell(1, 1).merge(ak_table.cell(1, 2)).text = "Signature"
+        ak_table.cell(1, 3).text = "Date"
+        ak_table.cell(1, 0).width = Cm(4)
+        ak_table.cell(1, 1).width = Cm(9)
+        ak_table.cell(1, 3).width = Cm(4)
 
         # Legend Section
         lg_header = document.add_paragraph()
