@@ -1,6 +1,6 @@
 from docx import Document
 from docx.shared import Cm, Pt
-from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
 
 import config
 import processor.helper.document as document_helper
@@ -280,46 +280,69 @@ class Generator:
         lg_header.paragraph_format.space_before = section_spacing
         lg_header.paragraph_format.space_after = Pt(0)
 
-        lg_table = document.add_table(rows = 6, cols = 4)
+        lg_table = document.add_table(rows = 3, cols = 12)
         lg_table.style = "Table Grid"
         lg_table.alignment = WD_TABLE_ALIGNMENT.CENTER
         lg_table.autofit = False
         lg_table.allow_autofit = False
 
-        lg_table.cell(0, 0).merge(lg_table.cell(0, 1)).text = "Skills and Assessment"
+        lg_table.cell(0, 0).merge(lg_table.cell(0, 5)).text = "Skills and Assessment"
         lg_table.cell(0, 0).paragraphs[0].runs[0].bold = True
         lg_table.cell(0, 0).width = Cm(8.5)
-        lg_table.cell(0, 2).merge(lg_table.cell(0, 3)).text = "Personal Development"
-        lg_table.cell(0, 2).paragraphs[0].runs[0].bold = True
-        lg_table.cell(0, 2).width = Cm(8.5)
+        lg_table.cell(0, 6).merge(lg_table.cell(0, 11)).text = "Personal Development"
+        lg_table.cell(0, 6).paragraphs[0].runs[0].bold = True
+        lg_table.cell(0, 6).width = Cm(8.5)
 
-        lg_table.cell(1, 0).text = "95-100"
-        lg_table.cell(1, 1).text = "A"
-        lg_table.cell(1, 2).text = "Excellent"
-        lg_table.cell(1, 3).text = "E"
+        # Skills and Assessment legend
+        lg_table.cell(1, 0).text = "A"
+        lg_table.cell(1, 1).text = "95-100"
+        lg_table.cell(2, 0).text = "B"
+        lg_table.cell(2, 1).text = "85-94"
+        lg_table.cell(1, 0).width = Cm(0.8)
+        lg_table.cell(1, 1).width = Cm(2)
+        lg_table.cell(2, 0).width = Cm(0.8)
+        lg_table.cell(2, 1).width = Cm(2)
 
-        lg_table.cell(2, 0).text = "85-94"
-        lg_table.cell(2, 1).text = "B"
-        lg_table.cell(2, 2).text = "Very Good"
-        lg_table.cell(2, 3).text = "VG"
+        lg_table.cell(1, 2).text = "C"
+        lg_table.cell(1, 3).text = "75-84"
+        lg_table.cell(2, 2).text = "D"
+        lg_table.cell(2, 3).text = "40-74"
+        lg_table.cell(1, 2).width = Cm(0.8)
+        lg_table.cell(1, 3).width = Cm(2)
+        lg_table.cell(2, 2).width = Cm(0.8)
+        lg_table.cell(2, 3).width = Cm(2)
 
-        lg_table.cell(3, 0).text = "75-84"
-        lg_table.cell(3, 1).text = "C"
-        lg_table.cell(3, 2).text = "Good"
-        lg_table.cell(3, 3).text = "G"
+        lg_table.cell(1, 4).merge(lg_table.cell(2, 4)).text = "E"
+        lg_table.cell(1, 5).merge(lg_table.cell(2, 5)).text = "Below 40"
+        lg_table.cell(1, 4).width = Cm(0.8)
+        lg_table.cell(1, 5).width = Cm(2.1)
 
-        lg_table.cell(4, 0).text = "40-74"
-        lg_table.cell(4, 1).text = "D"
-        lg_table.cell(4, 2).text = "Satisfactory"
-        lg_table.cell(4, 3).text = "S"
+        lg_table.cell(1, 6).text = "E"
+        lg_table.cell(1, 7).text = "Excellent"
+        lg_table.cell(2, 6).text = "VG"
+        lg_table.cell(2, 7).text = "Very Good"
+        lg_table.cell(1, 6).width = Cm(0.8)
+        lg_table.cell(1, 7).width = Cm(1.9)
+        lg_table.cell(2, 6).width = Cm(0.8)
+        lg_table.cell(2, 7).width = Cm(1.9)
 
-        lg_table.cell(5, 0).text = "Below 40"
-        lg_table.cell(5, 1).text = "E"
-        lg_table.cell(5, 2).text = "Needs Improvement"
-        lg_table.cell(5, 3).text = "NI"
+        lg_table.cell(1, 8).text = "G"
+        lg_table.cell(1, 9).text = "Good"
+        lg_table.cell(2, 8).text = "S"
+        lg_table.cell(2, 9).text = "Satisfactory"
+        lg_table.cell(1, 8).width = Cm(0.8)
+        lg_table.cell(1, 9).width = Cm(2)
+        lg_table.cell(2, 8).width = Cm(0.8)
+        lg_table.cell(2, 9).width = Cm(2)
 
-        for i in range(0, 6): # Adjust cell formatting for legend table
-            for j in range(0, 4):
+        lg_table.cell(1, 10).merge(lg_table.cell(2, 10)).text = "NI"
+        lg_table.cell(1, 11).merge(lg_table.cell(2, 11)).text = "Needs Improvement"
+        lg_table.cell(1, 10).width = Cm(0.8)
+        lg_table.cell(1, 11).width = Cm(2.2)
+
+        for i in range(0, 3): # Adjust cell formatting for legend table
+            for j in range(0, 12):
+                lg_table.cell(i, j).vertical_alignment = WD_ALIGN_VERTICAL.CENTER
                 lg_table.cell(i, j).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
                 lg_table.cell(i, j).paragraphs[0].runs[0].font.size = Pt(9)
 
