@@ -91,6 +91,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_output_path = ctk.CTkEntry(self, width = 250)
         self.btn_browse_output = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__save_file)
 
+        # Signature file path
+        self.lbl_signature = ctk.CTkLabel(self, text = "Signature File:")
+        self.txt_signature_path = ctk.CTkEntry(self, width = 250, placeholder_text = "Leave blank to not include signature")
+        self.btn_browse_signature = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__browse_signature)
+
         # Generate all or generate for student
         self.mode_var = tk.StringVar()
         self.lbl_generate = ctk.CTkLabel(self, text = "Generate:")
@@ -135,26 +140,30 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_output_path.grid(row = 1, column = 1, sticky = tk.W, padx =  5, pady = 2)
         self.btn_browse_output.grid(row = 1, column = 2, sticky = tk.EW, padx = 2, pady = 2)
 
-        self.lbl_generate.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
-        self.rdo_generate_all.grid(row = 2, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.rdo_generate_student.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.lbl_signature.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
+        self.txt_signature_path.grid(row = 2, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.btn_browse_signature.grid(row = 2, column = 2, sticky = tk.EW, padx = 2, pady = 2)
 
-        self.lbl_student_name.grid(row = 4, column = 0, sticky = tk.W, pady = 2)
-        self.txt_student_name.grid(row = 4, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        
-        self.lbl_options.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
-        self.switch_autocorrect.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.lbl_generate.grid(row = 3, column = 0, sticky = tk.W, pady = 2)
+        self.rdo_generate_all.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.rdo_generate_student.grid(row = 4, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.lbl_progress.grid(row = 6, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 6, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+        self.lbl_student_name.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
+        self.txt_student_name.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.lbl_status.grid(row = 7, column = 0, sticky = tk.W, pady = 0)
-        self.lbl_status_text.grid(row = 7, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_options.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
+        self.switch_autocorrect.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.btn_test_source.grid(row = 8, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 8, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 8, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.lbl_progress.grid(row = 7, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 7, column = 1, sticky = tk.W, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 7, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+
+        self.lbl_status.grid(row = 8, column = 0, sticky = tk.W, pady = 0)
+        self.lbl_status_text.grid(row = 8, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+
+        self.btn_test_source.grid(row = 9, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 9, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 9, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
         
 
     # UI functions
@@ -163,6 +172,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         file_path = ctk.filedialog.askopenfilename(title = "Select Grader Report File", defaultextension = ".xlsm", filetypes =[("Microsoft Excel Macro-Enabled Document", "*.xlsm"), ("Microsoft Excel Document", "*.xlsx")])
         self.txt_source_path.delete(0, tk.END)
         self.txt_source_path.insert(0, file_path)
+
+    def __browse_signature(self):
+        """Opens a file dialog for browsing the signature file."""
+        file_path = ctk.filedialog.askopenfilename(title = "Select Signature File", defaultextension = ".png", filetypes =[("Portable Network Graphics", "*.png"), ("Joint Photographic Experts Group", "*.jpg *.jpeg")])
+        self.txt_signature_path.delete(0, tk.END)
+        self.txt_signature_path.insert(0, file_path)
 
     def __save_file(self):
         """Opens a file dialog for saving the output file."""
@@ -187,14 +202,15 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         for all students if the generate all option is selected. It will run the report processor for
         a single student if the generate for student option is selected.
         """
+        if not self.__test_paths():
+            return
+        
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
-
-        if not self.__test_paths(source_file, output_file_path):
-            return
+        signature_file = self.txt_signature_path.get() if self.txt_signature_path.get() != "" else None
 
         gr = grader_report.GraderReport(source_file)
-        proc = processor.Generator(output_file_path, gr)
+        proc = processor.Generator(output_file_path, gr, signature_file)
 
         mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False
@@ -217,12 +233,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         Tests the source file using the comment generator test suite.
         It runs the comment generator test suite on the source file and saves the result to an Excel file.
         """
+        if not self.__test_paths():
+            return
+        
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
-        
-        if not self.__test_paths(source_file, output_file_path):
-            return
-
         file_name = source_file.split("/")[-1].split(".")[0]
         output_file_path = f"{output_file_path}/CGen_Test_{file_name}.xlsx"
         
@@ -242,20 +257,23 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_count.configure(text = "Done!")
         self.lbl_status_text.configure(text = "Validation completed. Check console/terminal for details.")
 
-    # TODO: Refactor this function not to use arguments but to use the values from the entry fields instead.
-    def __test_paths(self, source_path, out_path):
+    def __test_paths(self):
         """
         Tests if the source and output paths are valid.
 
         Returns:
             bool: True if the paths are valid, False otherwise.
         """
-        if not os.path.isfile(source_path):
+        if not os.path.isfile(self.txt_source_path.get()):
             tk.messagebox.showerror("Error", "Please select a valid source file.")
             return False
         
-        if not os.path.isdir(out_path):
+        if not os.path.isdir(self.txt_output_path.get()):
             tk.messagebox.showerror("Error", "Please select a valid output folder.")
+            return False
+        
+        if not os.path.isfile(self.txt_signature_path.get()):
+            tk.messagebox.showerror("Error", "Please select a valid signature file.")
             return False
         
         return True
