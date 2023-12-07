@@ -17,6 +17,7 @@ import getopt
 import sys
 
 import console.helper as con
+import processor.grader_report as grader_report
 import processor.semester_report as processor
 import processor.helper.language_tool_master as ltm
 
@@ -102,7 +103,8 @@ def run():
     print(f"\n[  ] Operation started!")
     start_time = time.time()
 
-    proc = processor.Generator(source_file, output_file_path)
+    gr = grader_report.GraderReport(source_file)
+    proc = processor.Generator(output_file_path, gr)
     if mode == 1:
         proc.generate_all(autocorrect = autocorrect)
     elif mode == 2:
@@ -154,7 +156,8 @@ def main(argv):
         print("report_generator.py -s <source_file_path> -o <output_file_path>")
         sys.exit(2)
 
-    proc = processor.Generator(source_file_path, output_file_path)
+    gr = grader_report.GraderReport(source_file_path)
+    proc = processor.Generator(output_file_path, gr)
     if generate_all:
         proc.generate_all(autocorrect = autocorrect, force = force)
     else:
