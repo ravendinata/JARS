@@ -1,8 +1,10 @@
 import os
+from datetime import date
 
 import customtkinter as ctk
 import tkinter as tk
 import tktooltip as tktip
+import tkcalendar as tkcal
 
 import processor.semester_report as processor
 import processor.grader_report as grader_report
@@ -117,10 +119,24 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.autocorrect_var = tk.IntVar()
         self.switch_autocorrect = ctk.CTkSwitch(self, text = "Autocorrect", variable = self.autocorrect_var, onvalue = 1, offvalue = 0)
 
+        # Insert date switch button
+        self.inject_date = tk.IntVar()
+        self.switch_date = ctk.CTkSwitch(self, text = "Insert Date", command = self.__toggle_date_entry, variable = self.inject_date, onvalue = 1, offvalue = 0)
+
         # Force generation switch button
         self.force_var = tk.IntVar()
         self.switch_force = ctk.CTkSwitch(self, text = "Force Generate", variable = self.force_var, onvalue = 1, offvalue = 0)
 
+        # Report date
+        self.lbl_date = ctk.CTkLabel(self, text = "Report Date:")
+        today = date.today()
+        self.date_report = tkcal.DateEntry(self, width = 25, 
+                                           background = "black", foreground = "white", 
+                                           year = today.year, month = today.month, day = today.day, 
+                                           font = ("Arial", 20), 
+                                           date_pattern = "dd/mm/yyyy",
+                                           state = tk.DISABLED)
+        
         # Generate button
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
         self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, command = self.__test_source)
@@ -182,18 +198,23 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_options.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
         self.switch_autocorrect.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
         
-        self.switch_force.grid(row = 7, column = 1, sticky = tk.W, padx = 5, pady = 2)
+        self.switch_date.grid(row = 7, column = 1, sticky = tk.EW, padx = 5, pady = 2)
+        
+        self.switch_force.grid(row = 8, column = 1, sticky = tk.W, padx = 5, pady = 2)
 
-        self.lbl_progress.grid(row = 8, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 8, column = 1, sticky = tk.W, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 8, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+        self.lbl_date.grid(row = 9, column = 0, sticky = tk.W, pady = 2)
+        self.date_report.grid(row = 9, column = 1, sticky = tk.W, padx = 5, pady = 2)
 
-        self.lbl_status.grid(row = 9, column = 0, sticky = tk.W, pady = 0)
-        self.lbl_status_text.grid(row = 9, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_progress.grid(row = 10, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 10, column = 1, sticky = tk.W, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 10, column = 2, sticky = tk.EW, padx = 2, pady = 0)
 
-        self.btn_test_source.grid(row = 10, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 10, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 10, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.lbl_status.grid(row = 11, column = 0, sticky = tk.W, pady = 0)
+        self.lbl_status_text.grid(row = 11, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+
+        self.btn_test_source.grid(row = 12, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 12, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 12, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
         
 
     # UI functions
@@ -224,6 +245,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_student_name.configure(state = tk.NORMAL)
         self.txt_student_name.focus_set()
 
+    def __toggle_date_entry(self):
+        """Enables or disables the date entry field when the insert date option is selected or not."""
+        if self.inject_date.get() == 1:
+            self.date_report.configure(state = tk.NORMAL)
+        else:
+            self.date_report.configure(state = tk.DISABLED)
+
     def __process(self):
         """
         Processes the report based on the selected options.
@@ -238,9 +266,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
         signature_file = self.txt_signature_path.get() if self.txt_signature_path.get() != "" else None
+        date = self.date_report.get_date() if self.inject_date.get() == 1 else None
 
         gr = grader_report.GraderReport(source_file)
-        proc = processor.Generator(output_file_path, gr, signature_file)
+        proc = processor.Generator(output_file_path, gr, date, signature_file)
 
         mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False
