@@ -127,6 +127,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.force_var = tk.IntVar()
         self.switch_force = ctk.CTkSwitch(self, text = "Force Generate", variable = self.force_var, onvalue = 1, offvalue = 0)
 
+        # Create PDF switch button
+        self.create_pdf = tk.IntVar()
+        self.switch_pdf = ctk.CTkSwitch(self, text = "Create PDF", variable = self.create_pdf, onvalue = 1, offvalue = 0)
+
         # Report date
         self.lbl_date = ctk.CTkLabel(self, text = "Report Date:")
         today = date.today()
@@ -202,19 +206,21 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         
         self.switch_force.grid(row = 8, column = 1, sticky = tk.W, padx = 5, pady = 2)
 
-        self.lbl_date.grid(row = 9, column = 0, sticky = tk.W, pady = 2)
-        self.date_report.grid(row = 9, column = 1, sticky = tk.W, padx = 5, pady = 2)
+        self.switch_pdf.grid(row = 9, column = 1, sticky = tk.W, padx = 5, pady = 2)
 
-        self.lbl_progress.grid(row = 10, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 10, column = 1, sticky = tk.W, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 10, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+        self.lbl_date.grid(row = 10, column = 0, sticky = tk.W, pady = 2)
+        self.date_report.grid(row = 10, column = 1, sticky = tk.W, padx = 5, pady = 2)
 
-        self.lbl_status.grid(row = 11, column = 0, sticky = tk.W, pady = 0)
-        self.lbl_status_text.grid(row = 11, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_progress.grid(row = 11, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 11, column = 1, sticky = tk.W, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 11, column = 2, sticky = tk.EW, padx = 2, pady = 0)
 
-        self.btn_test_source.grid(row = 12, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 12, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 12, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.lbl_status.grid(row = 12, column = 0, sticky = tk.W, pady = 0)
+        self.lbl_status_text.grid(row = 12, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+
+        self.btn_test_source.grid(row = 13, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 13, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 13, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
         
 
     # UI functions
@@ -274,18 +280,20 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False
         force = True if self.force_var.get() == 1 else False
+        pdf = True if self.create_pdf.get() == 1 else False
         
         if mode == "all":
-            proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force)
+            proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
         elif mode == "student":
             student_name = self.txt_student_name.get()
             self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
-            proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force)
+            proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
             self.__on_progress_update(1, 1, f"Done!")
             output_file_path = f"{output_file_path}/{student_name}.docx"
 
         self.lbl_count.configure(text = "Done!")
         self.lbl_status_text.configure(text = "Report generation completed successfully.")
+
         OutputDialog(master = self.master, title = "Report Generation Complete", file_path = output_file_path, content = "Report generation completed successfully.")
 
     def __test_source(self):

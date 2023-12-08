@@ -115,8 +115,8 @@ def run():
 
     ltm.close_tool()
 
-short_args = "hs:o:af"
-long_args = ["help", "source=", "output=", "autocorrect", "all", "student=", "force"]
+short_args = "hs:o:afp"
+long_args = ["help", "source=", "output=", "autocorrect", "all", "student=", "force", "pdf"]
 
 def main(argv):
     source_file_path = ""
@@ -124,6 +124,7 @@ def main(argv):
     autocorrect = False
     generate_all = False
     force = False
+    pdf = False
 
     print(f"Argument List: {argv}")
 
@@ -150,6 +151,8 @@ def main(argv):
             student_name = arg
         elif opt in ("-f", "--force"):
             force = True
+        elif opt in ("-p", "--pdf"):
+            pdf = True
 
     if source_file_path == "" or output_file_path == "":
         print("Error! No output and/or source file path specified.")
@@ -159,8 +162,8 @@ def main(argv):
     gr = grader_report.GraderReport(source_file_path)
     proc = processor.Generator(output_file_path, gr)
     if generate_all:
-        proc.generate_all(autocorrect = autocorrect, force = force)
+        proc.generate_all(autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
     else:
-        proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force)
+        proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
 
     ltm.close_tool()
