@@ -20,6 +20,8 @@ customtkinter==5.2.1
     # via -r requirements.in
 darkdetect==0.8.0
     # via customtkinter
+docx2pdf==0.1.8
+    # via -r requirements.in
 et-xmlfile==1.1.0
     # via openpyxl
 idna==2.10
@@ -44,6 +46,8 @@ python-docx==1.1.0
     # via -r requirements.in
 pytz==2023.3.post1
     # via pandas
+pywin32==306
+    # via docx2pdf
 regex==2023.10.3
     # via nltk
 requests==2.24.0
@@ -60,6 +64,7 @@ tkinter-tooltip==2.1.0
     # via -r requirements.in
 tqdm==4.66.1
     # via
+    #   docx2pdf
     #   language-tool-python
     #   nltk
 typing-extensions==4.8.0
