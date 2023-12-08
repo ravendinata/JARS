@@ -1,3 +1,5 @@
+import datetime
+
 from docx import Document
 from docx.shared import Cm, Pt
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
@@ -14,7 +16,7 @@ class Generator:
     This class is responsible for generating a standardized DOCX file from a templated XLSX grader report.
     """
 
-    def __init__(self, output_path, grader_report: GraderReport, signature_path = None):
+    def __init__(self, output_path, grader_report: GraderReport, date: datetime = None, signature_path = None):
         """
         Initialize the generator instance.
 
@@ -29,6 +31,7 @@ class Generator:
         print("[  ] Initializing generator...")
         self.output_path = output_path
         self.grader_report = grader_report
+        self.date = date
         self.signature_path = signature_path
         print("[OK] Report generator initialized!")
 
@@ -281,10 +284,15 @@ class Generator:
 
         ak_table.cell(0, 0).paragraphs[0].add_run("Teacher:").bold = True
         ak_table.cell(0, 0).add_paragraph(self.grader_report.get_course_info("Teacher"))
+
         ak_table.cell(0, 1).text = "Signature"
         if self.signature_path is not None:
             ak_table.cell(0, 2).paragraphs[0].add_run().add_picture(self.signature_path, height = Cm(1.5))
+        
         ak_table.cell(0, 3).text = "Date"
+        if self.date is not None:
+            ak_table.cell(0, 3).add_paragraph(self.date.strftime("%d %B %Y"))
+        
         ak_table.cell(0, 0).width = Cm(4)
         ak_table.cell(0, 1).width = Cm(2)
         ak_table.cell(0, 2).width = Cm(7)
