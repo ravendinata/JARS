@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+babel==2.13.1
+    # via tkcalendar
 certifi==2022.12.7
     # via requests
 chardet==3.0.4
@@ -51,6 +53,8 @@ six==1.16.0
 termcolor==2.4.0
     # via -r requirements.in
 tk==0.1.0
+    # via -r requirements.in
+tkcalendar==1.6.1
     # via -r requirements.in
 tkinter-tooltip==2.1.0
     # via -r requirements.in
