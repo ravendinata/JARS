@@ -4,6 +4,8 @@ from docx import Document
 from docx.shared import Cm, Pt
 from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
 
+import docx2pdf
+
 import config
 import processor.helper.document as document_helper
 import processor.helper.comment_generator as cgen
@@ -35,7 +37,7 @@ class Generator:
         self.signature_path = signature_path
         print("[OK] Report generator initialized!")
 
-    def generate_all(self, autocorrect = True, callback = None, force = False):
+    def generate_all(self, autocorrect = True, callback = None, force = False, convert_to_pdf = False):
         """
         Generates reports for all students in the grader report.
         This function basically calls generate_for_student() for each student in the grader report.
@@ -60,7 +62,12 @@ class Generator:
         
         print(f"Progress: 100%")
 
-    def generate_for_student(self, student_name, autocorrect = True, force = False):
+        if convert_to_pdf:
+            print(f"[  ] Creating PDF copies for all reports…")
+            docx2pdf.convert(self.output_path)
+            print(f"[OK] PDF copies for all reports created!")
+
+    def generate_for_student(self, student_name, autocorrect = True, force = False, convert_to_pdf = False):
         """
         Generates a report for a specific student.
         
@@ -383,3 +390,8 @@ class Generator:
         # Document processing ends
         # Save document. The output file will be named as the student's name.
         document.save(f"{self.output_path}/{student_name}.docx")
+
+        if convert_to_pdf:
+            print(f"[  ] Creating a PDF copy for {student_name}'s report…")
+            docx2pdf.convert(f"{self.output_path}/{student_name}.docx")
+            print(f"[OK] PDF copy for {student_name}'s report created!")
