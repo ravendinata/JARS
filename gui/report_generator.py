@@ -320,8 +320,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
     def __validate(self):
         source_file = self.txt_source_path.get()
-        output_file_path = self.txt_output_path.get() + "/validation.txt"
-        proc = processor.Generator(source_file, output_file_path)
+        
+        if not os.path.isfile(source_file):
+            tk.messagebox.showerror("Error", "Please select a valid source file.")
+            return
+        
+        grader_report.GraderReport(source_file)
         self.lbl_count.configure(text = "Done!")
         self.lbl_status_text.configure(text = "Validation completed. Check console/terminal for details.")
 
