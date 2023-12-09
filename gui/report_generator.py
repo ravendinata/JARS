@@ -325,9 +325,15 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             tk.messagebox.showerror("Error", "Please select a valid source file.")
             return
         
-        grader_report.GraderReport(source_file)
+        gr = grader_report.GraderReport(source_file, skip_validation = True)
+        valid = gr.validate()
+        if not valid:
+            tk.messagebox.showerror("Invalid grader report", "Grader report is invalid. Check console/terminal for details.")
+        else:
+            tk.messagebox.showinfo("Valid grader report", "Grader report is valid. You're good to go!")
+            
         self.lbl_count.configure(text = "Done!")
-        self.lbl_status_text.configure(text = "Validation completed. Check console/terminal for details.")
+        self.lbl_status_text.configure(text = f"{'Validation completed' if valid else 'Errors found'}. Check console/terminal for details.")
 
     def __test_paths(self):
         """
