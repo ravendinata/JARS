@@ -2,7 +2,7 @@ import pandas as pd
 from termcolor import colored
 
 class GraderReport:
-    def __init__(self, grader_report_path):
+    def __init__(self, grader_report_path, skip_validation = False):
         """
         Initialize the grader report instance.
 
@@ -26,11 +26,13 @@ class GraderReport:
         self.data_comment_mapping = pd.read_excel(self.grader_report_path, sheet_name = "Comment Mapping", index_col = 0, header = 0)
         
         self.__prepare_data()
-        self.validate()
-        if not self.data_valid:
-            print(colored("\n"
-                f"Attention: There are missing values in the grader report! Please check the grader report again and make sure all data is filled.",
-                "white", "on_red"), "\n")
+
+        if not skip_validation:
+            self.validate()
+            if not self.data_valid:
+                print(colored("\n"
+                    f"Attention: There are missing values in the grader report! Please check the grader report again and make sure all data is filled.",
+                    "white", "on_red"), "\n")
 
         print("[OK] Report generator initialized!")
 
