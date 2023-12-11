@@ -32,6 +32,7 @@ class OutputDialog(ctk.CTkToplevel):
         self.title(title)
         self.resizable(False, False)
         self.attributes("-topmost", True)
+        master.eval(f"tk::PlaceWindow {self} center")
 
         ctk.CTkLabel(self, text = content).grid(row = 0, column = 0, columnspan = 3, padx = 10, pady = 10)
 

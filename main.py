@@ -11,6 +11,7 @@ __author__ = "Raven Limadinata"
 
 import customtkinter as ctk
 import tkinter as tk
+from ctypes import windll
 
 from gui.report_formatter import ReportFormatterWindow
 from gui.report_generator import ReportGeneratorWindow
@@ -59,5 +60,6 @@ class Window(ctk.CTk):
         self.processor_frame = LauncherFrame(master = self)
         self.processor_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = 10)
 
+windll.shcore.SetProcessDpiAwareness(1)
 window = Window()
 window.mainloop()

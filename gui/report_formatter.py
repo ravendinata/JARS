@@ -10,14 +10,16 @@ from gui.dialog import OutputDialog
 class ReportFormatterWindow(ctk.CTkToplevel):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+        self.master = master
 
         # Window Setup
         self.title("Report Formatter")
         self.resizable(False, False)
 
         # Frame Setup
-        self.processor_frame = ReportFormatterFrame(master = self)
+        self.processor_frame = ReportFormatterFrame(master = self, root = master)
         self.processor_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = 10)
+        master.eval(f"tk::PlaceWindow {self} center")
 
         # Hide master window
         self.master.withdraw()
@@ -62,8 +64,9 @@ class ReportFormatterFrame(ctk.CTkFrame):
         __process(self): Processes the report based on the selected options.
     """
 
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, root, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
+        self.root = root
 
         presets = self.__get_presets()
 
@@ -131,7 +134,7 @@ class ReportFormatterFrame(ctk.CTkFrame):
         
         try:
             proc.generate_xlsx(self.adjust_cell_widths_var.get())
-            OutputDialog(master = self.master, title = "Processing completed!", file_path = output_file_path, content = f"Done. Output file saved at {output_file_path}")
+            OutputDialog(master = self.root, title = "Processing completed!", file_path = output_file_path, content = f"Done. Output file saved at {output_file_path}")
         except Exception as e:
             print(e)
             tk.messagebox.showerror("Error Encountered!", f"Please check that you have selected the correct report type!\nError: {str(e)}")

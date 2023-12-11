@@ -22,8 +22,9 @@ class ReportGeneratorWindow(ctk.CTkToplevel):
         self.resizable(False, False)
 
         # Frame Setup
-        self.processor_frame = ReportGeneratorFrame(master = self)
+        self.processor_frame = ReportGeneratorFrame(master = self, root = master)
         self.processor_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = 10)
+        master.eval(f"tk::PlaceWindow {self} center")
 
         # Hide master window
         self.master.withdraw()
@@ -80,8 +81,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         __on_progress_update(self, current, total, status_message): Updates the progress bar.
     """
 
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, root, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
+        self.root = root
 
         """
         WIDGETS SETUP
@@ -137,7 +139,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.date_report = tkcal.DateEntry(self, width = 25, 
                                            background = "black", foreground = "white", 
                                            year = today.year, month = today.month, day = today.day, 
-                                           font = ("Arial", 20), 
+                                           font = ("Arial", 12), 
                                            date_pattern = "dd/mm/yyyy",
                                            state = tk.DISABLED)
         
@@ -159,7 +161,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_status_text = ctk.CTkLabel(self, width = 300, justify = "left", anchor = tk.W, text = "Idle")
 
         # Tooltips
-        tooltip_font = ("Arial", 16)
+        tooltip_font = ("Arial", 10)
         tooltips = {
             self.btn_browse_source: "Browse for the grader report file.",
             self.btn_browse_output: "Browse for the output folder.",
@@ -330,7 +332,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_count.configure(text = "Done!")
         self.lbl_status_text.configure(text = "Report generation completed successfully.")
 
-        OutputDialog(master = self.master, title = "Report Generation Complete", file_path = output_file_path, content = "Report generation completed successfully.")
+        OutputDialog(master = self.root, title = "Report Generation Complete", file_path = output_file_path, content = "Report generation completed successfully.")
 
     def __test_source(self):
         """
@@ -350,7 +352,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         
         cgen_test.run(source_file_path = source_file, output_file_path = output_file_path, ltm = ltm, CommentGenerator = CommentGenerator)
         
-        OutputDialog(master = self.master, title = "Comment Generator Test Complete", file_path = output_file_path, content = "Comment generator test completed successfully.")
+        OutputDialog(master = self.root, title = "Comment Generator Test Complete", file_path = output_file_path, content = "Comment generator test completed successfully.")
         self.lbl_status_text.configure(text = "Comment generator test completed successfully.")
         tk.Misc.update_idletasks(self)
 
