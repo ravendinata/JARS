@@ -6,6 +6,8 @@ import tkinter as tk
 import tktooltip as tktip
 import tkcalendar as tkcal
 
+from win32com.client.dynamic import Dispatch
+
 import processor.semester_report as processor
 import processor.grader_report as grader_report
 import processor.helper.comment_generator_test as cgen_test
@@ -86,6 +88,21 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.root = root
 
         """
+        CHECKS
+        """
+        print("> Running system checks…")
+        try:
+            word = Dispatch("Word.Application")
+            office_version = word.Version
+            word.Quit()
+            print(f"  Microsoft Office {office_version} detected.")
+        except:
+            office_version = None
+            print("  Microsoft Office not detected.")
+
+        print("> System checks completed.")
+
+        """
         WIDGETS SETUP
         """
         # Grader report file path
@@ -132,6 +149,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         # Create PDF switch button
         self.create_pdf = tk.IntVar()
         self.switch_pdf = ctk.CTkSwitch(self, text = "Create PDF", variable = self.create_pdf, onvalue = 1, offvalue = 0)
+        if not office_version:
+            self.switch_pdf.configure(state = tk.DISABLED)
+            self.switch_pdf.deselect()
+            tktip.ToolTip(self.switch_pdf, "PDF creation is disabled because Microsoft Office is not installed.", font = ("Arial", 10))
+        else:
+            tktip.ToolTip(self.switch_pdf, "Enable this to convert the generated reports to PDF.", font = ("Arial", 10))
 
         # Report date
         self.lbl_date = ctk.CTkLabel(self, text = "Report Date:")
@@ -170,7 +193,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.rdo_generate_student: "Generate report for a single student. Fill in the student name field to specify the student.",
             self.switch_force: "Enable this to force generate the reports and disregard grader report errors.",
             self.switch_date: "Enable this to insert the date in the report. Please fill in the date field to specify the date to insert.",
-            self.switch_pdf: "Enable this to convert the generated reports to PDF. Note: This requires Microsoft Word to be installed.",
             self.txt_student_name: "Enter the name of the student to generate the report for. This is only enabled when the generate for student option is selected.",
             self.date_report: "Select the date to insert in the report. This is only enabled when the insert date option is selected.",
             self.btn_process: "Start generating the reports.",
