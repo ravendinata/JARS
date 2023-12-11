@@ -169,6 +169,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.rdo_generate_all: "Generate reports for all students.",
             self.rdo_generate_student: "Generate report for a single student. Fill in the student name field to specify the student.",
             self.switch_force: "Enable this to force generate the reports and disregard grader report errors.",
+            self.switch_date: "Enable this to insert the date in the report. Please fill in the date field to specify the date to insert.",
+            self.switch_pdf: "Enable this to convert the generated reports to PDF. Note: This requires Microsoft Word to be installed.",
+            self.txt_student_name: "Enter the name of the student to generate the report for. This is only enabled when the generate for student option is selected.",
+            self.date_report: "Select the date to insert in the report. This is only enabled when the insert date option is selected.",
             self.btn_process: "Start generating the reports.",
             self.btn_test_source: "Create a validation list of all possible comment combinations and dumps it into an Excel file",
             self.btn_validate: "Validate the grader report for errors."
