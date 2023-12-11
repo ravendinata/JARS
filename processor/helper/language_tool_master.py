@@ -1,15 +1,31 @@
 import language_tool_python as ltp
 import os
+from glob import glob
 
 _tool = None
 
 def check_java():
     import shutil
     if shutil.which("java"):
+        print("[OK] Java found.")
         return True
     else:
         print("It seems like you are trying to a feature from Language Tools. Languages Tools need Java but Java is not installed. Please install Java to use this feature.")
-        return False    
+        return False   
+
+def check_package(suppress = False):
+    """Checks if the LanguageTool package is installed."""
+    try:
+        if len(glob(f"{os.environ.get('LTP_PATH')}/LanguageTool*/languagetool-server.jar")) == 1:
+            return True
+        else:
+            if not suppress:
+                print("Appropriate Language Tool package not found. Please install the package to use this feature.")
+            return False
+    except:
+        if not suppress:
+            print("Error encountered while checking for Language Tool package.")
+        return False
 
 def get_tool():
     """Returns a LanguageTool object."""

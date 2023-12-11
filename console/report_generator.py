@@ -161,6 +161,23 @@ def main(argv):
 
     gr = grader_report.GraderReport(source_file_path)
     proc = processor.Generator(output_file_path, gr)
+
+    if autocorrect:
+        java_exists = ltm.check_java()
+        package_exists = ltm.check_package()
+
+        if not java_exists:
+            print("Error! Java is not installed. Please install Java to use this feature. Alternatively, you can disable autocorrect by removing the -a or --autocorrect flag.")
+            print("Operation aborted. Closing program…")
+            sys.exit(2)
+
+        if not package_exists:
+            print("Error! LanguageTool package not found. Please install the package to use this feature.")
+            prompt_download = input("Do you want to download the package now (~200MB)? (y/n): ")
+            if not prompt_download.lower() == "y":
+                print("Operation aborted. Closing program…")
+                sys.exit(2)
+
     if generate_all:
         proc.generate_all(autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
     else:

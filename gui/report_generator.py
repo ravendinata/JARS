@@ -166,12 +166,14 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_browse_signature: "Browse for your digitized signature image file.",
             self.rdo_generate_all: "Generate reports for all students.",
             self.rdo_generate_student: "Generate report for a single student. Fill in the student name field to specify the student.",
-            self.switch_autocorrect: "Enable this to automatically correct the comment grammar and spelling errors.",
             self.switch_force: "Enable this to force generate the reports and disregard grader report errors.",
             self.btn_process: "Start generating the reports.",
             self.btn_test_source: "Create a validation list of all possible comment combinations and dumps it into an Excel file",
             self.btn_validate: "Validate the grader report for errors."
         }
+
+        self.__autocorrect_disabled = False
+        self.ttip_switch = tktip.ToolTip(self.switch_autocorrect, msg = self.__autocorrect_tooltip_message, font = tooltip_font)
 
         for widget, message in tooltips.items():
             tktip.ToolTip(widget, message, font = tooltip_font)
@@ -258,6 +260,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         else:
             self.date_report.configure(state = tk.DISABLED)
 
+    def __autocorrect_tooltip_message(self):
+        """Returns the tooltip message for the autocorrect switch button."""
+        if self.__autocorrect_disabled:
+            return "Autocorrect has been disabled for this session because Java is not installed."
+        else:
+            return "Enable this to autocorrect the comments using Language Tool. Note: This requires Java to be installed."
+
     def __process(self):
         """
         Processes the report based on the selected options.
@@ -281,6 +290,33 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         autocorrect = True if self.autocorrect_var.get() == 1 else False
         force = True if self.force_var.get() == 1 else False
         pdf = True if self.create_pdf.get() == 1 else False
+
+        if autocorrect:
+            java_exists = ltm.check_java()
+            ltm_exists = ltm.check_package()
+            install_java = False
+            download_lt = False
+
+        if not java_exists:
+            install_java = tk.messagebox.askyesno("Java Not Found", 
+                            "To use the autocorrect feature, you need to install Java. Do you want to download and install it now?")
+            if install_java:
+                tk.messagebox.showinfo("Java Download", "JARS will be closed and you will be redirected to the Java download page on your browser. Please install Java, restart the software, and try again.")
+                java_url = "https://www.java.com/en/download/"
+                import webbrowser, sys
+                webbrowser.open_new(java_url)
+                sys.exit()
+
+        if not ltm_exists and (install_java or java_exists):
+            download_lt = tk.messagebox.askokcancel("Language Tool Package Not Found", 
+                            "To use the autocorrect feature, you need to install the Language Tool package. Do you want to download and install it now (~200 MB)? Note: This Requires Java to be installed")
+            
+        if not download_lt or not install_java:
+            tk.messagebox.showinfo("Autocorrect Disabled", "For this session, autocorrect has been disabled because Java is not installed and/or Language Tool package is not found. You can still use the software without the autocorrect feature.")
+            self.switch_autocorrect.deselect()
+            self.switch_autocorrect.configure(state = tk.DISABLED)
+            self.__autocorrect_disabled = True
+            return
         
         if mode == "all":
             proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
