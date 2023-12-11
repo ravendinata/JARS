@@ -297,26 +297,26 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             install_java = False
             download_lt = False
 
-        if not java_exists:
-            install_java = tk.messagebox.askyesno("Java Not Found", 
-                            "To use the autocorrect feature, you need to install Java. Do you want to download and install it now?")
-            if install_java:
-                tk.messagebox.showinfo("Java Download", "JARS will be closed and you will be redirected to the Java download page on your browser. Please install Java, restart the software, and try again.")
-                java_url = "https://www.java.com/en/download/"
-                import webbrowser, sys
-                webbrowser.open_new(java_url)
-                sys.exit()
+            if not java_exists:
+                install_java = tk.messagebox.askyesno("Java Not Found", 
+                                "To use the autocorrect feature, you need to install Java. Do you want to download and install it now?")
+                if install_java:
+                    tk.messagebox.showinfo("Java Download", "JARS will be closed and you will be redirected to the Java download page on your browser. Please install Java, restart the software, and try again.")
+                    java_url = "https://www.java.com/en/download/"
+                    import webbrowser, sys
+                    webbrowser.open_new(java_url)
+                    sys.exit()
 
-        if not ltm_exists and (install_java or java_exists):
-            download_lt = tk.messagebox.askokcancel("Language Tool Package Not Found", 
-                            "To use the autocorrect feature, you need to install the Language Tool package. Do you want to download and install it now (~200 MB)? Note: This Requires Java to be installed")
-            
-        if not download_lt or not install_java:
-            tk.messagebox.showinfo("Autocorrect Disabled", "For this session, autocorrect has been disabled because Java is not installed and/or Language Tool package is not found. You can still use the software without the autocorrect feature.")
-            self.switch_autocorrect.deselect()
-            self.switch_autocorrect.configure(state = tk.DISABLED)
-            self.__autocorrect_disabled = True
-            return
+            if not ltm_exists and (install_java or java_exists):
+                download_lt = tk.messagebox.askokcancel("Language Tool Package Not Found", 
+                                "To use the autocorrect feature, you need to install the Language Tool package. Do you want to download and install it now (~200 MB)? Note: This Requires Java to be installed")
+                
+            if (not download_lt and not ltm_exists) or (not install_java and not java_exists):
+                tk.messagebox.showinfo("Autocorrect Disabled", "For this session, autocorrect has been disabled because Java is not installed and/or Language Tool package is not found. You can still use the software without the autocorrect feature.")
+                self.switch_autocorrect.deselect()
+                self.switch_autocorrect.configure(state = tk.DISABLED)
+                self.__autocorrect_disabled = True
+                return
         
         if mode == "all":
             proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
