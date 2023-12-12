@@ -15,6 +15,7 @@ from ctypes import windll
 
 from gui.report_formatter import ReportFormatterWindow
 from gui.report_generator import ReportGeneratorWindow
+from gui.inmanage_verifier import InManageVerifierWindow
 
 class LauncherFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -27,27 +28,32 @@ class LauncherFrame(ctk.CTkFrame):
         self.lbl_prompt = ctk.CTkLabel(self, text = "Select a tool to open:")
         
         # Buttons
-        self.btn_report_formatter = ctk.CTkButton(self, text = "Report Formatter", command = self.__open_report_formatter)
-        self.btn_report_generator = ctk.CTkButton(self, text = "Report Generator", command = self.__open_report_generator)
+        self.btn_report_formatter = ctk.CTkButton(self, text = "Report Formatter", height = 30, command = self.__open_report_formatter)
+        self.btn_report_generator = ctk.CTkButton(self, text = "Report Generator", height = 30, command = self.__open_report_generator)
+        self.btn_inmanage_verifier = ctk.CTkButton(self, text = "InManage Verifier", height = 30, command = self.__open_inmanage_verifier, fg_color = "purple")
 
         # Exit button
-        self.btn_exit = ctk.CTkButton(self, text = "Exit", command = self.master.destroy)
+        self.btn_exit = ctk.CTkButton(self, text = "Exit", command = self.master.destroy, fg_color = "grey")
 
         # Layout
         self.lbl_title.grid(row = 0, column = 0, columnspan = 2, padx = 10, pady = (5, 0))
         self.lbl_subtitle.grid(row = 1, column = 0, columnspan = 2, padx = 10, pady = (0, 10))
         self.lbl_prompt.grid(row = 2, column = 0, columnspan = 2, padx = 10, pady = 5)
         
-        self.btn_report_formatter.grid(row = 3, column = 0, padx = 2, pady = 5)
-        self.btn_report_generator.grid(row = 3, column = 1, padx = 2, pady = 5)
+        self.btn_report_formatter.grid(row = 3, column = 0, padx = 2, pady = (5, 2))
+        self.btn_report_generator.grid(row = 3, column = 1, padx = 2, pady = (5, 2))
+        self.btn_inmanage_verifier.grid(row = 4, column = 0, columnspan = 2, padx = 2, pady = (2, 5))
         
-        self.btn_exit.grid(row = 4, column = 0, columnspan = 2, padx = 2, pady = 5)
+        self.btn_exit.grid(row = 5, column = 0, columnspan = 2, padx = 2, pady = (10, 5))
 
     def __open_report_formatter(self):
         ReportFormatterWindow(master = self.master)
 
     def __open_report_generator(self):
         ReportGeneratorWindow(master = self.master)
+
+    def __open_inmanage_verifier(self):
+        InManageVerifierWindow(master = self.master)
 
 class Window(ctk.CTk): 
     def __init__(self):
