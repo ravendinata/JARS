@@ -149,7 +149,7 @@ class GraderReport:
         return data
     
     # Public methods
-    def validate(self):
+    def validate(self, callback = None):
         """
         Validate the data in the grader report. This method will print warnings if there are missing values in the grader report.
         
@@ -165,24 +165,33 @@ class GraderReport:
 
         # Check if all course information is filled
         for item in self.course_info.index:
-            if str(self.get_course_info(item)) is "": # Check if the value is empty
+            if str(self.get_course_info(item)) == "": # Check if the value is empty
                 count += 1
                 valid = False
-                print(colored(f"Warning [{count}]: Course information '{item}' is not filled! Please check the grader report.", "red"))
+                output_text = f"Warning [{count}]: Course information '{item}' is not filled! Please check the grader report."
+                if callback is not None:
+                    callback(output_text)
+                print(colored(output_text, "red"))
 
         # Check if all students have a final grade
         for student in self.students.index:
             if self.get_final_grade(student, "Final Score", raw = True) == 0:
                 count += 1
                 valid = False
-                print(colored(f"Warning [{count}]: {student} has no final score! Please check the grader report.", "red"))
+                output_text = f"Warning [{count}]: {student} has no final score! Please check the grader report."
+                if callback is not None:
+                    callback(output_text)
+                print(colored(output_text, "red"))
 
         # Check if all students have a letter grade
         for student in self.students.index:
             if self.get_final_grade(student, "Letter Grade", raw = True) == 0:
                 count += 1
                 valid = False
-                print(colored(f"Warning [{count}]: {student} has no letter grade! Please check the grader report.", "red"))
+                output_text = f"Warning [{count}]: {student} has no letter grade! Please check the grader report."
+                if callback is not None:
+                    callback(output_text)
+                print(colored(output_text, "red"))
 
         # Check if all students have a grade for each SNA
         for student in self.students.index:
@@ -190,7 +199,10 @@ class GraderReport:
                 if self.get_grade_sna(student, assessment, raw = True) == "X":
                     count += 1
                     valid = False
-                    print(colored(f"Warning [{count}]: {student} has no grade for goal '{assessment}'! Please check the grader report.", "red"))
+                    output_text = f"Warning [{count}]: {student} has no grade for goal '{assessment}'! Please check the grader report."
+                    if callback is not None:
+                        callback(output_text)
+                    print(colored(output_text, "red"))
 
         # Check if all students have a grade for each PD item
         for student in self.students.index:
@@ -198,7 +210,10 @@ class GraderReport:
                 if self.get_grade_pd(student, item, raw = True) == 0:
                     count += 1
                     valid = False
-                    print(colored(f"Warning [{count}]: {student} has no grade for personal development item '{item}'! Please check the grader report.", "red"))
+                    output_text = f"Warning [{count}]: {student} has no grade for personal development item '{item}'! Please check the grader report."
+                    if callback is not None:
+                        callback(output_text)
+                    print(colored(output_text, "red"))
 
         self.data_valid = valid
         print(colored(f"Validation Pass: {valid}", "red" if not valid else "green"), "\n", colored(f"Warnings: {count}\n", "yellow") if not valid else "")
