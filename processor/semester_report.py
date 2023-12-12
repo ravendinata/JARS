@@ -59,17 +59,20 @@ class Generator:
             print(status_message)
             self.generate_for_student(student_name = student, autocorrect = autocorrect, force = force)
         
-        if callback is not None:
-            callback(job_count, job_count, "Done!")
-        
         print(f"Progress: 100%")
 
         if convert_to_pdf:
-            print(f"[  ] Creating PDF copies for all reports…")
             docx2pdf.convert(self.output_path)
             for student in self.grader_report.students.index:
+                if callback is not None:
+                    callback(i, job_count, f"Creating PDF copy for {student}'s report…")
+                print(f"[  ] Creating PDF copy for {student}'s report…")
+
                 metadata.pdf_inject(f"{self.output_path}/{student}.pdf", student, self.grader_report)
                 integrity.sign_pdf(f"{self.output_path}/{student}.pdf")
+            
+            if callback is not None:
+                callback(i, job_count, f"PDF copies for all reports created!")
             print(f"[OK] PDF copies for all reports created!")
 
     def generate_for_student(self, student_name, autocorrect = True, force = False, convert_to_pdf = False):
