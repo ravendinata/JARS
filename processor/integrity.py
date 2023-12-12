@@ -120,9 +120,10 @@ def verify_pdf(file_path, verbose = False):
         metadata.pop("/Signed On")
         metadata.pop("/Signature")
     except:
+        output_text = "The file is not signed. It is likely that the file is not a JARS report or it may have been severely tampered with."
         print(colored("(!)", "red"),
-              colored("The file is not signed. It is likely that the file is not a JARS report or it may have been severely tampered with.", "white", "on_red"))
-        return False
+              colored(output_text, "white", "on_red"))
+        return False, output_text
 
     writer.add_metadata(metadata)
 
@@ -135,13 +136,14 @@ def verify_pdf(file_path, verbose = False):
         print(f"Stored hash: {stored_hash[:8]} vs Computed hash: {computed_hash[:8]}")
     
     if stored_hash != computed_hash:
+        output_text = "The file is signed but the hash does not match. It is very likely that it has been tampered with."
         print(colored("(!)", "red"),
-                colored("The file is signed but the hash does not match. It is very likely that it has been tampered with.", "white", "on_red"))
+              colored(output_text, "white", "on_red"))
         os.remove(f"{temp_file}.temp.pdf")
-        return False
+        return False, output_text
     else:
         print(colored("v^", "green"), 
-              colored("The file is signed and the hash matches. This file is integrous and highly unlikely to have been tampered with.", "white", "on_green"))
+              colored("The file is signed and the hash matches. This file is integrous and is highly unlikely to have been tampered with.", "white", "on_green"))
     
     # 2. Check if the serial number matches
     print(colored("v^ Step 2 > Checking Serial number", "magenta"))
@@ -155,9 +157,10 @@ def verify_pdf(file_path, verbose = False):
     try:
         sn = tf_metadata.pop("/Serial Number")
     except:
+        output_text = "The file is signed but the serial number is missing. It is very likely that it has been tampered with."
         print(colored("(!)", "red"),
-              colored("The file is signed but the serial number is missing. It is very likely that it has been tampered with.", "white", "on_red"))
-        return False
+              colored(output_text, "white", "on_red"))
+        return False, output_text
 
     tf_writer.add_metadata(tf_metadata)
     tf_writer.write(f"{temp_file}.temp.pdf")
@@ -174,10 +177,12 @@ def verify_pdf(file_path, verbose = False):
         print(f"Stored serial number: {sn_hash_start}...{sn_hash_end} vs Computed serial number: {sn_computed_hash_start}...{sn_computed_hash_end}")
 
     if sn_hash_start != sn_computed_hash_start or sn_hash_end != sn_computed_hash_end:
+        output_text = "The file is signed but the serial number does not match. It is very likely that it has been tampered with."
         print(colored("(!)", "red"),
-              colored("The file is signed but the serial number does not match. It is very likely that it has been tampered with.", "white", "on_red"))
-        return False
+              colored(output_text, "white", "on_red"))
+        return False, output_text
     else:
+        output_text = "The file is signed, the hash matches, and the serial number matches. This file is integrous and is highly unlikely to have been tampered with."
         print(colored("v^", "green"), 
-              colored("The file is signed and the serial number matches. This file is integrous and highly unlikely to have been tampered with.", "white", "on_green"))
-        return True
+              colored(output_text, "white", "on_green"))
+        return True, output_text
