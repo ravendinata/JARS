@@ -6,8 +6,6 @@ import tkinter as tk
 import tktooltip as tktip
 import tkcalendar as tkcal
 
-from win32com.client.dynamic import Dispatch
-
 import processor.semester_report as processor
 import processor.grader_report as grader_report
 import processor.helper.comment_generator_test as cgen_test
@@ -16,7 +14,7 @@ from gui.dialog import OutputDialog
 from processor.helper.comment_generator import CommentGenerator
 
 class ReportGeneratorWindow(ctk.CTkToplevel):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master, office_version, **kwargs):
         super().__init__(master, **kwargs)
 
         # Window Setup
@@ -24,7 +22,7 @@ class ReportGeneratorWindow(ctk.CTkToplevel):
         self.resizable(False, False)
 
         # Frame Setup
-        self.processor_frame = ReportGeneratorFrame(master = self, root = master)
+        self.processor_frame = ReportGeneratorFrame(master = self, root = master, office_version = office_version)
         self.processor_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = 10)
         master.eval(f"tk::PlaceWindow {self} center")
 
@@ -83,24 +81,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         __on_progress_update(self, current, total, status_message): Updates the progress bar.
     """
 
-    def __init__(self, master, root, **kwargs):
+    def __init__(self, master, root, office_version, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
         self.root = root
-
-        """
-        CHECKS
-        """
-        print("> Running system checks…")
-        try:
-            word = Dispatch("Word.Application")
-            office_version = word.Version
-            word.Quit()
-            print(f"  Microsoft Office {office_version} detected.")
-        except:
-            office_version = None
-            print("  Microsoft Office not detected.")
-
-        print("> System checks completed.")
 
         """
         WIDGETS SETUP

@@ -12,10 +12,13 @@ __author__ = "Raven Limadinata"
 import customtkinter as ctk
 import tkinter as tk
 from ctypes import windll
+from win32com.client.dynamic import Dispatch
 
 from gui.report_formatter import ReportFormatterWindow
 from gui.report_generator import ReportGeneratorWindow
 from gui.inmanage_verifier import InManageVerifierWindow
+
+global office_version
 
 class LauncherFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -50,7 +53,7 @@ class LauncherFrame(ctk.CTkFrame):
         ReportFormatterWindow(master = self.master)
 
     def __open_report_generator(self):
-        ReportGeneratorWindow(master = self.master)
+        ReportGeneratorWindow(master = self.master, office_version = office_version)
 
     def __open_inmanage_verifier(self):
         InManageVerifierWindow(master = self.master)
@@ -65,6 +68,21 @@ class Window(ctk.CTk):
 
         self.processor_frame = LauncherFrame(master = self)
         self.processor_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = 10)
+
+"""
+CHECKS
+"""
+print("> Running system checks…")
+try:
+    word = Dispatch("Word.Application")
+    office_version = word.Version
+    word.Quit()
+    print(f"  Microsoft Office {office_version} detected.")
+except:
+    office_version = None
+    print("  Microsoft Office not detected.")
+
+print("> System checks completed.")
 
 windll.shcore.SetProcessDpiAwareness(1)
 window = Window()
