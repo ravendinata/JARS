@@ -179,7 +179,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         # Status section
         self.lbl_status = ctk.CTkLabel(self, text = "Status:")
-        self.lbl_status_text = ctk.CTkLabel(self, width = 300, justify = "left", anchor = tk.W, text = "Idle")
+        self.lbl_status_text = ctk.CTkTextbox(self, width = 300, height = 100, state = tk.DISABLED, wrap = "word")
 
         # Tooltips
         tooltip_font = ("Arial", 10)
@@ -243,7 +243,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.progress_bar.grid(row = 11, column = 1, sticky = tk.W, padx =  5, pady = 0)
         self.lbl_count.grid(row = 11, column = 2, sticky = tk.EW, padx = 2, pady = 0)
 
-        self.lbl_status.grid(row = 12, column = 0, sticky = tk.W, pady = 0)
+        self.lbl_status.grid(row = 12, column = 0, sticky = tk.NW, pady = 0)
         self.lbl_status_text.grid(row = 12, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
 
         self.btn_test_source.grid(row = 13, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
@@ -350,11 +350,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             student_name = self.txt_student_name.get()
             self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
             proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
-            self.__on_progress_update(1, 1, f"Done!")
             output_file_path = f"{output_file_path}/{student_name}.docx"
 
         self.lbl_count.configure(text = "Done!")
-        self.lbl_status_text.configure(text = "Report generation completed successfully.")
+        self.__update_status("Report generation completed successfully.")
 
         OutputDialog(master = self.root, title = "Report Generation Complete", file_path = output_file_path, content = "Report generation completed successfully.")
 
@@ -371,14 +370,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         file_name = source_file.split("/")[-1].split(".")[0]
         output_file_path = f"{output_file_path}/CGen_Test_{file_name}.xlsx"
         
-        self.lbl_status_text.configure(text = "Running comment generator test suite. Please wait…")
-        tk.Misc.update_idletasks(self)
+        self.__update_status("Running comment generator test suite. Please wait…", clear = True)
         
         cgen_test.run(source_file_path = source_file, output_file_path = output_file_path, ltm = ltm, CommentGenerator = CommentGenerator)
         
         OutputDialog(master = self.root, title = "Comment Generator Test Complete", file_path = output_file_path, content = "Comment generator test completed successfully.")
-        self.lbl_status_text.configure(text = "Comment generator test completed successfully.")
-        tk.Misc.update_idletasks(self)
+        self.__update_status("Comment generator test completed successfully.")
 
     def __validate(self):
         source_file = self.txt_source_path.get()
@@ -395,7 +392,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             tk.messagebox.showinfo("Valid grader report", "Grader report is valid. You're good to go!")
             
         self.lbl_count.configure(text = "Done!")
-        self.lbl_status_text.configure(text = f"{'Validation completed' if valid else 'Errors found'}. Check console/terminal for details.")
+        self.__update_status(f"{'Validation completed' if valid else 'Errors found'}. Check console/terminal for details.", clear = True)
 
     def __test_paths(self):
         """
@@ -435,6 +432,22 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.progress_bar.set(progress)
         self.lbl_count.configure(text = f"{current}/{total}")
 
-        self.lbl_status_text.configure(text = status_message)
+        self.__update_status(status_message)
+
+    def __update_status(self, status_message, clear = False):
+        """
+        Updates the status message.
+
+        Args:
+            status_message (str): The status message to display.
+        """
+        self.lbl_status_text.configure(state = tk.NORMAL)
+        
+        if clear:
+            self.lbl_status_text.delete("1.0", tk.END)
+
+        self.lbl_status_text.insert(tk.END, f"{status_message}\n")
+        self.lbl_status_text.configure(state = tk.DISABLED)
+        self.lbl_status_text.see(tk.END)
 
         tk.Misc.update_idletasks(self)
