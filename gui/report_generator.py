@@ -168,10 +168,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         
         # Generate button
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
-        self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, command = self.__test_source)
-        self.btn_test_source.configure(fg_color = "grey")
-        self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 100, command = self.__validate)
-        self.btn_validate.configure(fg_color = "grey")
+        self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, fg_color = "grey", command = self.__test_source)
+        self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 100, fg_color = "grey", command = self.__validate)
 
         # Progress tracker
         self.lbl_progress = ctk.CTkLabel(self, text = "Progress:")
