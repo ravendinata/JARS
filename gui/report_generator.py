@@ -344,6 +344,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                 self.switch_autocorrect.configure(state = tk.DISABLED)
                 self.__autocorrect_disabled = True
                 return
+            
+        self.__update_status("Starting report generation…", clear = True)
         
         if mode == "all":
             proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
