@@ -180,6 +180,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         # Status section
         self.lbl_status = ctk.CTkLabel(self, text = "Status:")
         self.lbl_status_text = ctk.CTkTextbox(self, width = 300, height = 100, state = tk.DISABLED, wrap = "word")
+        self.lbl_status_text.tag_config("warning", foreground = "red")
 
         # Tooltips
         tooltip_font = ("Arial", 10)
@@ -385,14 +386,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             return
         
         gr = grader_report.GraderReport(source_file, skip_validation = True)
-        valid = gr.validate()
+        valid = gr.validate(callback = self.__update_status)
         if not valid:
             tk.messagebox.showerror("Invalid grader report", "Grader report is invalid. Check console/terminal for details.")
         else:
             tk.messagebox.showinfo("Valid grader report", "Grader report is valid. You're good to go!")
             
         self.lbl_count.configure(text = "Done!")
-        self.__update_status(f"{'Validation completed' if valid else 'Errors found'}. Check console/terminal for details.", clear = True)
 
     def __test_paths(self):
         """
@@ -441,12 +441,17 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         Args:
             status_message (str): The status message to display.
         """
+        tag = None
+
         self.lbl_status_text.configure(state = tk.NORMAL)
         
         if clear:
             self.lbl_status_text.delete("1.0", tk.END)
 
-        self.lbl_status_text.insert(tk.END, f"{status_message}\n")
+        if "warning" in status_message.lower():
+            tag = "warning"
+
+        self.lbl_status_text.insert(tk.END, f"{status_message}\n", tags = tag)
         self.lbl_status_text.configure(state = tk.DISABLED)
         self.lbl_status_text.see(tk.END)
 
