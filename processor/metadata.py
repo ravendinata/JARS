@@ -4,6 +4,15 @@ from pypdf import PdfWriter, PdfReader
 
 @staticmethod
 def pdf_inject(file_path, student_name, grader_report, time_docsaved = datetime.now()):
+    """
+    Injects generic metadata to a PDF file.
+
+    Args:
+        file_path (str): The path to the file to be signed.
+        student_name (str): The name of the student.
+        grader_report (GraderReport): The GraderReport object to be used.
+        time_docsaved (datetime.datetime): The time the document was saved.
+    """
     # Add metadata to PDF
     reader = PdfReader(file_path)
     writer = PdfWriter()
