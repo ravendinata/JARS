@@ -7,6 +7,12 @@ from termcolor import colored
 def hash_file(path):
     """
     Hashes a file using blake2b algorithm.
+
+    Args:
+        path (str): The path to the file to be hashed.
+
+    Returns:
+        str: The hash of the file.
     """
     # Make a hash object
     hash = hashlib.blake2b()
@@ -27,8 +33,14 @@ def hash_file(path):
 def generate_serial_number(file_path):
     """
     Generates a serial number based on the current date, 
-    first 8 characters of the hash of the file, 
-    and last 8 characters of the hash of the file.
+    first 8 characters of the file hash, 
+    and last 8 characters of the file hash.
+
+    Args:
+        file_path (str): The path to the file to be signed.
+
+    Returns:
+        str: The serial number.
     """
     # Get the current date
     date = datetime.datetime.now().strftime("%Y%m%d")
@@ -42,7 +54,22 @@ def generate_serial_number(file_path):
 @staticmethod
 def sign_pdf(file_path, verbose = False):
     """
-    Signs a PDF file using the JAC Digital Signature.
+    Signs a PDF file using the JARSIM Digital Signature.
+
+    The signing process is as follows:
+    1. Generate a serial number
+    2. Inject the serial number into the file
+    3. Hash the file (with serial number)
+    4. Inject the hash and signing metadata into the file
+
+    Note: This function only signs the file and does not verify the authenticity of the signer.
+
+    Args:
+        file_path (str): The path to the file to be signed.
+        verbose (bool): Whether to print verbose output or not.
+
+    Returns:
+        str: The hash of the file.
     """
     
     from pypdf import PdfWriter, PdfReader
@@ -98,6 +125,21 @@ def sign_pdf(file_path, verbose = False):
 def verify_pdf(file_path, verbose = False):
     """
     Verifies the integrity of a PDF file.
+
+    The verification process is as follows:
+    1. Check if the hash matches
+    2. Check if the serial number matches
+    The file is considered integrous if both checks pass.
+
+    Note: This function only verifies the JARSIM Digital Signature and does not verify the authenticity of the signer.
+
+    Args:
+        file_path (str): The path to the file to be verified.
+        verbose (bool): Whether to print verbose output or not.
+
+    Returns:
+        bool: Whether the file is integrous or not.
+        str: The log texts from the process.
     """
     import os
     from pypdf import PdfReader, PdfWriter
