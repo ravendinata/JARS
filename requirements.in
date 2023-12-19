@@ -7,6 +7,7 @@ pandas
 python_docx
 PyMySQL
 pypdf
+pywebview
 termcolor
 tk
 tkcalendar

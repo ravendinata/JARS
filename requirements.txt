@@ -6,12 +6,18 @@
 #
 babel==2.13.1
     # via tkcalendar
+bottle==0.12.25
+    # via pywebview
 certifi==2022.12.7
     # via requests
+cffi==1.16.0
+    # via clr-loader
 chardet==3.0.4
     # via requests
 click==8.1.7
     # via nltk
+clr-loader==0.2.6
+    # via pythonnet
 colorama==0.4.6
     # via
     #   click
@@ -40,6 +46,10 @@ openpyxl==3.1.2
     # via -r requirements.in
 pandas==2.1.3
     # via -r requirements.in
+proxy-tools==0.1.0
+    # via pywebview
+pycparser==2.21
+    # via cffi
 pymysql==1.1.0
     # via -r requirements.in
 pypdf==3.17.3
@@ -48,8 +58,12 @@ python-dateutil==2.8.2
     # via pandas
 python-docx==1.1.0
     # via -r requirements.in
+pythonnet==3.0.3
+    # via pywebview
 pytz==2023.3.post1
     # via pandas
+pywebview==4.4.1
+    # via -r requirements.in
 pywin32==306
     # via docx2pdf
 regex==2023.10.3
@@ -72,7 +86,9 @@ tqdm==4.66.1
     #   language-tool-python
     #   nltk
 typing-extensions==4.8.0
-    # via python-docx
+    # via
+    #   python-docx
+    #   pywebview
 tzdata==2023.3
     # via pandas
 urllib3==1.25.11
