@@ -5,6 +5,7 @@ nltk
 openpyxl
 pandas
 python_docx
+PyMySQL
 termcolor
 tk
 tkcalendar
