@@ -141,6 +141,10 @@ class MoodleDatabaseFrame(ctk.CTkFrame):
 
                 self.btn_execute.grid(row = 3 + len(params), column = 1, sticky = tk.E, padx = 2, pady = 10)
                 tk.Misc.update_idletasks(self)
+            else:
+                self.use_params = False
+                self.btn_execute.grid(row = 3, column = 1, sticky = tk.E, padx = 2, pady = 10)
+                tk.Misc.update_idletasks(self)
 
     def __execute_query(self):
         print("Executing query…")
