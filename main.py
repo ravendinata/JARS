@@ -19,6 +19,7 @@ from gui.report_generator import ReportGeneratorWindow
 from gui.inmanage_verifier import InManageVerifierWindow
 from gui.moodle_database import MoodleDatabaseWindow
 
+
 global office_version
 
 class LauncherFrame(ctk.CTkFrame):
@@ -63,6 +64,7 @@ class LauncherFrame(ctk.CTkFrame):
 
     def __open_moodle_database(self):
         MoodleDatabaseWindow(master = self.master)
+
 
 class Window(ctk.CTk): 
     def __init__(self):

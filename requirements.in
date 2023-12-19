@@ -4,6 +4,7 @@ language_tool_python
 nltk
 openpyxl
 pandas
+pypdf
 python_docx
 PyMySQL
 pypdf
