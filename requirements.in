@@ -6,6 +6,7 @@ openpyxl
 pandas
 python_docx
 PyMySQL
+pypdf
 termcolor
 tk
 tkcalendar
