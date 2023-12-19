@@ -42,11 +42,12 @@ class Database:
             result = cursor.fetchall()
             return result
         
-    def query_from_file(self, filename, **kwargs):
+    def query_from_file(self, filename, verbose = False, **kwargs):
         with open(filename, "r") as f:
             sql = f.read()
             sql = sql.format(**kwargs).replace("\n", " ").replace("  ", " ")
-            print(sql)
+            if verbose:
+                print(sql)
             return self.query(sql)
     
     # Simple data queries (no joins)
