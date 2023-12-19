@@ -1,5 +1,10 @@
 {
     "logo_path": "resources/logo.png",
     "report_parser_presets": "resources/report_parser_settings",
-    "page_presets": "resources/page_presets"
+    "page_presets": "resources/page_presets",
+
+    "moodle_db_server": "localhost",
+    "moodle_db_username": "root",
+    "moodle_db_password": "",
+    "moodle_db_name": "mysql"
 }
