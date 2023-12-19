@@ -73,7 +73,7 @@ class MoodleDatabaseFrame(ctk.CTkFrame):
         self.btn_execute = ctk.CTkButton(self, text = "Execute Query", command = self.__execute_query)
 
         # Layout
-        self.lbl_title.grid(row = 0, column = 0, columnspan = 2, padx = 10, pady = (5, 0))
+        self.lbl_title.grid(row = 0, column = 0, sticky = tk.W, columnspan = 2, padx = 5, pady = (5, 10))
 
         self.lbl_category.grid(row = 1, column = 0, sticky = tk.W, pady = 2)
         self.cmb_category.grid(row = 1, column = 1, sticky = tk.W, padx =  5, pady = 2)
@@ -81,7 +81,7 @@ class MoodleDatabaseFrame(ctk.CTkFrame):
         self.lbl_report.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
         self.cmb_report.grid(row = 2, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.btn_execute.grid(row = 3, column = 1, sticky = tk.E, padx = 2, pady = 10)
+        self.btn_execute.grid(row = 3, column = 1, sticky = tk.E, padx = 5, pady = 10)
 
         # Bindings
         self.category.trace_add("write", self.__on_category_selected)
