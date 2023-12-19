@@ -17,6 +17,8 @@ from win32com.client.dynamic import Dispatch
 from gui.report_formatter import ReportFormatterWindow
 from gui.report_generator import ReportGeneratorWindow
 from gui.inmanage_verifier import InManageVerifierWindow
+from gui.moodle_database import MoodleDatabaseWindow
+
 
 global office_version
 
@@ -34,6 +36,7 @@ class LauncherFrame(ctk.CTkFrame):
         self.btn_report_formatter = ctk.CTkButton(self, text = "Report Formatter", height = 30, command = self.__open_report_formatter)
         self.btn_report_generator = ctk.CTkButton(self, text = "Report Generator", height = 30, command = self.__open_report_generator)
         self.btn_inmanage_verifier = ctk.CTkButton(self, text = "InManage Verifier", height = 30, command = self.__open_inmanage_verifier, fg_color = "purple")
+        self.btn_moodle_database = ctk.CTkButton(self, text = "Moodle Database Explorer", height = 30, command = self.__open_moodle_database, fg_color = "orange")
 
         # Exit button
         self.btn_exit = ctk.CTkButton(self, text = "Exit", command = self.master.destroy, fg_color = "grey")
@@ -46,8 +49,9 @@ class LauncherFrame(ctk.CTkFrame):
         self.btn_report_formatter.grid(row = 3, column = 0, padx = 2, pady = (5, 2))
         self.btn_report_generator.grid(row = 3, column = 1, padx = 2, pady = (5, 2))
         self.btn_inmanage_verifier.grid(row = 4, column = 0, columnspan = 2, padx = 2, pady = (2, 5))
+        self.btn_moodle_database.grid(row = 5, column = 0, columnspan = 2, padx = 2, pady = (2, 5))
         
-        self.btn_exit.grid(row = 5, column = 0, columnspan = 2, padx = 2, pady = (10, 5))
+        self.btn_exit.grid(row = 6, column = 0, columnspan = 2, padx = 2, pady = (10, 5))
 
     def __open_report_formatter(self):
         ReportFormatterWindow(master = self.master)
@@ -57,6 +61,10 @@ class LauncherFrame(ctk.CTkFrame):
 
     def __open_inmanage_verifier(self):
         InManageVerifierWindow(master = self.master)
+
+    def __open_moodle_database(self):
+        MoodleDatabaseWindow(master = self.master)
+
 
 class Window(ctk.CTk): 
     def __init__(self):
