@@ -1,0 +1,56 @@
+#datatable {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#datatable td {
+    overflow: auto;
+    white-space: normal;
+}
+
+#datatable th {
+    min-width: 60px;
+}
+
+.header {
+    text-align: left; 
+    padding-bottom: 32px; 
+    padding-top: 12px; 
+    padding-left: 14px;
+}
+
+.dt-buttons {
+    padding: 10px 0px 5px;
+}
+
+.buttons-html5 {
+    color: white;
+    background: #1c7eda;
+    border: white;
+}
+
+.buttons-html5:hover {
+    background: #0b42d9;
+}
+
+.buttons-colvis {
+    color: white;
+    background: #2236eb;
+    border: white;
+}
+
+.buttons-colvis:hover {
+    background: #240fad;
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+
+h2 {
+    font-size: 1.25rem;
+    font-weight: 200;
+    line-height: 1.2;
+}
