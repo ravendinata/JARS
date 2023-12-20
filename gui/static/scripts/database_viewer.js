@@ -26,7 +26,7 @@ $(document).ready(function() {
                 'colvis'
             ],
             pagingType: "full_numbers",
-            scrollX: true,
+            // scrollX: true,
             "deferRender": true
         }
     );
