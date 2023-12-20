@@ -1,5 +1,6 @@
 customtkinter
 docx2pdf
+flask
 language_tool_python
 nltk
 openpyxl

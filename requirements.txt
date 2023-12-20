@@ -6,6 +6,8 @@
 #
 babel==2.13.1
     # via tkcalendar
+blinker==1.7.0
+    # via flask
 bottle==0.12.25
     # via pywebview
 certifi==2022.12.7
@@ -15,7 +17,9 @@ cffi==1.16.0
 chardet==3.0.4
     # via requests
 click==8.1.7
-    # via nltk
+    # via
+    #   flask
+    #   nltk
 clr-loader==0.2.6
     # via pythonnet
 colorama==0.4.6
@@ -30,14 +34,24 @@ docx2pdf==0.1.8
     # via -r requirements.in
 et-xmlfile==1.1.0
     # via openpyxl
+flask==3.0.0
+    # via -r requirements.in
 idna==2.10
     # via requests
+itsdangerous==2.1.2
+    # via flask
+jinja2==3.1.2
+    # via flask
 joblib==1.3.2
     # via nltk
 language-tool-python==2.7.1
     # via -r requirements.in
 lxml==4.9.3
     # via python-docx
+markupsafe==2.1.3
+    # via
+    #   jinja2
+    #   werkzeug
 nltk==3.8.1
     # via -r requirements.in
 numpy==1.26.2
@@ -93,3 +107,5 @@ tzdata==2023.3
     # via pandas
 urllib3==1.25.11
     # via requests
+werkzeug==3.0.1
+    # via flask
