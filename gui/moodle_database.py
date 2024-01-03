@@ -5,12 +5,17 @@ import customtkinter as ctk
 import tkinter as tk
 
 import config
-from moodle.database import Database
+from moodle.database import Database, test_connection
 from gui.database_viewer import TableViewer
 
 class MoodleDatabaseWindow(ctk.CTkToplevel):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
+
+        if not test_connection():
+            print("Connection to Moodle database failed!")
+            tk.messagebox.showerror("Connection Failed", "Connection to Moodle database failed!")
+            return
 
         # Window setup
         self.title("JARS Moodle Database Explorer")
