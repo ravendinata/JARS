@@ -14,6 +14,7 @@ import tkinter as tk
 from ctypes import windll
 from win32com.client.dynamic import Dispatch
 
+import moodle.database as moodle
 from gui.report_formatter import ReportFormatterWindow
 from gui.report_generator import ReportGeneratorWindow
 from gui.inmanage_verifier import InManageVerifierWindow
@@ -63,7 +64,10 @@ class LauncherFrame(ctk.CTkFrame):
         InManageVerifierWindow(master = self.master)
 
     def __open_moodle_database(self):
-        MoodleDatabaseWindow(master = self.master)
+        if moodle.test_connection():
+            MoodleDatabaseWindow(master = self.master)
+        else:
+            tk.messagebox.showerror("Connection Error", "Connection to Moodle database failed. Please check your connection settings or contact administrator.")
 
 
 class Window(ctk.CTk): 
