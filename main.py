@@ -30,7 +30,7 @@ class LauncherFrame(ctk.CTkFrame):
         # Define widgets
         # Text widgets
         self.lbl_title = ctk.CTkLabel(self, text = "JARS Report Processor", font = ("Arial", 20, "bold"))
-        self.lbl_subtitle = ctk.CTkLabel(self, text = "JAC Academic Reporting System | Version 1.0.0", font = ("Arial", 10))
+        self.lbl_subtitle = ctk.CTkLabel(self, text = "JAC Academic Reporting System | Version 1.1.0", font = ("Arial", 10))
         self.lbl_prompt = ctk.CTkLabel(self, text = "Select a tool to open:")
         
         # Buttons
