@@ -2,6 +2,8 @@ import flask
 import pandas as pd
 import webview
 
+import config
+
 @staticmethod
 def TableViewer(data, window_title = "JARS Database Table Viewer", report_title = "Unnamed Report"):
     """
@@ -22,7 +24,12 @@ def TableViewer(data, window_title = "JARS Database Table Viewer", report_title 
         html = html.replace("<!-- DATA -->", data_html)
         html = html.replace('class="dataframe"', 'id="datatable" class="table table-striped"')
 
-    app = flask.Flask(__name__, template_folder = "templates/", static_folder = "static/")
+    # Create path to static dir
+    import os
+    static_path = os.path.join(os.getcwd(), config.get_config("static_folder"))
+    template_path = os.path.join(os.getcwd(), config.get_config("template_folder"))
+
+    app = flask.Flask(__name__, template_folder = template_path, static_folder = static_path)
 
     @app.route("/")
     def index():

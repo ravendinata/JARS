@@ -3,6 +3,8 @@
     "report_parser_presets": "resources/report_parser_settings",
     "page_presets": "resources/page_presets",
     "moodle_custom_queries": "resources/moodle_custom_queries",
+    "static_folder": "gui/static",
+    "template_folder": "gui/templates",
 
     "moodle_db_server": "localhost",
     "moodle_db_username": "root",

@@ -1,26 +1,39 @@
 import pymysql
+from termcolor import colored
 
 import config
 
 @staticmethod
-def test_connection():
-    conn = pymysql.connect(
-        host = config.get_config("moodle_db_server"),
-        user = config.get_config("moodle_db_username"),
-        password = config.get_config("moodle_db_password"),
-        db = config.get_config("moodle_db_name"),
-        charset = "utf8mb4",
-        cursorclass = pymysql.cursors.DictCursor
-    )
-
+def test_connection(supress = True):
+    """
+    Tests the connection to the moodle database.
+    
+    Returns:
+        bool: Whether the connection was successful.
+    """
     try:
+        conn = pymysql.connect(
+            host = config.get_config("moodle_db_server"),
+            user = config.get_config("moodle_db_username"),
+            password = config.get_config("moodle_db_password"),
+            db = config.get_config("moodle_db_name"),
+            charset = "utf8mb4",
+            cursorclass = pymysql.cursors.DictCursor
+        )   
+
         with conn.cursor() as cursor:
             sql = "SHOW TABLES;"
             cursor.execute(sql)
             result = cursor.fetchall()
-            print(result)
-    finally:
-        conn.close()
+            if not supress:
+                print(result)
+    except Exception as e:
+        print(e)
+        print(colored("Connection to Moodle database failed!", "red"))
+        return False
+
+    conn.close()
+    return True
 
 class Database:
     def __init__(self):
