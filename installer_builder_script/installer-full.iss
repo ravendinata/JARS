@@ -59,6 +59,7 @@ Source: "Z:\Development\Custom Report Processor\dist\main\console.exe"; DestDir:
 Source: "Z:\Development\Custom Report Processor\dist\main\config.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Z:\Development\Custom Report Processor\dist\main\_internal\*"; DestDir: "{app}\_internal"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Z:\Development\Custom Report Processor\dist\main\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Z:\Development\Custom Report Processor\dist\main\gui\*"; DestDir: "{app}\gui"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
