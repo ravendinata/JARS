@@ -6,7 +6,7 @@ The GUI application is only suitable for processing a single file at a time.
 But it is more user-friendly and easier to use than the console application.
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "Raven Limadinata"
 
 import customtkinter as ctk
