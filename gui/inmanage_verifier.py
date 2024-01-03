@@ -26,6 +26,27 @@ class InManageVerifierWindow(ctk.CTkToplevel):
             self.master.deiconify()
 
 class InManageVerifierFrame(ctk.CTkFrame):
+    """
+    A custom frame for the InManage Verifier application.
+
+    This frame contains various widgets for selecting a file to verify and verifying it.
+    Also displays the result of the verification.
+
+    Attributes:
+        Buttons:
+            btn_file (CTkButton): The button for browsing the file to verify.
+            btn_verify (CTkButton): The button for verifying the selected file.
+
+        Labels:
+            lbl_title (CTkLabel): The application window title.
+            lbl_file (CTkLabel): The label for the file selection.
+            lbl_output (CTkLabel): The label for the output text box.
+            lbl_info (CTkLabel): The label for the verification result.
+
+        Textboxes and Entries:
+            txt_file (CTkEntry): The text entry for the file to verify.
+            txt_output (CTkTextbox): The text box for displaying the verification result.
+    """
     def __init__(self, master, root, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
         self.root = root

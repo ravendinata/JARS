@@ -45,29 +45,54 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
     Attributes:
         Buttons:
-        btn_browse_source (ctk.CTkButton): Button for browsing the source file.
-        btn_browse_output (ctk.CTkButton): Button for browsing the output file path.
-        btn_process (ctk.CTkButton): Button for initiating the report processing.
+            btn_browse_source (CTkButton): The button for browsing the source file.
+            btn_browse_output (CTkButton): The button for browsing the output folder.
+            btn_browse_signature (CTkButton): The button for browsing the signature file.
+            btn_test_source (CTkButton): The button for testing the comment generator.
+            btn_validate (CTkButton): The button for validating the grader report.
+            btn_process (CTkButton): The button for processing the report.
 
         Labels:
-        lbl_source (ctk.CTkLabel): Label for the source file path.
-        lbl_output (ctk.CTkLabel): Label for the output file path.
-        lbl_generate (ctk.CTkLabel): Label for the generate option.
-        lbl_student_name (ctk.CTkLabel): Label for the student name entry.
-        lbl_options (ctk.CTkLabel): Label for the options section.
-        lbl_progress (ctk.CTkLabel): Label for the progress tracker.
-        lbl_count (ctk.CTkLabel): Label for the progress count.
-        lbl_status (ctk.CTkLabel): Label for the status section.
-        lbl_status_text (ctk.CTkLabel): Label for the status text.
+            lbl_source (CTkLabel): The label for the source file path.
+            lbl_output (CTkLabel): The label for the output folder path.
+            lbl_signature (CTkLabel): The label for the signature file path.
+            lbl_generate (CTkLabel): The label for the generate options.
+            lbl_student_name (CTkLabel): The label for the student name.
+            lbl_options (CTkLabel): The label for the options.
+            lbl_date (CTkLabel): The label for the report date.
+            lbl_progress (CTkLabel): The label for the progress bar.
+            lbl_count (CTkLabel): The label for the progress count.
+            lbl_status (CTkLabel): The label for the status message.
 
-        Text fields:
-        txt_source_path (ctk.CTkEntry): Entry field for entering the source file path.
-        txt_output_path (ctk.CTkEntry): Entry field for entering the output file path.
-        txt_student_name (ctk.CTkEntry): Entry field for entering the student name.
-        
-        progress_bar (ctk.CTkProgressBar): Progress bar for tracking the progress.
+        Textboxes and Entries:
+            txt_source_path (CTkEntry): The textbox for the source file path.
+            txt_output_path (CTkEntry): The textbox for the output folder path.
+            txt_signature_path (CTkEntry): The textbox for the signature file path.
+            txt_student_name (CTkEntry): The textbox for the student name.
+            txt_status (CTkTextbox): The textbox for the status message.
 
-        mode_var (tk.StringVar): Variable for the generate option.
+        Switches:
+            switch_autocorrect (CTkSwitch): The switch for enabling/disabling autocorrect.
+            switch_date (CTkSwitch): The switch for enabling/disabling the report date.
+            switch_force (CTkSwitch): The switch for enabling/disabling force generation.
+            switch_pdf (CTkSwitch): The switch for enabling/disabling PDF creation.
+
+        Radio Buttons:
+            rdo_generate_all (CTkRadioButton): The radio button for generating all reports.
+            rdo_generate_student (CTkRadioButton): The radio button for generating a single report.
+
+        Date Entry:
+            date_report (DateEntry): The date entry for the report date.
+
+        Progress Bar:
+            progress_bar (CTkProgressBar): The progress bar for the report generation.
+
+        Variables:
+            mode_var (tk.StringVar): The variable for the generate options.
+            autocorrect_var (tk.IntVar): The variable for the autocorrect switch.
+            inject_date (tk.IntVar): The variable for the insert date switch.
+            force_var (tk.IntVar): The variable for the force generation switch.
+            create_pdf (tk.IntVar): The variable for the create PDF switch.
 
     Methods:
         __init__(self, master, **kwargs): Initializes the ProcessorFrame.
@@ -162,8 +187,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         # Status section
         self.lbl_status = ctk.CTkLabel(self, text = "Status:")
-        self.lbl_status_text = ctk.CTkTextbox(self, width = 300, height = 100, state = tk.DISABLED, wrap = "word")
-        self.lbl_status_text.tag_config("warning", foreground = "red")
+        self.txt_status = ctk.CTkTextbox(self, width = 300, height = 100, state = tk.DISABLED, wrap = "word")
+        self.txt_status.tag_config("warning", foreground = "red")
 
         # Tooltips
         tooltip_font = ("Arial", 10)
@@ -228,7 +253,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_count.grid(row = 11, column = 2, sticky = tk.EW, padx = 2, pady = 0)
 
         self.lbl_status.grid(row = 12, column = 0, sticky = tk.NW, pady = 0)
-        self.lbl_status_text.grid(row = 12, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.txt_status.grid(row = 12, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
 
         self.btn_test_source.grid(row = 13, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
         self.btn_validate.grid(row = 13, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
@@ -428,16 +453,16 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """
         tag = None
 
-        self.lbl_status_text.configure(state = tk.NORMAL)
+        self.txt_status.configure(state = tk.NORMAL)
         
         if clear:
-            self.lbl_status_text.delete("1.0", tk.END)
+            self.txt_status.delete("1.0", tk.END)
 
         if "warning" in status_message.lower():
             tag = "warning"
 
-        self.lbl_status_text.insert(tk.END, f"{status_message}\n", tags = tag)
-        self.lbl_status_text.configure(state = tk.DISABLED)
-        self.lbl_status_text.see(tk.END)
+        self.txt_status.insert(tk.END, f"{status_message}\n", tags = tag)
+        self.txt_status.configure(state = tk.DISABLED)
+        self.txt_status.see(tk.END)
 
         tk.Misc.update_idletasks(self)

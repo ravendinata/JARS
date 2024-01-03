@@ -40,28 +40,31 @@ class ReportFormatterFrame(ctk.CTkFrame):
 
     Attributes:
         Buttons:
-        btn_browse_source (ctk.CTkButton): Button for browsing the source file.
-        btn_browse_output (ctk.CTkButton): Button for browsing the output file path.
-        btn_process (ctk.CTkButton): Button for initiating the report processing.
-        
+            btn_browse_source (CTkButton): The button for browsing the source file.
+            btn_browse_output (CTkButton): The button for browsing the output folder.
+            btn_process (CTkButton): The button for starting the report processing.
+
+        Checkboxes:
+            chk_adjust_cell_widths (CTkCheckBox): The checkbox for adjusting cell widths.
+
+        Comboboxes:
+            cmb_mode (CTkComboBox): The combobox for selecting the report file type.
+
         Labels:
-        lbl_source (ctk.CTkLabel): Label for the source file path.
-        lbl_mode (ctk.CTkLabel): Label for the report file type.
-        lbl_output (ctk.CTkLabel): Label for the output file path.
-        
-        Text Fields:
-        txt_source_path (ctk.CTkEntry): Entry field for entering the source file path.
-        txt_output_path (ctk.CTkEntry): Entry field for entering the output file path.
-        
-        adjust_cell_widths_var (tk.BooleanVar): Variable for the "Auto adjust cell widths" checkbox.
-        chk_adjust_cell_widths (ctk.CTkCheckBox): Checkbox for enabling/disabling auto adjust cell widths.
-        cmb_mode (ctk.CTkComboBox): ComboBox for selecting the report file type.
+            lbl_source (CTkLabel): The label for the source file path.
+            lbl_mode (CTkLabel): The label for the report file type.
+            lbl_output (CTkLabel): The label for the output file path.
+
+        Text Entries:
+            txt_source_path (CTkEntry): The text entry for the source file path.
+            txt_output_path (CTkEntry): The text entry for the output file path.
 
     Methods:
         __init__(self, master, **kwargs): Initializes the ProcessorFrame.
         __browse_file(self): Opens a file dialog for browsing the source file.
         __save_file(self): Opens a file dialog for saving the output file.
         __process(self): Processes the report based on the selected options.
+        __get_presets(self): Gets the list of available report file types.
     """
 
     def __init__(self, master, root, **kwargs):
@@ -124,6 +127,10 @@ class ReportFormatterFrame(ctk.CTkFrame):
         self.txt_output_path.insert(0, file_path)  # Insert the file path into entry
 
     def __process(self):
+        """
+        Processes the report based on the selected options.
+        Runs the Report Formatting processor with the selected options. If an error is encountered, a messagebox will be shown.
+        """
         # Get values
         source_file = self.txt_source_path.get()
         mode = self.cmb_mode.get()
@@ -141,6 +148,10 @@ class ReportFormatterFrame(ctk.CTkFrame):
 
     # Helper functions
     def __get_presets(self):
+        """
+        Gets the list of available report file types.
+        The method gets all files in the report_parser_presets folder and returns their names without the extension.
+        """
         presets = []
         for preset in pathlib.Path(config.get_config("report_parser_presets")).glob("*.json"):
             presets.append(preset.stem)

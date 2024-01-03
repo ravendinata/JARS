@@ -18,9 +18,6 @@ class OutputDialog(ctk.CTkToplevel):
         __init__(self, master, title, file_path, content, **kwargs): Initializes the OutputDialog.
         __open_file(self): Opens the output file.
         __open_folder(self): Opens the output folder.
-
-    TODO:
-        Move this class to a separate custom widget file ?
     """
 
     def __init__(self, master, title, file_path, content,**kwargs):

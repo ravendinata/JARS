@@ -31,6 +31,34 @@ class MoodleDatabaseWindow(ctk.CTkToplevel):
             self.master.deiconify()
             
 class MoodleDatabaseFrame(ctk.CTkFrame):
+    """
+    A custom frame for the report processor application.
+    
+    This frame contains various widgets for selecting a preset query to query from.
+    Query parameters are automatically translated into applicable input widgets in the GUI.
+    
+    Attributes:
+        Buttons:
+            btn_execute (CTkButton): The button for executing the selected query.
+   
+        Labels:
+            lbl_title (CTkLabel): The application window title.
+            lbl_category (CTkLabel): The label for the query category selector.
+            lbl_report (CTkLabel): The label for the query report selector.
+            lbl_params (CTkLabel): The label for the query parameter input.
+
+        Comboboxes:
+            cmb_category (CTkComboBox): The combobox for selecting the query category.
+            cmb_report (CTkComboBox): The combobox for selecting the query report.
+
+        Variables:
+            category (StringVar): The variable for the selected query category.
+            query (StringVar): The variable for the selected query report.
+            selected_params (list): The list of selected query parameters.
+            param_entries (list): The list of parameter input widgets.
+            param_labels (list): The list of parameter input labels.
+            use_params (bool): Whether or not the selected query uses parameters.
+    """
     def __init__(self, master, root, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
         self.root = root
@@ -147,6 +175,7 @@ class MoodleDatabaseFrame(ctk.CTkFrame):
                 tk.Misc.update_idletasks(self)
 
     def __execute_query(self):
+        """Executes the selected query and opens the results in a new database viewer window."""
         print("Executing query…")
 
         param_dict = {}

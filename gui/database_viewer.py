@@ -4,6 +4,14 @@ import webview
 
 @staticmethod
 def TableViewer(data, window_title = "JARS Database Table Viewer", report_title = "Unnamed Report"):
+    """
+    Opens a new database viwer window for viewing data in a table form.
+    
+    Args:
+        data (list): The data to display in the table.
+        window_title (str): The title of the window.
+        report_title (str): The title of the report.
+    """
     df = pd.DataFrame(data)
     df.fillna("-", inplace = True)
     data_html = df.to_html()
