@@ -13,7 +13,6 @@ class MoodleDatabaseWindow(ctk.CTkToplevel):
         super().__init__(master, **kwargs)
 
         if not test_connection():
-            print("Connection to Moodle database failed!")
             tk.messagebox.showerror("Connection Failed", "Connection to Moodle database failed!")
             return
 

@@ -1,9 +1,10 @@
 import pymysql
+from termcolor import colored
 
 import config
 
 @staticmethod
-def test_connection():
+def test_connection(supress = True):
     """
     Tests the connection to the moodle database.
     
@@ -24,9 +25,11 @@ def test_connection():
             sql = "SHOW TABLES;"
             cursor.execute(sql)
             result = cursor.fetchall()
-            print(result)
+            if not supress:
+                print(result)
     except Exception as e:
         print(e)
+        print(colored("Connection to Moodle database failed!", "red"))
         return False
 
     conn.close()
