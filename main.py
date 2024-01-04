@@ -49,7 +49,7 @@ class LauncherFrame(ctk.CTkFrame):
         
         self.btn_report_formatter.grid(row = 3, column = 0, padx = 2, pady = (5, 2))
         self.btn_report_generator.grid(row = 3, column = 1, padx = 2, pady = (5, 2))
-        self.btn_inmanage_verifier.grid(row = 4, column = 0, columnspan = 2, padx = 2, pady = (2, 5))
+        self.btn_inmanage_verifier.grid(row = 4, column = 0, columnspan = 2, padx = 2, pady = 2)
         self.btn_moodle_database.grid(row = 5, column = 0, columnspan = 2, padx = 2, pady = (2, 5))
         
         self.btn_exit.grid(row = 6, column = 0, columnspan = 2, padx = 2, pady = (10, 5))
