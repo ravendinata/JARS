@@ -35,5 +35,8 @@ def TableViewer(data, window_title = "JARS Database Table Viewer", report_title 
     def index():
         return html
 
-    webview.create_window(title = window_title, url = app, text_select = True, confirm_close = True, maximized = True)
-    webview.start()
+    try:
+        webview.create_window(title = window_title, url = app, text_select = True, confirm_close = True, maximized = True)
+        webview.start(gui = "cef")
+    except:
+        print("Webview failed to start. Please check your browser settings.")
