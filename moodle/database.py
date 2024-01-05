@@ -20,27 +20,25 @@ def test_connection(supress = True):
         raise ValueError("Moodle database credentials and/or server information not set! Please check configuration or contact administrator.")
 
     try:
-        conn = pymysql.connect(
+        with pymysql.connect(
             host = config.get_config("moodle_db_server"),
             user = config.get_config("moodle_db_username"),
             password = config.get_config("moodle_db_password"),
             db = config.get_config("moodle_db_name"),
             charset = "utf8mb4",
             cursorclass = pymysql.cursors.DictCursor
-        )   
-
-        with conn.cursor() as cursor:
-            sql = "SHOW TABLES;"
-            cursor.execute(sql)
-            result = cursor.fetchall()
-            if not supress:
-                print(result)
+        ) as conn:
+            with conn.cursor() as cursor:
+                sql = "SHOW TABLES;"
+                cursor.execute(sql)
+                result = cursor.fetchall()
+                if not supress:
+                    print(result)
     except Exception as e:
         print(colored(f"Exception: {e}", "red"))
         print(colored("Connection to Moodle database failed!", "red"))
         return False
 
-    conn.close()
     return True
 
 class Database:
