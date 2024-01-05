@@ -11,6 +11,7 @@ __author__ = "Raven Limadinata"
 
 import customtkinter as ctk
 import tkinter as tk
+import tktooltip as tktip
 from ctypes import windll
 from win32com.client.dynamic import Dispatch
 
@@ -22,6 +23,7 @@ from gui.moodle_database import MoodleDatabaseWindow
 
 
 global office_version
+global moodle_reachable
 
 class LauncherFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -38,6 +40,9 @@ class LauncherFrame(ctk.CTkFrame):
         self.btn_report_generator = ctk.CTkButton(self, text = "Report Generator", height = 30, command = self.__open_report_generator)
         self.btn_inmanage_verifier = ctk.CTkButton(self, text = "InManage Verifier", height = 30, command = self.__open_inmanage_verifier, fg_color = "purple")
         self.btn_moodle_database = ctk.CTkButton(self, text = "Moodle Database Explorer", height = 30, command = self.__open_moodle_database, fg_color = "darkorange1")
+        if not moodle_reachable:
+            self.btn_moodle_database.configure(state = tk.DISABLED)
+            tktip.ToolTip(self.btn_moodle_database, "Cannot reach Moodle Database. Hence, function is disabled. Details are in console. Please check your connection settings or contact administrator.")
 
         # Exit button
         self.btn_exit = ctk.CTkButton(self, text = "Exit", command = self.master.destroy, fg_color = "grey")
@@ -85,6 +90,8 @@ class Window(ctk.CTk):
 CHECKS
 """
 print("> Running system checks…")
+
+# Check if Microsoft Office is installed
 try:
     word = Dispatch("Word.Application")
     office_version = word.Version
@@ -93,6 +100,18 @@ try:
 except:
     office_version = None
     print("  Microsoft Office not detected.")
+
+# Check if Moodle database is reachable
+try:
+    if moodle.test_connection(supress = True):
+        moodle_reachable = True
+        print("  Moodle database connection successful.")
+    else:
+        moodle_reachable = False
+        print("  Cannot reach Moodle database.")
+except Exception as e:
+    moodle_reachable = False
+    print(f"  Moodle database connection failed due to excecption: {e}")
 
 print("> System checks completed.")
 
