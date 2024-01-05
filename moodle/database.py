@@ -42,15 +42,25 @@ def test_connection(supress = True):
     return True
 
 class Database:
-    def __init__(self):
-        self.conn = pymysql.connect(
-            host = config.get_config("moodle_db_server"),
-            user = config.get_config("moodle_db_username"),
-            password = config.get_config("moodle_db_password"),
-            db = config.get_config("moodle_db_name"),
-            charset = "utf8mb4",
-            cursorclass = pymysql.cursors.DictCursor
-        )
+    def __init__(self):        
+        try:
+            # Check if moodle database credentials are set
+            config_keys = ["moodle_db_server", "moodle_db_username", "moodle_db_name", "moodle_db_password"]
+            if any(config.get_config(key) is None or config.get_config(key) == "" for key in config_keys):
+                raise ValueError("Moodle database credentials and/or server information not set! Please check configuration or contact administrator.")
+            
+            self.conn = pymysql.connect(
+                host = config.get_config("moodle_db_server"),
+                user = config.get_config("moodle_db_username"),
+                password = config.get_config("moodle_db_password"),
+                db = config.get_config("moodle_db_name"),
+                charset = "utf8mb4",
+                cursorclass = pymysql.cursors.DictCursor
+            )
+        except Exception as e:
+            print(colored(f"Exception: {e}", "red"))
+            print(colored("Connection to Moodle database failed!", "red"))
+            raise e
 
     def __del__(self):
         self.conn.close()
