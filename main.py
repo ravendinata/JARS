@@ -13,6 +13,7 @@ import customtkinter as ctk
 import tkinter as tk
 import tktooltip as tktip
 from ctypes import windll
+from PIL import Image
 from win32com.client.dynamic import Dispatch
 
 import moodle.database as moodle
@@ -29,6 +30,12 @@ class LauncherFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs, fg_color = "transparent")
 
+        # Variables
+        img_attention = Image.open("resources/icons/attention.png")
+        icon_attention = ctk.CTkImage(light_image = img_attention, 
+                                      dark_image = img_attention, 
+                                      size = (20, 20))
+
         # Define widgets
         # Text widgets
         self.lbl_title = ctk.CTkLabel(self, text = "JARS Report Processor", font = ("Arial", 20, "bold"))
@@ -41,7 +48,7 @@ class LauncherFrame(ctk.CTkFrame):
         self.btn_inmanage_verifier = ctk.CTkButton(self, text = "InManage Verifier", height = 30, command = self.__open_inmanage_verifier, fg_color = "purple")
         self.btn_moodle_database = ctk.CTkButton(self, text = "Moodle Database Explorer", height = 30, command = self.__open_moodle_database, fg_color = "darkorange1")
         if not moodle_reachable:
-            self.btn_moodle_database.configure(state = tk.DISABLED)
+            self.btn_moodle_database.configure(image = icon_attention)
             tktip.ToolTip(self.btn_moodle_database, "Cannot reach Moodle Database. Hence, function is disabled. Details are in console. Please check your connection settings or contact administrator.")
 
         # Exit button
