@@ -16,7 +16,7 @@ def test_connection(supress = True):
     """
     try:
         # Check if moodle database credentials are set
-        config_keys = ["moodle_db_server", "moodle_db_username", "moodle_db_name", "moodle_db_password"]
+        config_keys = ["moodle_db_server", "moodle_db_username", "moodle_db_name"]
         if any(config.get_config(key) is None or config.get_config(key) == "" for key in config_keys):
             raise ValueError("Moodle database credentials and/or server information not set! Please check configuration or contact administrator.")
     
@@ -45,7 +45,7 @@ class Database:
     def __init__(self):        
         try:
             # Check if moodle database credentials are set
-            config_keys = ["moodle_db_server", "moodle_db_username", "moodle_db_name", "moodle_db_password"]
+            config_keys = ["moodle_db_server", "moodle_db_username", "moodle_db_name"]
             if any(config.get_config(key) is None or config.get_config(key) == "" for key in config_keys):
                 raise ValueError("Moodle database credentials and/or server information not set! Please check configuration or contact administrator.")
             
