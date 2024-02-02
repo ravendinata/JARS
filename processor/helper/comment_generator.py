@@ -1,3 +1,4 @@
+import google.generativeai as genai
 import nltk
 from termcolor import colored
 
@@ -270,3 +271,86 @@ class CommentGenerator:
             negative_comments = negative_comments.replace("also", "")
 
         return negative_comments
+    
+class AICommentGenerator:
+    """
+    Generates a comment based on the student's result using AI.
+
+    Attributes:
+        None
+
+    Methods:
+        generate_comment(self, nickname, gender, result, verbose = False): Generates a comment based on the student's result using AI.
+        rephrase(self, source): Rephrases a pre-generated comment using AI.
+    """
+    genai.configure(api_key = "AIzaSyD9YSbAjp2jrQ_m3I4LQMYTvAPUpWNoVEM")
+
+    config = genai.GenerationConfig(candidate_count = 1, temperature = 0.2, max_output_tokens = 200, top_k = 20, top_p = 0.8)
+    model = genai.GenerativeModel('gemini-pro')
+
+    generation_config = {
+    "temperature": 0.2,
+    "max_output_tokens": 200,
+    "top_k": 20,
+    "top_p": 0.8,
+    }
+
+    safety = [
+        {
+            "category": "HARM_CATEGORY_HATE_SPEECH",
+            "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+        },
+        {
+            "category": "HARM_CATEGORY_HARASSMENT",
+            "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+        }
+    ]
+
+    def generate_comment(self, nickname, gender, result, verbose = False):
+        """
+        Generates a comment based on the student's result using AI.
+        
+        Args:
+            nickname (str): The student's nickname.
+            gender (str): The student's gender.
+            result (dict): The student's result.
+            verbose (bool): Whether to print the prompt and response.
+        
+        Returns:
+            str: The generated comment.
+        """
+        assembled_result = ""
+
+        for goal, grade in result.items():
+            assembled_result += f"{goal}: {grade}\n"
+
+        if gender == "M":
+            gender_normalized = "male"
+        elif gender == "F":
+            gender_normalized = "female"
+
+        base_prompt = "Write a simple, single paragraph report card commentary for a student according to their grades for each goal. 5Grade A being best and Grade D being worst. Make it between 45 and 85 words and don't forget to include a simple opening and a closing. Do not mention the grades in the commentary."
+        parametric_prompt = f"The student's nickname is {nickname}. This student is a {gender_normalized}.\nGoals and grades for each goal:\n{assembled_result}"
+        response = self.model.generate_content(f"{base_prompt} {parametric_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
+
+        if verbose:
+            print(f"Prompt: {base_prompt} {parametric_prompt}\n")
+            print(f"Candidates: {response.candidates}")
+            print(f"Response: {response.text}")
+
+        return response.text
+
+    def rephrase(self, source):
+        """
+        Rephrases a pre-generated comment using AI.
+        
+        Args:
+            source (str): The source comment to rephrase.
+            
+        Returns:
+            str: The rephrased comment.
+        """
+        response = self.model.generate_content(f"Rephrase the following sentence. Use simple english and do not add personal opinions. The countent should be between 45 and 85 words. Sentence: {source}.", 
+                                               safety_settings = self.safety, 
+                                               generation_config = self.generation_config)
+        return response.text
