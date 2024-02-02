@@ -334,9 +334,16 @@ class AICommentGenerator:
         response = self.model.generate_content(f"{base_prompt} {parametric_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
 
         if verbose:
-            print(f"Prompt: {base_prompt} {parametric_prompt}\n")
-            print(f"Candidates: {response.candidates}")
-            print(f"Response: {response.text}")
+            print(f"\nPrompt: {base_prompt} {parametric_prompt}\n")
+            print(f"\nCandidates: {response.candidates}")
+            print(f"\nResponse: {response.text}")
+            print(f"\nResponse Length: {len(response.text.split())} words\n")
+
+        if len(response.text.split()) > 100:
+            if verbose:
+                print(colored("(!) Response too long. Rephrasing the response.", "light_cyan"))
+            
+            response = self.rephrase(response.text)
 
         return response.text
 
