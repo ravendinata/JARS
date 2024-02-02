@@ -39,7 +39,7 @@ class Generator:
         self.signature_path = signature_path
         print("[OK] Report generator initialized!")
 
-    def generate_all(self, autocorrect = True, callback = None, force = False, convert_to_pdf = False):
+    def generate_all(self, mode, autocorrect = True, callback = None, force = False, convert_to_pdf = False):
         """
         Generates reports for all students in the grader report.
         This function basically calls generate_for_student() for each student in the grader report.
@@ -57,7 +57,7 @@ class Generator:
                 callback(i, job_count, status_message)
             print(f"Progress: {round(i / job_count * 100, 2)}%")
             print(status_message)
-            self.generate_for_student(student_name = student, autocorrect = autocorrect, force = force)
+            self.generate_for_student(student_name = student, mode = mode, autocorrect = autocorrect, force = force)
         
         print(f"Progress: 100%")
 
@@ -75,7 +75,7 @@ class Generator:
                 callback(i, job_count, f"PDF copies for all reports created!")
             print(f"[OK] PDF copies for all reports created!")
 
-    def generate_for_student(self, student_name, autocorrect = True, force = False, convert_to_pdf = False):
+    def generate_for_student(self, student_name, mode, autocorrect = True, force = False, convert_to_pdf = False):
         """
         Generates a report for a specific student.
         
@@ -258,13 +258,6 @@ class Generator:
 
         # Teacher's Comments Section
         # Initialize comment generator
-        comment_generator = cgen.CommentGenerator(student_name = student_name, 
-                                                  short_name = self.grader_report.get_student_info(student_name, "Short Name"),
-                                                  gender = self.grader_report.get_student_info(student_name, "Gender"),
-                                                  comment_mapping = self.grader_report.data_comment_mapping,
-                                                  student_result = student_sna,
-                                                  letter_grade = str_letter_grade,
-                                                 )
         
         tc_header = document.add_paragraph()
         tc_header.add_run("TEACHER'S COMMENTS").bold = True
@@ -277,7 +270,24 @@ class Generator:
         tc_table.autofit = False
         tc_table.allow_autofit = False
         tc_table.rows[0].height = Cm(2)
-        tc_table.cell(0, 0).text = comment_generator.generate_comment(autocorrect = autocorrect)
+
+        if mode == "map":
+            comment_generator = cgen.CommentGenerator(student_name = student_name, 
+                                                      short_name = self.grader_report.get_student_info(student_name, "Short Name"),
+                                                      gender = self.grader_report.get_student_info(student_name, "Gender"),
+                                                      comment_mapping = self.grader_report.data_comment_mapping,
+                                                      student_result = student_sna,
+                                                      letter_grade = str_letter_grade,
+                                                     )
+            tc_table.cell(0, 0).text = comment_generator.generate_comment(autocorrect = autocorrect)
+        elif mode == "ai":
+            comment_generator = cgen.AICommentGenerator()
+            tc_table.cell(0, 0).text = comment_generator.generate_comment(nickname = self.grader_report.get_student_info(student_name, "Short Name"),
+                                                                          gender = self.grader_report.get_student_info(student_name, "Gender"),
+                                                                          result = student_sna,
+                                                                          verbose = True
+                                                                         )
+            
         tc_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
         tc_table.cell(0, 0).width = Cm(17)
 
