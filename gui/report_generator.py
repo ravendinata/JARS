@@ -139,6 +139,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_student_name = ctk.CTkLabel(self, text = "Student Name:")
         self.txt_student_name = ctk.CTkEntry(self, width = 250, state = tk.DISABLED)
 
+        # Comment generator mode
+        self.cgen_mode_var = tk.StringVar()
+        self.lbl_comment_mode = ctk.CTkLabel(self, text = "Comment Generator Mode:")
+        self.rdo_map_mode = ctk.CTkRadioButton(self, text = "Comment Map", variable = self.cgen_mode_var, value = "map")
+        self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated", variable = self.cgen_mode_var, value = "ai")
+        self.rdo_map_mode.select()
+
         # Options section
         self.lbl_options = ctk.CTkLabel(self, text = "Options:")
 
@@ -236,28 +243,32 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_student_name.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
         self.txt_student_name.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.lbl_options.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
-        self.switch_autocorrect.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        
-        self.switch_date.grid(row = 7, column = 1, sticky = tk.EW, padx = 5, pady = 2)
-        
-        self.switch_force.grid(row = 8, column = 1, sticky = tk.W, padx = 5, pady = 2)
+        self.lbl_comment_mode.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
+        self.rdo_map_mode.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.rdo_ai_mode.grid(row = 7, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.switch_pdf.grid(row = 9, column = 1, sticky = tk.W, padx = 5, pady = 2)
+        self.lbl_options.grid(row = 8, column = 0, sticky = tk.W, pady = 2)
+        self.switch_autocorrect.grid(row = 8, column = 1, sticky = tk.W, padx =  5, pady = 2)
 
-        self.lbl_date.grid(row = 10, column = 0, sticky = tk.W, pady = 2)
-        self.date_report.grid(row = 10, column = 1, sticky = tk.W, padx = 5, pady = 2)
+        self.switch_date.grid(row = 9, column = 1, sticky = tk.EW, padx = 5, pady = 2)
 
-        self.lbl_progress.grid(row = 11, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 11, column = 1, sticky = tk.W, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 11, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+        self.switch_force.grid(row = 10, column = 1, sticky = tk.W, padx = 5, pady = 2)
 
-        self.lbl_status.grid(row = 12, column = 0, sticky = tk.NW, pady = 0)
-        self.txt_status.grid(row = 12, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.switch_pdf.grid(row = 11, column = 1, sticky = tk.W, padx = 5, pady = 2)
 
-        self.btn_test_source.grid(row = 13, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 13, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 13, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.lbl_date.grid(row = 12, column = 0, sticky = tk.W, pady = 2)
+        self.date_report.grid(row = 12, column = 1, sticky = tk.W, padx = 5, pady = 2)
+
+        self.lbl_progress.grid(row = 13, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 13, column = 1, sticky = tk.W, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 13, column = 2, sticky = tk.EW, padx = 2, pady = 0)
+
+        self.lbl_status.grid(row = 14, column = 0, sticky = tk.NW, pady = 0)
+        self.txt_status.grid(row = 14, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+
+        self.btn_test_source.grid(row = 15, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 15, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 15, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
         
 
     # UI functions
@@ -356,11 +367,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.__update_status("Starting report generation…", clear = True)
         
         if mode == "all":
-            proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
+            proc.generate_all(callback = self.__on_progress_update, mode = self.cgen_mode_var.get(), autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
         elif mode == "student":
             student_name = self.txt_student_name.get()
             self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
-            proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
+            proc.generate_for_student(student_name = student_name, mode = self.cgen_mode_var.get(), autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
             output_file_path = f"{output_file_path}/{student_name}.docx"
 
         self.lbl_count.configure(text = "Done!")
