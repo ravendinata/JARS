@@ -284,6 +284,7 @@ class Generator:
             comment_generator = cgen.AICommentGenerator()
             tc_table.cell(0, 0).text = comment_generator.generate_comment(nickname = self.grader_report.get_student_info(student_name, "Short Name"),
                                                                           gender = self.grader_report.get_student_info(student_name, "Gender"),
+                                                                          final_grade = str_letter_grade,
                                                                           result = student_sna,
                                                                           verbose = True
                                                                          )

@@ -306,7 +306,7 @@ class AICommentGenerator:
         }
     ]
 
-    def generate_comment(self, nickname, gender, result, verbose = False):
+    def generate_comment(self, nickname, gender, final_grade, result, verbose = False):
         """
         Generates a comment based on the student's result using AI.
         
@@ -329,8 +329,8 @@ class AICommentGenerator:
         elif gender == "F":
             gender_normalized = "female"
 
-        base_prompt = "Write a simple, single paragraph report card commentary for a student according to their grades for each goal. 5Grade A being best and Grade D being worst. Make it between 45 and 85 words and don't forget to include a simple opening and a closing. Do not mention the grades in the commentary."
-        parametric_prompt = f"The student's nickname is {nickname}. This student is a {gender_normalized}.\nGoals and grades for each goal:\n{assembled_result}"
+        base_prompt = "Write a simple, single paragraph report card comment for a student according to their grades for each goal. Grade A is best, B is better, C is okay, and Grade D being worst. Make it between 45 and 85 words and don't forget to include a simple opening and a closing. Be truthful and open about the comment even if it is blatant. Do not mention the grades in the commentary."
+        parametric_prompt = f"The student's nickname is {nickname}. This student is a {gender_normalized} and achieved an overall grade of {final_grade}.\nGoals and grades for each goal:\n{assembled_result}"
         response = self.model.generate_content(f"{base_prompt} {parametric_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
 
         if verbose:
