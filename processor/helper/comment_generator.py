@@ -2,6 +2,8 @@ import google.generativeai as genai
 import nltk
 from termcolor import colored
 
+import config
+
 class CommentGenerator:
     """
     Generates a comment based on the student's result and the comment mapping.
@@ -283,7 +285,7 @@ class AICommentGenerator:
         generate_comment(self, nickname, gender, result, verbose = False): Generates a comment based on the student's result using AI.
         rephrase(self, source): Rephrases a pre-generated comment using AI.
     """
-    genai.configure(api_key = "AIzaSyD9YSbAjp2jrQ_m3I4LQMYTvAPUpWNoVEM")
+    genai.configure(api_key = config.get_config("genai_api_key"))
 
     config = genai.GenerationConfig(candidate_count = 1, temperature = 0.2, max_output_tokens = 200, top_k = 20, top_p = 0.8)
     model = genai.GenerativeModel('gemini-pro')
