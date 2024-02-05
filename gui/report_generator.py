@@ -6,6 +6,7 @@ import tkinter as tk
 import tktooltip as tktip
 import tkcalendar as tkcal
 
+import config
 import processor.semester_report as processor
 import processor.grader_report as grader_report
 import processor.helper.comment_generator_test as cgen_test
@@ -365,6 +366,20 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                 return
             
         self.__update_status("Starting report generation…", clear = True)
+
+        if self.cgen_mode_var.get() == "ai":
+            print("AI mode selected!")
+            print("Checking API key…")
+
+            if config.get_config("genai_api_key") == "" or config.get_config("genai_api_key") is None:
+                tk.messagebox.showerror("API Key Not Found", "The AI-generated comment feature requires an API key. Please enter the API key in the configuration file and restart the program.")
+                self.rdo_ai_mode.deselect()
+                self.rdo_map_mode.select()
+                self.rdo_ai_mode.configure(state = tk.DISABLED)
+                self.__update_status("Aborting report generation!")
+                return
+
+            tk.messagebox.showwarning("Experimental Feature", "The AI-generated comment feature is an experimental feature and may not work as expected. Please use with caution.")
         
         if mode == "all":
             proc.generate_all(callback = self.__on_progress_update, mode = self.cgen_mode_var.get(), autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
