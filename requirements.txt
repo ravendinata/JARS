@@ -121,7 +121,9 @@ pytz==2023.3.post1
 pywebview==4.4.1
     # via -r requirements.in
 pywin32==306
-    # via docx2pdf
+    # via
+    #   docx2pdf
+    #   wmi
 regex==2023.10.3
     # via nltk
 requests==2.24.0
@@ -157,3 +159,5 @@ urllib3==1.25.11
     # via requests
 werkzeug==3.0.1
     # via flask
+wmi==1.5.1
+    # via -r requirements.in
