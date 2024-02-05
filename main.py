@@ -6,7 +6,7 @@ The GUI application is only suitable for processing a single file at a time.
 But it is more user-friendly and easier to use than the console application.
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 __author__ = "Raven Limadinata"
 
 import customtkinter as ctk
@@ -39,7 +39,7 @@ class LauncherFrame(ctk.CTkFrame):
         # Define widgets
         # Text widgets
         self.lbl_title = ctk.CTkLabel(self, text = "JARS Report Processor", font = ("Arial", 20, "bold"))
-        self.lbl_subtitle = ctk.CTkLabel(self, text = "JAC Academic Reporting System | Version 1.1.0", font = ("Arial", 10))
+        self.lbl_subtitle = ctk.CTkLabel(self, text = "JAC Academic Reporting System | Version 1.2.0", font = ("Arial", 10))
         self.lbl_prompt = ctk.CTkLabel(self, text = "Select a tool to open:")
         
         # Buttons
