@@ -143,7 +143,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.cgen_mode_var = tk.StringVar()
         self.lbl_comment_mode = ctk.CTkLabel(self, text = "Comment Generator Mode:")
         self.rdo_map_mode = ctk.CTkRadioButton(self, text = "Comment Map", variable = self.cgen_mode_var, value = "map")
-        self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated", variable = self.cgen_mode_var, value = "ai")
+        self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated (Experimental Feature)", variable = self.cgen_mode_var, value = "ai")
         self.rdo_map_mode.select()
 
         # Options section
