@@ -218,7 +218,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_test_source: "Create a validation list of all possible comment combinations and dumps it into an Excel file",
             self.btn_validate: "Validate the grader report for errors.",
             self.rdo_map_mode: "Use the comment map to generate student comments.",
-            self.rdo_ai_mode: "Use AI to generate student comments. Note: This is an experimental feature and may not work as expected. This requires an API key to be set in the configuration file.",
+            self.rdo_ai_mode: "Use AI to generate student comments. Note: This is an experimental feature and may not work as expected. This requires an API key to be set in the configuration file. An API key has been pre-supplied for you but in case the key is not working, please contact the developer or supply your own key. Check the JARS GitHub page for guide on obtaining an API key.",
         }
 
         self.__autocorrect_disabled = False
