@@ -1,10 +1,12 @@
 customtkinter
 docx2pdf
 flask
+google-generativeai
 language_tool_python
 nltk
 openpyxl
 pandas
+pillow
 pypdf
 python_docx
 PyMySQL
