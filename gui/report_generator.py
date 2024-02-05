@@ -216,7 +216,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.date_report: "Select the date to insert in the report. This is only enabled when the insert date option is selected.",
             self.btn_process: "Start generating the reports.",
             self.btn_test_source: "Create a validation list of all possible comment combinations and dumps it into an Excel file",
-            self.btn_validate: "Validate the grader report for errors."
+            self.btn_validate: "Validate the grader report for errors.",
+            self.rdo_map_mode: "Use the comment map to generate student comments.",
+            self.rdo_ai_mode: "Use AI to generate student comments. Note: This is an experimental feature and may not work as expected. This requires an API key to be set in the configuration file.",
         }
 
         self.__autocorrect_disabled = False
