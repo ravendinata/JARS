@@ -12,6 +12,7 @@ __author__ = "Raven Limadinata"
 import customtkinter as ctk
 import tkinter as tk
 import tktooltip as tktip
+import wmi
 from ctypes import windll
 from PIL import Image
 from win32com.client.dynamic import Dispatch
@@ -98,11 +99,18 @@ CHECKS
 """
 print("> Running system checks…")
 
+# Check if MS Word is running
+c = wmi.WMI()
+for process in c.Win32_Process():
+    if process.Name == "WINWORD.EXE":
+        word_is_open = True
+
 # Check if Microsoft Office is installed
 try:
     word = Dispatch("Word.Application")
     office_version = word.Version
-    word.Quit()
+    if not word_is_open:
+        word.Quit()
     print(f"  Microsoft Office {office_version} detected.")
 except:
     office_version = None
