@@ -64,6 +64,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             lbl_progress (CTkLabel): The label for the progress bar.
             lbl_count (CTkLabel): The label for the progress count.
             lbl_status (CTkLabel): The label for the status message.
+            lbl_comment_mode (CTkLavel): The label for comment generator mode.
 
         Textboxes and Entries:
             txt_source_path (CTkEntry): The textbox for the source file path.
@@ -81,6 +82,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         Radio Buttons:
             rdo_generate_all (CTkRadioButton): The radio button for generating all reports.
             rdo_generate_student (CTkRadioButton): The radio button for generating a single report.
+            rdo_map_mode (CTkRadioButton): The radio button for comment map mode.
+            rdo_ai_mode (CTkRadioButton): The radio button for AI-generated commentmode.
 
         Date Entry:
             date_report (DateEntry): The date entry for the report date.
@@ -90,6 +93,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         Variables:
             mode_var (tk.StringVar): The variable for the generate options.
+            cgen_mode_var (tk.StringVar): The variable for the comment generator mode.
             autocorrect_var (tk.IntVar): The variable for the autocorrect switch.
             inject_date (tk.IntVar): The variable for the insert date switch.
             force_var (tk.IntVar): The variable for the force generation switch.
