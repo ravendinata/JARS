@@ -1,5 +1,6 @@
 # Ignored DIRs
 __pycache__
+.vscode/
 build/
 dist/
 resources/
