@@ -1,6 +1,7 @@
 import google.generativeai as genai
 import nltk
 from termcolor import colored
+from google.ai.generativelanguage import Candidate
 
 import config
 
@@ -352,9 +353,9 @@ class AICommentGenerator:
 
         print(response)
 
-        if not response.text:
-            print(colored("(!) Response is empty. Retrying.", "light_cyan"))
-            response = self.model.generate_content(f"{base_prompt} {parametric_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
+        if response.candidates[0].finish_reason is not Candidate.FinishReason.STOP:
+            print(colored(f"(!) Server stopped because: {response.candidates[0].finish_reason.value}. Aborting.\n", "light_cyan"))
+            return f"AI Comment Generation Error! Reason: Server stopped because: {response.candidates[0].finish_reason}."
 
         if verbose:
             print(f"\nCandidates: {response.candidates}")
