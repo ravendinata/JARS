@@ -354,8 +354,8 @@ class AICommentGenerator:
         print(response)
 
         if response.candidates[0].finish_reason is not Candidate.FinishReason.STOP:
-            print(colored(f"(!) Server stopped because: {response.candidates[0].finish_reason.value}. Aborting.\n", "light_cyan"))
-            return f"AI Comment Generation Error! Reason: Server stopped because: {response.candidates[0].finish_reason}."
+            print(colored(f"(!) Server stopped because: {response.candidates[0].finish_reason.name}. Aborting.\n", "light_cyan"))
+            return f"AI Comment Generation Error! Reason: Server stopped because: {response.candidates[0].finish_reason.name}."
 
         if verbose:
             print(f"\nCandidates: {response.candidates}")
