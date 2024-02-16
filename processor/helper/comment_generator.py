@@ -387,6 +387,6 @@ class AICommentGenerator:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
         
-        print(f"\nRephrased Text: {response.text}")
+        print(f"\nRephrased Text: {response.text}\n")
 
         return response.text
