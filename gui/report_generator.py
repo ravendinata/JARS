@@ -328,7 +328,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         for all students if the generate all option is selected. It will run the report processor for
         a single student if the generate for student option is selected.
         """
-        if not self.__test_paths():
+        paths_valid = self.__test_paths()
+        if not paths_valid:
             return
         
         source_file = self.txt_source_path.get()
@@ -344,7 +345,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         force = True if self.force_var.get() == 1 else False
         pdf = True if self.create_pdf.get() == 1 else False
 
+        # Pre-checks
         if autocorrect:
+            print("Autocorrect enabled!")
+            print("Checking Java and Language Tool package…")
+
             java_exists = ltm.check_java()
             ltm_exists = ltm.check_package()
             install_java = False
@@ -371,8 +376,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                 self.__autocorrect_disabled = True
                 return
             
-        self.__update_status("Starting report generation…", clear = True)
-
         if self.cgen_mode_var.get() == "ai":
             print("AI mode selected!")
             print("Checking API key…")
@@ -387,6 +390,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
             tk.messagebox.showwarning("Experimental Feature", "The AI-generated comment feature is an experimental feature and may not work as expected. Please use with caution.")
         
+        # Start report generation
+        self.__update_status("Starting report generation…", clear = True)
+        
         if mode == "all":
             proc.generate_all(callback = self.__on_progress_update, mode = self.cgen_mode_var.get(), autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
         elif mode == "student":
@@ -395,6 +401,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             proc.generate_for_student(student_name = student_name, mode = self.cgen_mode_var.get(), autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
             output_file_path = f"{output_file_path}/{student_name}.docx"
 
+        # Post-operation
         self.lbl_count.configure(text = "Done!")
         self.__update_status("Report generation completed successfully.")
 
@@ -421,6 +428,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.__update_status("Comment generator test completed successfully.")
 
     def __validate(self):
+        """
+        Validates the grader report for errors.
+        It runs the grader report validator and displays the result in a message box.
+        
+        This function does not return anything. It displays a message box with the result of the validation.
+        """
         source_file = self.txt_source_path.get()
         
         if not os.path.isfile(source_file):
@@ -479,6 +492,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
     def __update_status(self, status_message, clear = False):
         """
         Updates the status message.
+        Can be used as a callback function for the report processor.
 
         Args:
             status_message (str): The status message to display.
