@@ -340,10 +340,23 @@ class AICommentGenerator:
 
         base_prompt = f"Write a simple, single paragraph report card comment for a student according to their grades for each goal. Grade A is best, B is better, C is okay, and Grade D being worst. Make it between 30 and {max_length} words. Strictly no more than {max_length} words. Don't forget to include a simple opening and a closing. Be truthful and open about the comment even if it is blatant. Do not mention the grades in the commentary."
         parametric_prompt = f"The student's nickname is {nickname}. This student is a {gender_normalized} and achieved an overall grade of {final_grade}.\nGoals and grades for each goal:\n{assembled_result}"
-        response = self.model.generate_content(f"{base_prompt} {parametric_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
-
+        
         if verbose:
             print(f"\nPrompt: {base_prompt} {parametric_prompt}\n")
+
+        try:
+            response = self.model.generate_content(f"{base_prompt} {parametric_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
+        except Exception as e:
+            print(colored(f"(!) Error: {e}", "red"))
+            return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
+
+        print(response)
+
+        if not response.text:
+            print(colored("(!) Response is empty. Retrying.", "light_cyan"))
+            response = self.model.generate_content(f"{base_prompt} {parametric_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
+
+        if verbose:
             print(f"\nCandidates: {response.candidates}")
             print(f"\nResponse: {response.text}")
             print(f"\nResponse Length: {len(response.text.split())} words\n")
@@ -366,7 +379,14 @@ class AICommentGenerator:
         Returns:
             str: The rephrased comment.
         """
-        response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} words. Content: {source}.", 
-                                               safety_settings = self.safety, 
-                                               generation_config = self.generation_config)
+        try:
+            response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} words. Content: {source}.", 
+                                                   safety_settings = self.safety, 
+                                                   generation_config = self.generation_config)
+        except Exception as e:
+            print(colored(f"(!) Error: {e}", "red"))
+            return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
+        
+        print(f"\nRephrased Text: {response.text}")
+
         return response.text
