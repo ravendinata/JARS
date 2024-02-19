@@ -231,15 +231,17 @@ class GraderReport:
         self.course_info.fillna("", inplace = True)
         self.data_final_grades.fillna(0, inplace = True)
         self.data_pd.fillna(0, inplace = True)
-        self.data_sna.fillna("X", inplace = True)
 
         # Data type conversion
         self.course_info = self.course_info.astype(str)
         self.students = self.students.astype(str)
         self.data_pd = self.data_pd.astype(int)
-        self.data_sna = self.data_sna.astype(str)
         self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
         self.data_comment_mapping = self.data_comment_mapping.astype(str)
+        
+        # Convert SNA data to string and fill NaN values with "X"
+        self.data_sna = self.data_sna.astype(str)
+        self.data_sna.fillna("X", inplace = True)
 
         # Strip whitespace from index
         self.course_info.index = self.course_info.index.str.strip()
