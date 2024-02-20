@@ -52,6 +52,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             btn_test_source (CTkButton): The button for testing the comment generator.
             btn_validate (CTkButton): The button for validating the grader report.
             btn_process (CTkButton): The button for processing the report.
+            btn_scan_word (CTkButton): The button to start manual scanning of MS Word installation.
 
         Labels:
             lbl_source (CTkLabel): The label for the source file path.
@@ -102,13 +103,20 @@ class ReportGeneratorFrame(ctk.CTkFrame):
     Methods:
         __init__(self, master, **kwargs): Initializes the ProcessorFrame.
         __browse_file(self): Opens a file dialog for browsing the source file.
+        __browse_signature(self): Opens a file dialog for browsing the signature file.
         __save_file(self): Opens a file dialog for saving the output file.
         __opt_all_selected(self): Disables the student name entry when the generate all option is selected.
         __opt_student_selected(self): Enables the student name entry when the generate for student option is selected.
+        __toggle_date_entry(self): Enables or disables the date entry field when the insert date option is selected or not.
+        __autocorrect_tooltip_message(self): Returns a dynamic tooltip message for the autocorrect switch button.
+        __pdf_tooltip_message(self): Returns a dynamic tooltip message for the PDF switch button.
         __process(self): Processes the report based on the selected options.
         __test_source(self): Tests the source file using the comment generator test suite
+        __validate(self): Validates the grader report for errors.
         __test_paths(self, source_path, out_path): Tests if the source and output paths are valid.
+        __scan_word(self): Scans the device for MS Word installation.
         __on_progress_update(self, current, total, status_message): Updates the progress bar.
+        __update_status(self, status_message, clear = False): Updates the status message.
     """
 
     def __init__(self, master, root, office_version, **kwargs):
