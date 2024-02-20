@@ -497,6 +497,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         # Check if MS Word is running
         print("  Checking if an MS Word instance is running…")
+        word_is_open = False
         c = wmi.WMI()
         for process in c.Win32_Process():
             if process.Name == "WINWORD.EXE":
