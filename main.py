@@ -100,19 +100,22 @@ CHECKS
 print("> Running system checks…")
 
 # Check if MS Word is running
+word_is_open = False
 c = wmi.WMI()
 for process in c.Win32_Process():
     if process.Name == "WINWORD.EXE":
         word_is_open = True
+        print("  An open MS Word instance is detected. Will not close it.")
 
 # Check if Microsoft Office is installed
 try:
     word = Dispatch("Word.Application")
     office_version = word.Version
+    print(f"  Microsoft Office {office_version} detected.")
     if not word_is_open:
         word.Quit()
-    print(f"  Microsoft Office {office_version} detected.")
-except:
+except Exception as e:
+    print(f"  An error occurred when trying to detect Microsoft Office installation. Details: {e}")
     office_version = None
     print("  Microsoft Office not detected.")
 
