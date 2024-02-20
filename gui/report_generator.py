@@ -208,6 +208,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_browse_source: "Browse for the grader report file.",
             self.btn_browse_output: "Browse for the output folder.",
             self.btn_browse_signature: "Browse for your digitized signature image file.",
+            self.btn_scan_word: "Manually scan for MS Word installation. This is already done automatically on startup but you can use this if you have just installed Office, or the startup scan failed to discover your installation.",
             self.rdo_generate_all: "Generate reports for all students.",
             self.rdo_generate_student: "Generate report for a single student. Fill in the student name field to specify the student.",
             self.switch_force: "Enable this to force generate the reports and disregard grader report errors.",
