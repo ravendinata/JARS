@@ -174,9 +174,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         if not office_version:
             self.switch_pdf.configure(state = tk.DISABLED)
             self.switch_pdf.deselect()
-            tktip.ToolTip(self.switch_pdf, "PDF creation is disabled because Microsoft Office is not installed.", font = ("Arial", 10))
-        else:
-            tktip.ToolTip(self.switch_pdf, "Enable this to convert the generated reports to PDF.", font = ("Arial", 10))
 
         # Report date
         self.lbl_date = ctk.CTkLabel(self, text = "Report Date:")
@@ -226,6 +223,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         self.__autocorrect_disabled = False
         self.ttip_switch = tktip.ToolTip(self.switch_autocorrect, msg = self.__autocorrect_tooltip_message, font = tooltip_font)
+        self.ttip_pdf = tktip.ToolTip(self.switch_pdf, msg = self.__pdf_tooltip_message, font = tooltip_font)
 
         for widget, message in tooltips.items():
             tktip.ToolTip(widget, message, font = tooltip_font)
