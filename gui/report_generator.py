@@ -115,6 +115,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         super().__init__(master, **kwargs, fg_color = "transparent")
         self.root = root
 
+        self.__office_version = office_version
+
         """
         WIDGETS SETUP
         """
@@ -479,6 +481,49 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             return False
         
         return True
+    
+    def __scan_word(self):
+        """
+        Scans the device for MS Word installation.
+        
+        This function does not return anything. It updates the GUI and enables the PDF switch if MS Word is found.
+        """
+        import wmi
+        from win32com.client import Dispatch
+
+        if self.__office_version:
+            tk.messagebox.showinfo("Microsoft Office Detected", "Microsoft Office has already been detected. No need to scan.")
+            return
+
+        print("> Manually Scanning for MS Word installation…")
+
+        # Check if MS Word is running
+        print("  Checking if an MS Word instance is running…")
+        c = wmi.WMI()
+        for process in c.Win32_Process():
+            if process.Name == "WINWORD.EXE":
+                word_is_open = True
+        
+        word_is_open = False
+        
+        # Check if Microsoft Office is installed
+        try:
+            print("  Checking if Microsoft Office is installed…")
+            word = Dispatch("Word.Application")
+            office_version = word.Version
+            if not word_is_open:
+                word.Quit()
+            print(f"  Microsoft Office {office_version} detected.")
+        except:
+            office_version = None
+            print("  Microsoft Office not detected.")
+
+        # Set GUI
+        if office_version:
+            self.__office_version = office_version
+            self.switch_pdf.configure(state = tk.NORMAL)
+            self.__update_status("Microsoft Office detected. PDF creation is enabled.")
+            print("  Microsoft Office detected. PDF creation is enabled.")
 
     def __on_progress_update(self, current, total, status_message):
         """
