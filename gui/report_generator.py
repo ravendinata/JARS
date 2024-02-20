@@ -190,6 +190,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
         self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, fg_color = "grey", command = self.__test_source)
         self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 100, fg_color = "grey", command = self.__validate)
+        self.btn_scan_word = ctk.CTkButton(self, text = "Re-Scan MS Word", width = 100, fg_color = "grey", command = self.__scan_word)
 
         # Progress tracker
         self.lbl_progress = ctk.CTkLabel(self, text = "Progress:")
@@ -276,6 +277,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.btn_test_source.grid(row = 15, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
         self.btn_validate.grid(row = 15, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
         self.btn_process.grid(row = 15, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
+
+        self.btn_scan_word.grid(row = 16, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
         
 
     # UI functions
@@ -319,6 +322,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             return "Autocorrect has been disabled for this session because Java is not installed."
         else:
             return "Enable this to autocorrect the comments using Language Tool. Note: This requires Java to be installed."
+        
+    def __pdf_tooltip_message(self):
+        """Returns the tooltip message for the PDF switch button."""
+        if not self.__office_version:
+            return "PDF creation is disabled because Microsoft Office is not installed."
+        else:
+            return "Enable this to convert the generated reports to PDF."
 
     def __process(self):
         """
