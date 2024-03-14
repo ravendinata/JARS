@@ -4,6 +4,7 @@ __pycache__
 build/
 dist/
 resources/
+ai/
 
 # Ignored Files
 *.spec

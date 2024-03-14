@@ -309,6 +309,11 @@ class AICommentGenerator:
         }
     ]
 
+    def get_base_prompt(self):
+        with open("ai/base_prompt.txt", "r") as file:
+            base_prompt = file.read()
+            return base_prompt
+
     def generate_comment(self, nickname, gender, final_grade, result, verbose = False):
         """
         Generates a comment based on the student's result using AI.
@@ -339,14 +344,15 @@ class AICommentGenerator:
         if goals_counts > 7:
             max_length = 60
 
-        base_prompt = f"Write a simple, single paragraph report card comment for a student according to their grades for each goal. Grade A is best, B is better, C is okay, and Grade D being worst. Make it between 30 and {max_length} words. Strictly no more than {max_length} words. Don't forget to include a simple opening and a closing. Be truthful and open about the comment even if it is blatant. Do not mention the grades in the commentary."
+        base_prompt = self.get_base_prompt()
         parametric_prompt = f"The student's nickname is {nickname}. This student is a {gender_normalized} and achieved an overall grade of {final_grade}.\nGoals and grades for each goal:\n{assembled_result}"
+        final_prompt = f"{base_prompt}\nMake it between 30 and {max_length} words. Strictly no more than {max_length} words.\n{parametric_prompt}"
         
         if verbose:
-            print(f"\nPrompt: {base_prompt} {parametric_prompt}\n")
+            print(f"\nPrompt: {final_prompt}\n")
 
         try:
-            response = self.model.generate_content(f"{base_prompt} {parametric_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
+            response = self.model.generate_content(f"{final_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
         except Exception as e:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
