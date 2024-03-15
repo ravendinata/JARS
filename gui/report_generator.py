@@ -124,6 +124,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.root = root
 
         self.__office_version = office_version
+        
+        self._grader_report = None
 
         """
         WIDGETS SETUP
@@ -288,7 +290,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.btn_process.grid(row = 15, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
 
         self.btn_scan_word.grid(row = 16, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
-        
 
     # UI functions
     def __browse_file(self):
@@ -296,6 +297,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         file_path = ctk.filedialog.askopenfilename(title = "Select Grader Report File", defaultextension = ".xlsm", filetypes =[("Microsoft Excel Macro-Enabled Document", "*.xlsm"), ("Microsoft Excel Document", "*.xlsx")])
         self.txt_source_path.delete(0, tk.END)
         self.txt_source_path.insert(0, file_path)
+        self._grader_report = grader_report.GraderReport(file_path)
 
     def __browse_signature(self):
         """Opens a file dialog for browsing the signature file."""
@@ -351,13 +353,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         if not paths_valid:
             return
         
-        source_file = self.txt_source_path.get()
         output_file_path = self.txt_output_path.get()
         signature_file = self.txt_signature_path.get() if self.txt_signature_path.get() != "" else None
         date = self.date_report.get_date() if self.inject_date.get() == 1 else None
 
-        gr = grader_report.GraderReport(source_file)
-        proc = processor.Generator(output_file_path, gr, date, signature_file)
+        proc = processor.Generator(output_file_path, self._grader_report, date, signature_file)
 
         mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False
