@@ -314,7 +314,7 @@ class AICommentGenerator:
             base_prompt = file.read()
             return base_prompt
 
-    def generate_comment(self, nickname, gender, final_grade, result, verbose = False):
+    def generate_comment(self, nickname, gender, final_grade, sna_list, verbose = False):
         """
         Generates a comment based on the student's result using AI.
         
@@ -329,7 +329,7 @@ class AICommentGenerator:
         """
         assembled_result = ""
 
-        for goal, grade in result.items():
+        for goal, grade in sna_list.items():
             assembled_result += f"{goal}: {grade}\n"
 
         if gender == "M":
@@ -338,8 +338,8 @@ class AICommentGenerator:
             gender_normalized = "female"
 
         # Dynamic length calculation
-        goals_counts = len(result)
         max_length = 70
+        goals_counts = len(sna_list)
 
         if goals_counts > 7:
             max_length = 60
