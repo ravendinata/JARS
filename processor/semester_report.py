@@ -93,7 +93,7 @@ class Generator:
         student_sna = {}
         str_letter_grade = str(self.grader_report.get_final_grade(student_name, "Letter Grade"))
         str_final_score = str(self.grader_report.get_final_grade(student_name, "Final Score"))
-        count_sna = len(self.grader_report.data_sna.columns)
+        count_sna = self.grader_report.count_sna()
 
         # Document processing begins
         document = Document()
@@ -256,9 +256,7 @@ class Generator:
             for j in range(1, 6):                                       # and in each column
                 pd_table.cell(i, j).width = Cm(1)                       # set width to 1cm
 
-        # Teacher's Comments Section
-        # Initialize comment generator
-        
+        # Teacher's Comments Section        
         tc_header = document.add_paragraph()
         tc_header.add_run("TEACHER'S COMMENTS").bold = True
         tc_header.paragraph_format.space_before = section_spacing
@@ -285,7 +283,7 @@ class Generator:
             tc_table.cell(0, 0).text = comment_generator.generate_comment(nickname = self.grader_report.get_student_info(student_name, "Short Name"),
                                                                           gender = self.grader_report.get_student_info(student_name, "Gender"),
                                                                           final_grade = str_letter_grade,
-                                                                          result = student_sna,
+                                                                          sna_list = student_sna,
                                                                           verbose = True
                                                                          )
             

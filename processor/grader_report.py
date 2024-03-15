@@ -148,7 +148,25 @@ class GraderReport:
         
         return data
     
-    # Public methods
+    def count_sna(self):
+        """
+        Get the length of the SNA data.
+        
+        Returns:
+            int: The length of the SNA data.
+        """
+        return len(self.data_sna.columns)
+    
+    def count_students(self):
+        """
+        Get the length of the student data.
+        
+        Returns:
+            int: The length of the student data.
+        """
+        return len(self.students.index)
+    
+    # Misc functions
     def validate(self, callback = None):
         """
         Validate the data in the grader report. This method will print warnings if there are missing values in the grader report.
