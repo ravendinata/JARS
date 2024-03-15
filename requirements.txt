@@ -48,7 +48,7 @@ google-auth==2.27.0
     # via
     #   google-api-core
     #   google-generativeai
-google-generativeai==0.3.2
+google-generativeai==0.4.1
     # via -r requirements.in
 googleapis-common-protos==1.62.0
     # via
