@@ -293,7 +293,7 @@ class AICommentGenerator:
 
     generation_config = {
     "temperature": 0.2,
-    "max_output_tokens": 200,
+    "max_output_tokens": 225,
     "top_k": 20,
     "top_p": 0.8,
     }
@@ -338,15 +338,26 @@ class AICommentGenerator:
             gender_normalized = "female"
 
         # Dynamic length calculation
-        max_length = 70
         goals_counts = len(sna_list)
+        max_length = 0
 
-        if goals_counts > 7:
-            max_length = 60
+        match goals_counts:
+            case 3:
+                max_length = 800
+            case 4:
+                max_length = 700
+            case 5:
+                max_length = 600
+            case 6:
+                max_length = 500
+            case 7 | 8 | 9 | 10:
+                max_length = 400
+            case _:
+                max_length = 900
 
         base_prompt = self.get_base_prompt()
         parametric_prompt = f"The student's nickname is {nickname}. This student is a {gender_normalized} and achieved an overall grade of {final_grade}.\nGoals and grades for each goal:\n{assembled_result}"
-        final_prompt = f"{base_prompt}\nMake it between 30 and {max_length} words. Strictly no more than {max_length} words.\n{parametric_prompt}"
+        final_prompt = f"{base_prompt}\nMake it between 400 and {max_length} characters. Strictly no more than {max_length} characters.\n{parametric_prompt}"
         
         if verbose:
             print(f"\nPrompt: {final_prompt}\n")
@@ -366,9 +377,10 @@ class AICommentGenerator:
         if verbose:
             print(f"\nCandidates: {response.candidates}")
             print(f"\nResponse: {response.text}")
-            print(f"\nResponse Length: {len(response.text.split())} words\n")
+            print(f"\nResponse Length (Chars): {len(response.text)} characters")
+            print(f"Response Length (Words): {len(response.text.split())} words\n")
 
-        if len(response.text.split()) > max_length:
+        if len(response.text) > max_length:
             if verbose:
                 print(colored("(!) Response too long. Rephrasing the response.", "light_cyan"))
             
@@ -376,7 +388,7 @@ class AICommentGenerator:
 
         return response.text
 
-    def rephrase(self, source, max_length = 75):
+    def rephrase(self, source, max_length = 600):
         """
         Rephrases a pre-generated comment using AI.
         
@@ -387,7 +399,7 @@ class AICommentGenerator:
             str: The rephrased comment.
         """
         try:
-            response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} words. Content: {source}.", 
+            response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} characters. Content: {source}.", 
                                                    safety_settings = self.safety, 
                                                    generation_config = self.generation_config)
         except Exception as e:
@@ -395,5 +407,7 @@ class AICommentGenerator:
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
         
         print(f"\nRephrased Text: {response.text}\n")
+        print(f"\nResponse Length (Chars): {len(response.text)} characters")
+        print(f"Response Length (Words): {len(response.text.split())} words\n")
 
         return response.text
