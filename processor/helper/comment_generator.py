@@ -383,8 +383,12 @@ class AICommentGenerator:
                 print(colored("(!) Response too long. Rephrasing the response.", "light_cyan"))
             
             return self.rephrase(response.text, max_length = max_length)
+        
+        # Remove unnecessary new lines
+        split_response = response.text.split("\n")
+        final_response = "".join(split_response)
 
-        return response.text
+        return final_response
 
     def rephrase(self, source, max_length = 600):
         """
@@ -408,4 +412,8 @@ class AICommentGenerator:
         print(f"\nResponse Length (Chars): {len(response.text)} characters")
         print(f"Response Length (Words): {len(response.text.split())} words\n")
 
-        return response.text
+        # Remove unnecessary new lines
+        split_response = response.text.split("\n")
+        final_response = "".join(split_response)
+
+        return final_response
