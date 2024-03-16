@@ -368,8 +368,6 @@ class AICommentGenerator:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
 
-        print(response)
-
         if response.candidates[0].finish_reason is not Candidate.FinishReason.STOP:
             print(colored(f"(!) Server stopped because: {response.candidates[0].finish_reason.name}. Aborting.\n", "light_cyan"))
             return f"AI Comment Generation Error! Reason: Server stopped because: {response.candidates[0].finish_reason.name}."
@@ -399,7 +397,7 @@ class AICommentGenerator:
             str: The rephrased comment.
         """
         try:
-            response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} characters. Content: {source}.", 
+            response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} characters BUT DO NOT WRITE LESS THAN 400 CHARACTERS. Content: {source}.", 
                                                    safety_settings = self.safety, 
                                                    generation_config = self.generation_config)
         except Exception as e:
