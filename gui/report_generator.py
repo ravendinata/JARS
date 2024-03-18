@@ -357,7 +357,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         signature_file = self.txt_signature_path.get() if self.txt_signature_path.get() != "" else None
         date = self.date_report.get_date() if self.inject_date.get() == 1 else None
 
-        proc = processor.Generator(output_file_path, self._grader_report, date, signature_file)
+        proc = processor.Generator(output_file_path, self._grader_report, date, signature_file, self.cgen_mode_var.get())
 
         mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False
@@ -413,11 +413,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.__update_status("Starting report generation…", clear = True)
         
         if mode == "all":
-            proc.generate_all(callback = self.__on_progress_update, mode = self.cgen_mode_var.get(), autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
+            proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
         elif mode == "student":
             student_name = self.txt_student_name.get()
             self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
-            proc.generate_for_student(student_name = student_name, mode = self.cgen_mode_var.get(), autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
+            proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
             output_file_path = f"{output_file_path}/{student_name}.docx"
 
         # Post-operation

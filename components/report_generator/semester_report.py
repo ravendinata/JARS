@@ -20,7 +20,7 @@ class Generator:
     This class is responsible for generating a standardized DOCX file from a templated XLSX grader report.
     """
 
-    def __init__(self, output_path, grader_report: GraderReport, date: datetime = None, signature_path = None):
+    def __init__(self, output_path, grader_report: GraderReport, date: datetime = None, signature_path = None, cgen_mode = "map"):
         """
         Initialize the generator instance.
 
@@ -37,9 +37,10 @@ class Generator:
         self.grader_report = grader_report
         self.date = date
         self.signature_path = signature_path
+        self.cgen_mode = cgen_mode
         print("[OK] Report generator initialized!")
 
-    def generate_all(self, mode, autocorrect = True, callback = None, force = False, convert_to_pdf = False):
+    def generate_all(self, autocorrect = True, callback = None, force = False, convert_to_pdf = False):
         """
         Generates reports for all students in the grader report.
         This function basically calls generate_for_student() for each student in the grader report.
@@ -57,7 +58,7 @@ class Generator:
                 callback(i, job_count, status_message)
             print(f"Progress: {round(i / job_count * 100, 2)}%")
             print(status_message)
-            self.generate_for_student(student_name = student, mode = mode, autocorrect = autocorrect, force = force)
+            self.generate_for_student(student_name = student, autocorrect = autocorrect, force = force)
         
         print(f"Progress: 100%")
 
@@ -75,7 +76,7 @@ class Generator:
                 callback(i, job_count, f"PDF copies for all reports created!")
             print(f"[OK] PDF copies for all reports created!")
 
-    def generate_for_student(self, student_name, mode, autocorrect = True, force = False, convert_to_pdf = False):
+    def generate_for_student(self, student_name, autocorrect = True, force = False, convert_to_pdf = False):
         """
         Generates a report for a specific student.
         
@@ -269,7 +270,7 @@ class Generator:
         tc_table.allow_autofit = False
         tc_table.rows[0].height = Cm(2)
 
-        if mode == "map":
+        if self.cgen_mode == "map":
             comment_generator = cgen.CommentGenerator(student_name = student_name, 
                                                       short_name = self.grader_report.get_student_info(student_name, "Short Name"),
                                                       gender = self.grader_report.get_student_info(student_name, "Gender"),
@@ -278,8 +279,8 @@ class Generator:
                                                       letter_grade = str_letter_grade,
                                                      )
             tc_table.cell(0, 0).text = comment_generator.generate_comment(autocorrect = autocorrect)
-        elif mode == "ai":
-            comment_generator = cgen.AICommentGenerator()
+        elif self.cgen_mode == "ai":
+            comment_generator = cgen.AICommentGenerator(self.manifest)
             tc_table.cell(0, 0).text = comment_generator.generate_comment(nickname = self.grader_report.get_student_info(student_name, "Short Name"),
                                                                           gender = self.grader_report.get_student_info(student_name, "Gender"),
                                                                           final_grade = str_letter_grade,
