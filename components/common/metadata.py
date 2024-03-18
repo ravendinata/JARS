@@ -36,3 +36,16 @@ def pdf_inject(file_path, student_name, grader_report, time_docsaved = datetime.
 
     with open(file_path, "wb") as output:
         writer.write(output)
+
+def get_pdf_metadata(file_path):
+    """
+    Gets the metadata of a PDF file.
+
+    Args:
+        file_path (str): The path to the file to be signed.
+
+    Returns:
+        dict: The metadata of the file.
+    """
+    reader = PdfReader(file_path)
+    return reader.metadata
