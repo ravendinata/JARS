@@ -4,7 +4,7 @@ import customtkinter as ctk
 import tkinter as tk
 
 import config
-import processor.formatter as processor
+import components.report_formatter.formatter as processor
 from gui.dialog import OutputDialog
 
 class ReportFormatterWindow(ctk.CTkToplevel):

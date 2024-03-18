@@ -17,7 +17,7 @@ import getopt
 import sys
 
 import console.helper as con
-import processor.formatter as processor
+import components.report_formatter.formatter as processor
 
 help_text = """
 HELP PAGE

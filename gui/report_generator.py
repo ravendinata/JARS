@@ -7,12 +7,12 @@ import tktooltip as tktip
 import tkcalendar as tkcal
 
 import config
-import processor.semester_report as processor
-import processor.grader_report as grader_report
-import processor.helper.comment_generator_test as cgen_test
-import processor.helper.language_tool_master as ltm
+import components.report_generator.semester_report as processor
+import components.common.grader_report as grader_report
+import components.report_generator.comment_generator_test as cgen_test
+import components.report_generator.language_tool_master as ltm
 from gui.dialog import OutputDialog
-from processor.helper.comment_generator import CommentGenerator
+from components.report_generator.comment_generator import CommentGenerator
 
 class ReportGeneratorWindow(ctk.CTkToplevel):
     def __init__(self, master, office_version, **kwargs):

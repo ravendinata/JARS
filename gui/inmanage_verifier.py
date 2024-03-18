@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import tkinter as tk
 
-import processor.integrity as integrity
+import components.common.integrity as integrity
 
 class InManageVerifierWindow(ctk.CTkToplevel):
     def __init__(self, master, **kwargs):

@@ -1,7 +1,7 @@
 import openpyxl
 import pandas as pd
 
-import processor.interface as interface
+import components.interface as interface
 
 class Formatter:
     """

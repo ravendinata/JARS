@@ -7,11 +7,11 @@ from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
 import docx2pdf
 
 import config
-import processor.integrity as integrity
-import processor.metadata as metadata
-import processor.helper.document as document_helper
-import processor.helper.comment_generator as cgen
-from processor.grader_report import GraderReport
+import components.common.integrity as integrity
+import components.common.metadata as metadata
+import components.report_generator.document as document_helper
+import components.report_generator.comment_generator as cgen
+from components.common.grader_report import GraderReport
 
 class Generator:
     """

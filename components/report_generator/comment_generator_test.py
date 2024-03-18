@@ -117,7 +117,7 @@ def run(source_file_path, output_file_path, ltm, CommentGenerator):
 
 def main(argv):
     import language_tool_master as ltm
-    from comment_generator import CommentGenerator
+    from components.report_generator.comment_generator import CommentGenerator
 
     source_file_path = ""
     output_file_path = ""

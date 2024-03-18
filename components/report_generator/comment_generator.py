@@ -65,7 +65,7 @@ class CommentGenerator:
         """
         if ltm is None:
             try:
-                import processor.helper.language_tool_master as ltm
+                import components.report_generator.language_tool_master as ltm
             except ImportError:
                 raise ImportError("LanguageTool is not installed. Please install LanguageTool to use this feature.")
 

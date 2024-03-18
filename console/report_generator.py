@@ -17,9 +17,9 @@ import getopt
 import sys
 
 import console.helper as con
-import processor.grader_report as grader_report
-import processor.semester_report as processor
-import processor.helper.language_tool_master as ltm
+import components.common.grader_report as grader_report
+import components.report_generator.semester_report as processor
+import components.report_generator.language_tool_master as ltm
 
 help_text = """
 HELP PAGE
