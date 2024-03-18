@@ -11,6 +11,7 @@ import components.common.integrity as integrity
 import components.common.metadata as metadata
 import components.report_generator.document as document_helper
 import components.report_generator.comment_generator as cgen
+import components.report_generator.manifest as manifest
 from components.common.grader_report import GraderReport
 
 class Generator:
@@ -32,12 +33,20 @@ class Generator:
             Generator: The report initialized generator instance.
         """
 
+        time_now = datetime.datetime.now()
+        init_time = time_now.strftime("%Y%m%d %H%M%S")
+
         print("[  ] Initializing generator...")
+        
         self.output_path = output_path
         self.grader_report = grader_report
         self.date = date
         self.signature_path = signature_path
         self.cgen_mode = cgen_mode
+
+        if self.cgen_mode == "ai":
+            self.manifest = manifest.Manifest(f"{self.output_path}/Manifest {init_time}.xlsx")
+
         print("[OK] Report generator initialized!")
 
     def generate_all(self, autocorrect = True, callback = None, force = False, convert_to_pdf = False):
@@ -415,3 +424,6 @@ class Generator:
             metadata.pdf_inject(f"{self.output_path}/{student_name}.pdf", student_name, self.grader_report, time_docsaved)
             integrity.sign_pdf(f"{self.output_path}/{student_name}.pdf")
             print(f"[OK] PDF copy for {student_name}'s report created!")
+
+        if self.cgen_mode == "ai":
+            self.manifest.save()

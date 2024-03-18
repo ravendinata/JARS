@@ -1,8 +1,10 @@
 import google.generativeai as genai
 import nltk
+from datetime import datetime
 from termcolor import colored
 from google.ai.generativelanguage import Candidate
 
+import components.report_generator.manifest as manifest
 import config
 
 class CommentGenerator:
@@ -286,28 +288,34 @@ class AICommentGenerator:
         generate_comment(self, nickname, gender, result, verbose = False): Generates a comment based on the student's result using AI.
         rephrase(self, source): Rephrases a pre-generated comment using AI.
     """
-    genai.configure(api_key = config.get_config("genai_api_key"))
 
-    config = genai.GenerationConfig(candidate_count = 1, temperature = 0.2, max_output_tokens = 200, top_k = 20, top_p = 0.8)
-    model = genai.GenerativeModel('gemini-pro')
+    def __init__(self, manifest: manifest.Manifest):
+        """
+        Initialize the AICommentGenerator instance.
+        """
+        genai.configure(api_key = config.get_config("genai_api_key"))
 
-    generation_config = {
-    "temperature": 0.2,
-    "max_output_tokens": 225,
-    "top_k": 20,
-    "top_p": 0.8,
-    }
+        self.config = genai.GenerationConfig(candidate_count = 1, temperature = 0.2, max_output_tokens = 200, top_k = 20, top_p = 0.8)
+        self.model = genai.GenerativeModel('gemini-pro')
+        self.manifest = manifest
 
-    safety = [
-        {
-            "category": "HARM_CATEGORY_HATE_SPEECH",
-            "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-        },
-        {
-            "category": "HARM_CATEGORY_HARASSMENT",
-            "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+        self.generation_config = {
+            "temperature": 0.2,
+            "max_output_tokens": 225,
+            "top_k": 20,
+            "top_p": 0.8,
         }
-    ]
+
+        self.safety = [
+            {
+                "category": "HARM_CATEGORY_HATE_SPEECH",
+                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+            },
+            {
+                "category": "HARM_CATEGORY_HARASSMENT",
+                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+            }
+        ]
 
     def get_base_prompt(self):
         with open("ai/base_prompt.txt", "r") as file:
@@ -327,7 +335,9 @@ class AICommentGenerator:
         Returns:
             str: The generated comment.
         """
+        rephrase = False
         assembled_result = ""
+        finish_time = ""
 
         for goal, grade in sna_list.items():
             assembled_result += f"{goal}: {grade}\n"
@@ -382,11 +392,30 @@ class AICommentGenerator:
             if verbose:
                 print(colored("(!) Response too long. Rephrasing the response.", "light_cyan"))
             
-            return self.rephrase(response.text, max_length = max_length)
+            rephrase = True
+            final_response = self.rephrase(response.text, max_length = max_length)
+
+            if verbose:
+                print(f"\nRephrased Response: {final_response}\n")
+                print(f"Rephrased Response Length (Chars): {len(final_response)} characters")
+                print(f"Rephrased Response Length (Words): {len(final_response.split())} words\n")
+
+            finish_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        # Remove unnecessary new lines if not rephrasing
+        if not rephrase:
+            split_response = response.text.split("\n")
+            final_response = "".join(split_response)
+            finish_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
-        # Remove unnecessary new lines
-        split_response = response.text.split("\n")
-        final_response = "".join(split_response)
+        self.manifest.add_entry(student = nickname, 
+                                comment_orig = final_response if not rephrase else response.text, 
+                                comment_short = final_response if rephrase else "-", 
+                                length_chars = len(final_response),
+                                length_words = len(final_response.split()),
+                                status = "Done", 
+                                completed_at = finish_time,
+                                error = None if not rephrase else "Max Length Exceeeded. Rephrased.")
 
         return final_response
 
@@ -407,10 +436,6 @@ class AICommentGenerator:
         except Exception as e:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
-        
-        print(f"\nRephrased Text: {response.text}\n")
-        print(f"\nResponse Length (Chars): {len(response.text)} characters")
-        print(f"Response Length (Words): {len(response.text.split())} words\n")
 
         # Remove unnecessary new lines
         split_response = response.text.split("\n")
