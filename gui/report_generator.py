@@ -159,8 +159,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         # Comment generator mode
         self.cgen_mode_var = tk.StringVar()
         self.lbl_comment_mode = ctk.CTkLabel(self, text = "Comment Generator Mode:")
-        self.rdo_map_mode = ctk.CTkRadioButton(self, text = "Comment Map", variable = self.cgen_mode_var, value = "map")
-        self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated (Experimental Feature)", variable = self.cgen_mode_var, value = "ai")
+        self.rdo_map_mode = ctk.CTkRadioButton(self, text = "Comment Map", variable = self.cgen_mode_var, value = "map", command = self.__map_cgen_mode_selected)
+        self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated (Experimental Feature)", variable = self.cgen_mode_var, value = "ai", command = self.__ai_cgen_mode_selected)
         self.rdo_map_mode.select()
 
         # Options section
@@ -319,6 +319,14 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """Enables the student name entry when the generate for student option is selected."""
         self.txt_student_name.configure(state = tk.NORMAL)
         self.txt_student_name.focus_set()
+
+    def __map_cgen_mode_selected(self):
+        """Enables autocorrect toggle"""
+        self.switch_autocorrect.configure(state = tk.NORMAL)
+
+    def __ai_cgen_mode_selected(self):
+        """Disables autocorrect toggle"""
+        self.switch_autocorrect.configure(state = tk.DISABLED)
 
     def __toggle_date_entry(self):
         """Enables or disables the date entry field when the insert date option is selected or not."""
