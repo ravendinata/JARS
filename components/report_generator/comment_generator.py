@@ -416,7 +416,7 @@ class AICommentGenerator:
                                 length_words = len(final_response.split()),
                                 status = "Done", 
                                 completed_at = finish_time,
-                                error = None if not rephrase else "Max Length Exceeeded. Rephrased.")
+                                error = None if not rephrase else "Max Length Exceeded. Rephrased.")
 
         return final_response
 
