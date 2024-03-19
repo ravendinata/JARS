@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "JARS Report Processor"
-#define MyAppVersion "1.2.1"
+#define MyAppVersion "1.2.2"
 #define MyAppPublisher "JAC School Research and Development"
 #define MyAppExeName "gui.exe"
 
@@ -35,7 +35,6 @@ Root: HKCU; Subkey: "Environment"; ValueType:string; ValueName: "LTP_PATH"; Valu
 
 [Files]
 Source: "Z:\Development\Custom Report Processor\dist\main\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Z:\Development\Custom Report Processor\dist\main\console.exe"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Z:\Development\Custom Report Processor\dist\main\config.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Z:\Development\Custom Report Processor\dist\main\_internal\*"; DestDir: "{app}\_internal"; Flags: ignoreversion recursesubdirs createallsubdirs
 Source: "Z:\Development\Custom Report Processor\dist\main\resources_minimal\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs
