@@ -405,7 +405,8 @@ class AICommentGenerator:
         # Remove unnecessary new lines if not rephrasing
         if not rephrase:
             split_response = response.text.split("\n")
-            final_response = "".join(split_response)
+            final_response = " ".join(split_response)
+            final_response = final_response.replace("  ", " ").replace(" .", ".").replace(" ,", ",").replace(" !", "!").replace(" '", "'").replace(".,", ".")
             finish_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         self.manifest.add_entry(student = nickname, 
@@ -439,6 +440,7 @@ class AICommentGenerator:
 
         # Remove unnecessary new lines
         split_response = response.text.split("\n")
-        final_response = "".join(split_response)
+        final_response = " ".join(split_response)
+        final_response = final_response.replace("  ", " ").replace(" .", ".").replace(" ,", ",").replace(" !", "!").replace(" '", "'").replace(".,", ".")
 
         return final_response
