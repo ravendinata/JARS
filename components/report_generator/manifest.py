@@ -31,7 +31,7 @@ class Manifest:
         """
         Saves the manifest file.
         """
-        self.table.to_excel(self.file_path, index = False)
+        self.table.to_excel(self.file_path, sheet_name = "Report Manifest", index = False)
 
         # Enable word wrap for the "Original Comment" and "Shortened Comment" columns
         workbook = openpyxl.load_workbook(self.file_path)
