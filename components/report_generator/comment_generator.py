@@ -21,7 +21,7 @@ class CommentGenerator:
     
     Methods:
         Public:
-        generate_comment(self, probe = False, autocorrect = False, ltm = None): Generates a comment based on the student's result and the comment mapping.
+        generate_comment(self, probe = False, autocorrect = False): Generates a comment based on the student's result and the comment mapping.
         
         Private:
         __format_comment(self, comment): Formats the comment.
@@ -47,15 +47,13 @@ class CommentGenerator:
         self._comment_mapping = self._comment_mapping.fillna("")
 
     # TODO: Change return type to proper dictionary type ?
-    def generate_comment(self, probe = False, autocorrect = False, ltm = None):
+    def generate_comment(self, probe = False, autocorrect = False):
         """
         Generates a comment based on the student's result and the comment mapping.
 
         Args:
             probe (bool): Whether the caller want's to 'probe' into the process by returning the number of positive and negative comments.
             autocorrect (bool): Whether to autocorrect the comment using LanguageTool.
-            ltm (module): The LanguageTool Instance Manager module. This is to inject the module to the class. 
-                          If not specified, the class will try to import the module itself
         
         Returns:
             str: The generated comment.
@@ -65,12 +63,6 @@ class CommentGenerator:
         Raises:
             ImportError: If the LanguageTool module is not installed.
         """
-        if ltm is None:
-            try:
-                import components.report_generator.language_tool_master as ltm
-            except ImportError:
-                raise ImportError("LanguageTool is not installed. Please install LanguageTool to use this feature.")
-
         pronoun = "he" if self._gender == "M" else "she"
         adjective = "his" if self._gender == "M" else "her"
 

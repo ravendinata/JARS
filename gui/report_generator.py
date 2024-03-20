@@ -10,7 +10,6 @@ import config
 import components.report_generator.semester_report as processor
 import components.common.grader_report as grader_report
 import components.report_generator.comment_generator_test as cgen_test
-import components.report_generator.language_tool_master as ltm
 from gui.dialog import OutputDialog
 from components.report_generator.comment_generator import CommentGenerator
 
@@ -414,7 +413,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         
         self.__update_status("Running comment generator test suite. Please wait…", clear = True)
         
-        cgen_test.run(source_file_path = source_file, output_file_path = output_file_path, ltm = ltm, CommentGenerator = CommentGenerator)
+        cgen_test.run(source_file_path = source_file, output_file_path = output_file_path, CommentGenerator = CommentGenerator)
         
         OutputDialog(master = self.root, title = "Comment Generator Test Complete", file_path = output_file_path, content = "Comment generator test completed successfully.")
         self.__update_status("Comment generator test completed successfully.")
