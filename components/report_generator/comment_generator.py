@@ -76,10 +76,12 @@ class CommentGenerator:
         text = ". ".join([sentence_intro, positive_text, negative_text, sentence_closing])
 
         comment = text.format(short_name = "VDC", pronoun = pronoun, adjective = adjective)
+        print(f"\nGenerated Comment:\n{comment}")
         if autocorrect:
-            tool = ltm.get_tool()
-            if tool.check(comment):
-                comment = tool.correct(comment)
+            ai = AICommentGenerator(None)
+            comment = ai.grammar_check(comment)
+            print(colored("\n[Comment autocorrected using AI]", "yellow"))
+            print(f"Autocorrected Comment:\n{comment}\n")
                 
         comment = comment.replace("VDC", self._short_name)
         comment = self.__format_comment(comment)
@@ -430,6 +432,31 @@ class AICommentGenerator:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
 
+        # Remove unnecessary new lines
+        split_response = response.text.split("\n")
+        final_response = " ".join(split_response)
+        final_response = final_response.replace("  ", " ").replace(" .", ".").replace(" ,", ",").replace(" !", "!").replace(" '", "'").replace(".,", ".")
+
+        return final_response
+    
+    def grammar_check(self, text):
+        """
+        Checks the grammar of a comment using Gemini AI.
+        
+        Args:
+            text (str): The comment to check.
+            
+        Returns:
+            str: The corrected comment.
+        """
+        try:
+            response = self.model.generate_content(f"You are a professional writer. You are reviewing a report for a student made by a machine. You want to make sure that the report is grammatically correct. The report is: {text}.",
+                                                   safety_settings = self.safety,
+                                                   generation_config = self.generation_config)
+        except Exception as e:
+            print(colored(f"(!) Error: {e}", "red"))
+            return f"AI Grammar Checking Error! Reason: {e}\nPlease regenerate report for this student manually."
+        
         # Remove unnecessary new lines
         split_response = response.text.split("\n")
         final_response = " ".join(split_response)
