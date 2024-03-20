@@ -230,10 +230,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_validate: "Validate the grader report for errors.",
             self.rdo_map_mode: "Use the comment map to generate student comments.",
             self.rdo_ai_mode: "Use AI to generate student comments. Note: This is an experimental feature and may not work as expected. This requires an API key to be set in the configuration file. An API key has been pre-supplied for you but in case the key is not working, please contact the developer or supply your own key. Check the JARS GitHub page for guide on obtaining an API key.",
+            self.switch_autocorrect: "Automatically corrects spelling and grammar errors in the generated comments. This requires internet connection as it uses Google's Gemini AI to autocorrect the comments.",
         }
 
-        self.__autocorrect_disabled = False
-        self.ttip_switch = tktip.ToolTip(self.switch_autocorrect, msg = self.__autocorrect_tooltip_message, font = tooltip_font)
         self.ttip_pdf = tktip.ToolTip(self.switch_pdf, msg = self.__pdf_tooltip_message, font = tooltip_font)
 
         for widget, message in tooltips.items():
@@ -334,13 +333,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.date_report.configure(state = tk.NORMAL)
         else:
             self.date_report.configure(state = tk.DISABLED)
-
-    def __autocorrect_tooltip_message(self):
-        """Returns the tooltip message for the autocorrect switch button."""
-        if self.__autocorrect_disabled:
-            return "Autocorrect has been disabled for this session because Java is not installed."
-        else:
-            return "Enable this to autocorrect the comments using Language Tool. Note: This requires Java to be installed."
         
     def __pdf_tooltip_message(self):
         """Returns the tooltip message for the PDF switch button."""
