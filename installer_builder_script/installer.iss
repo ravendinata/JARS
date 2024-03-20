@@ -6,25 +6,6 @@
 #define MyAppPublisher "JAC School Research and Development"
 #define MyAppExeName "gui.exe"
 
-[Code]
-function CheckJava(): Boolean;
-var
-  JavaVer : String;
-  AcceptInstall : Boolean;
-begin
-  if RegQueryStringValue(HKLM, 'SOFTWARE\JavaSoft\Java Runtime Environment','CurrentVersion', JavaVer) 
-      AND (JavaVer <> '') 
-    OR RegQueryStringValue(HKLM64, 'SOFTWARE\JavaSoft\Java Runtime Environment','CurrentVersion', JavaVer) 
-      AND (JavaVer <> '') then begin
-    Log('* Java Entry in Registry present. Version: ' + JavaVer);
-  end else
-  begin
-    AcceptInstall := MsgBox('Some feature in this program requires Java  to run. Do you want to install Java now?', mbConfirmation, MB_YESNO) = idYes;
-  end;
-
-  Result := AcceptInstall
-end;
-
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
@@ -37,7 +18,7 @@ DefaultDirName={autopf}\JARS
 DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputBaseFilename=jars-setup-full
+OutputBaseFilename=jars-setup
 Compression=lzma2/ultra64
 SolidCompression=yes
 WizardStyle=modern
@@ -49,11 +30,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
-[Registry]
-Root: HKCU; Subkey: "Environment"; ValueType:string; ValueName: "LTP_PATH"; ValueData: "resources/ltp"; Flags: preservestringtype
-
 [Files]
-Source: "Z:\Development\jre.exe"; DestDir: "{tmp}"; Flags: deleteafterinstall
 Source: "Z:\Development\Custom Report Processor\dist\main\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Z:\Development\Custom Report Processor\dist\main\config.json"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Z:\Development\Custom Report Processor\dist\main\_internal\*"; DestDir: "{app}\_internal"; Flags: ignoreversion recursesubdirs createallsubdirs
@@ -65,7 +42,3 @@ Source: "Z:\Development\Custom Report Processor\dist\main\gui\*"; DestDir: "{app
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
-
-[Run]
-Filename: "{tmp}\jre.exe"; Parameters: "/s"; Description: "Installing Java..."; Check: CheckJava; Flags: runhidden
-
