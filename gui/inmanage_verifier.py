@@ -1,3 +1,5 @@
+import os
+
 import customtkinter as ctk
 import tkinter as tk
 
@@ -118,40 +120,49 @@ class InManageVerifierFrame(ctk.CTkFrame):
         self.txt_file.delete(0, tk.END)
         self.txt_file.insert(0, file_path)
 
-        # Reset results field
-        self.txt_output.configure(state = tk.NORMAL)
-        self.txt_output.delete("1.0", tk.END)
-        self.txt_output.configure(state = tk.DISABLED)
+        if os.path.isfile(file_path):
+            # Reset results field
+            self.txt_output.configure(state = tk.NORMAL)
+            self.txt_output.delete("1.0", tk.END)
+            self.txt_output.configure(state = tk.DISABLED)
+            self.lbl_info.configure(text = "PENDING", fg_color = "blue")
 
-        self.lbl_info.configure(text = "PENDING", fg_color = "blue")
+            # Get metadata
+            data = metadata.get_pdf_metadata(file_path)
 
-        # Get metadata
-        data = metadata.get_pdf_metadata(file_path)
+            # Show signature metadata
+            self.txt_signer.configure(state = tk.NORMAL)
+            self.txt_signer.delete(0, tk.END)
+            self.txt_signer.insert(0, data.get("/Signed By", "N/A"))
+            self.txt_signer.configure(state = tk.DISABLED)
 
-        # Show signature metadata
-        self.txt_signer.configure(state = tk.NORMAL)
-        self.txt_signer.delete(0, tk.END)
-        self.txt_signer.insert(0, data.get("/Signed By", "N/A"))
-        self.txt_signer.configure(state = tk.DISABLED)
+            self.txt_signed_on.configure(state = tk.NORMAL)
+            self.txt_signed_on.delete(0, tk.END)
+            self.txt_signed_on.insert(0, data.get("/Signed On", "N/A"))
+            self.txt_signed_on.configure(state = tk.DISABLED)
+            
+            self.txt_hash.configure(state = tk.NORMAL)
+            self.txt_hash.delete(0, tk.END)
+            self.txt_hash.insert(0, data.get("/Hash", "N/A"))
+            self.txt_hash.configure(state = tk.DISABLED)
 
-        self.txt_signed_on.configure(state = tk.NORMAL)
-        self.txt_signed_on.delete(0, tk.END)
-        self.txt_signed_on.insert(0, data.get("/Signed On", "N/A"))
-        self.txt_signed_on.configure(state = tk.DISABLED)
-        
-        self.txt_hash.configure(state = tk.NORMAL)
-        self.txt_hash.delete(0, tk.END)
-        self.txt_hash.insert(0, data.get("/Hash", "N/A"))
-        self.txt_hash.configure(state = tk.DISABLED)
-
-        self.txt_serial_number.configure(state = tk.NORMAL)
-        self.txt_serial_number.delete(0, tk.END)
-        self.txt_serial_number.insert(0, data.get("/Serial Number", "N/A"))
-        self.txt_serial_number.configure(state = tk.DISABLED)
+            self.txt_serial_number.configure(state = tk.NORMAL)
+            self.txt_serial_number.delete(0, tk.END)
+            self.txt_serial_number.insert(0, data.get("/Serial Number", "N/A"))
+            self.txt_serial_number.configure(state = tk.DISABLED)
 
     def __verify(self):
         """Verifies the integrity of the selected file."""
         file_path = self.txt_file.get()
+
+        if not os.path.isfile(file_path):
+            self.txt_output.configure(state = tk.NORMAL)
+            self.txt_output.delete("1.0", tk.END)
+            self.txt_output.insert("1.0", "The file does not exist!\nPlease check the file path and select a valid file to verify.")
+            self.txt_output.configure(state = tk.DISABLED)
+            self.lbl_info.configure(text = "FAIL", fg_color = "red")
+            return
+
         integrous, output_text = integrity.verify_pdf(file_path)
         
         self.txt_output.configure(state = tk.NORMAL)
