@@ -295,7 +295,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         file_path = ctk.filedialog.askopenfilename(title = "Select Grader Report File", defaultextension = ".xlsm", filetypes =[("Microsoft Excel Macro-Enabled Document", "*.xlsm"), ("Microsoft Excel Document", "*.xlsx")])
         self.txt_source_path.delete(0, tk.END)
         self.txt_source_path.insert(0, file_path)
-        self._grader_report = grader_report.GraderReport(file_path)
+
+        if os.path.isfile(file_path):
+            self._grader_report = grader_report.GraderReport(file_path)
 
     def __browse_signature(self):
         """Opens a file dialog for browsing the signature file."""
