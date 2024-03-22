@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "JARS Report Processor"
-#define MyAppVersion "1.2.2"
+#define MyAppVersion "1.2.3-beta"
 #define MyAppPublisher "JAC School Research and Development"
 #define MyAppExeName "gui.exe"
 
