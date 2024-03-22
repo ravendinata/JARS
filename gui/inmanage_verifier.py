@@ -118,6 +118,13 @@ class InManageVerifierFrame(ctk.CTkFrame):
         self.txt_file.delete(0, tk.END)
         self.txt_file.insert(0, file_path)
 
+        # Reset results field
+        self.txt_output.configure(state = tk.NORMAL)
+        self.txt_output.delete("1.0", tk.END)
+        self.txt_output.configure(state = tk.DISABLED)
+
+        self.lbl_info.configure(text = "PENDING", fg_color = "blue")
+
         # Get metadata
         data = metadata.get_pdf_metadata(file_path)
 
