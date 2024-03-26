@@ -276,7 +276,9 @@ class AICommentGenerator:
     Generates a comment based on the student's result using AI.
 
     Attributes:
-        None
+        config (genai.GenerationConfig): The Gen AI generation configuration.
+        model (genai.GenerativeModel): The Gen AI generative model.
+        manifest (manifest.Manifest): The manifest instance for logging.
 
     Methods:
         generate_comment(self, nickname, gender, result, verbose = False): Generates a comment based on the student's result using AI.
@@ -289,16 +291,9 @@ class AICommentGenerator:
         """
         genai.configure(api_key = config.get_config("genai_api_key"))
 
-        self.config = genai.GenerationConfig(candidate_count = 1, temperature = 0.2, max_output_tokens = 200, top_k = 20, top_p = 0.8)
+        self.config = genai.GenerationConfig(candidate_count = 1, temperature = 0.2, max_output_tokens = 225, top_k = 20, top_p = 0.8)
         self.model = genai.GenerativeModel('gemini-pro')
         self.manifest = manifest
-
-        self.generation_config = {
-            "temperature": 0.2,
-            "max_output_tokens": 225,
-            "top_k": 20,
-            "top_p": 0.8,
-        }
 
         self.safety = [
             {
@@ -312,6 +307,12 @@ class AICommentGenerator:
         ]
 
     def get_base_prompt(self):
+        """
+        Gets the base prompt from a predefined file.
+
+        Returns:
+            str: The base prompt.
+        """
         with open("ai/base_prompt.txt", "r") as file:
             base_prompt = file.read()
             return base_prompt
@@ -367,7 +368,7 @@ class AICommentGenerator:
             print(f"\nPrompt: {final_prompt}\n")
 
         try:
-            response = self.model.generate_content(f"{final_prompt}", safety_settings = self.safety, generation_config = self.generation_config)
+            response = self.model.generate_content(f"{final_prompt}", safety_settings = self.safety, generation_config = self.config)
         except Exception as e:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
@@ -427,7 +428,7 @@ class AICommentGenerator:
         try:
             response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} characters BUT DO NOT WRITE LESS THAN 400 CHARACTERS. Content: {source}.", 
                                                    safety_settings = self.safety, 
-                                                   generation_config = self.generation_config)
+                                                   generation_config = self.config)
         except Exception as e:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
@@ -452,7 +453,7 @@ class AICommentGenerator:
         try:
             response = self.model.generate_content(f"You are a professional writer. You are reviewing a report for a student made by a machine. You want to make sure that the report is grammatically correct. The report is: {text}.",
                                                    safety_settings = self.safety,
-                                                   generation_config = self.generation_config)
+                                                   generation_config = self.config)
         except Exception as e:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Grammar Checking Error! Reason: {e}\nPlease regenerate report for this student manually."
