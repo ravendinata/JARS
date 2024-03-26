@@ -159,7 +159,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.cgen_mode_var = tk.StringVar()
         self.lbl_comment_mode = ctk.CTkLabel(self, text = "Comment Generator Mode:")
         self.rdo_map_mode = ctk.CTkRadioButton(self, text = "Comment Map", variable = self.cgen_mode_var, value = "map", command = self.__map_cgen_mode_selected)
-        self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated (Experimental Feature)", variable = self.cgen_mode_var, value = "ai", command = self.__ai_cgen_mode_selected)
+        self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated", variable = self.cgen_mode_var, value = "ai", command = self.__ai_cgen_mode_selected)
         self.rdo_map_mode.select()
 
         # Options section
@@ -381,7 +381,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                 self.__update_status("Aborting report generation!")
                 return
 
-            tk.messagebox.showwarning("Experimental Feature", "The AI-generated comment feature is an experimental feature and may not work as expected. Please use with caution.")
+            tk.messagebox.showwarning("Attention: Internet Required", "The AI-based comment generator utilizes Google's Gemini AI. Hence, you are required to connect to the internet when using this feature.")
         
         # Start report generation
         self.__update_status("Starting report generation…", clear = True)
