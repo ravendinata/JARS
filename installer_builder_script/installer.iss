@@ -4,7 +4,7 @@
 #define MyAppName "JARS Report Processor"
 #define MyAppVersion "1.2.3-beta"
 #define MyAppPublisher "JAC School Research and Development"
-#define MyAppExeName "gui.exe"
+#define MyAppExeName "jars.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.

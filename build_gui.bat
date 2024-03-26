@@ -2,5 +2,5 @@ pyinstaller ^
 --onedir ^
 --upx-dir "Z:\Development\upx" ^
 --hidden-import "babel.numbers" ^
---name gui ^
+--name jars ^
 main.py
