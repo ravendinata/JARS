@@ -297,7 +297,17 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_source_path.insert(0, file_path)
 
         if os.path.isfile(file_path):
-            self._grader_report = grader_report.GraderReport(file_path)
+            self._grader_report = grader_report.GraderReport(file_path, skip_validation = True, callback = self.__update_status)
+            if not self._grader_report:
+                tk.messagebox.showerror("Error", "An error occurred while loading the grader report. Check console/terminal for details.")
+                return
+
+            self.__update_status("Validating grader report…", clear = True)
+            valid = self._grader_report.validate(callback = self.__update_status)
+            if not valid:
+                self.__update_status("\nWARNING: Grader report is invalid. Check information above for details.")
+            else:
+                self.__update_status("Grader report is valid. You're good to go!")
 
     def __browse_signature(self):
         """Opens a file dialog for browsing the signature file."""
@@ -433,7 +443,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             tk.messagebox.showerror("Error", "Please select a valid source file.")
             return
         
-        gr = grader_report.GraderReport(source_file, skip_validation = True)
+        gr = grader_report.GraderReport(source_file, skip_validation = True, callback = self.__update_status)
         valid = gr.validate(callback = self.__update_status)
         if not valid:
             tk.messagebox.showerror("Invalid grader report", "Grader report is invalid. Check console/terminal for details.")

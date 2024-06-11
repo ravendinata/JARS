@@ -2,7 +2,7 @@ import pandas as pd
 from termcolor import colored
 
 class GraderReport:
-    def __init__(self, grader_report_path, skip_validation = False):
+    def __init__(self, grader_report_path, skip_validation = False, callback = None):
         """
         Initialize the grader report instance.
 
@@ -17,13 +17,23 @@ class GraderReport:
         print("[  ] Initializing generator...")
 
         self.grader_report_path = grader_report_path
+        self.__data_broken = False
 
-        self.course_info = pd.read_excel(self.grader_report_path, sheet_name = "Course Information", index_col = 0, header = 0, nrows = 7)
-        self.students = pd.read_excel(self.grader_report_path, sheet_name = "Student List", index_col = 0, header = 0, usecols = "A:C")
-        self.data_sna = pd.read_excel(self.grader_report_path, sheet_name = "Skills and Assessment", index_col = 0, header = 0)
-        self.data_pd = pd.read_excel(self.grader_report_path, sheet_name = "Personal Development", index_col = 0, header = 0)
-        self.data_final_grades = pd.read_excel(self.grader_report_path, sheet_name = "Final Grades", index_col = 0, header = 0, usecols = "A,H:I")
-        self.data_comment_mapping = pd.read_excel(self.grader_report_path, sheet_name = "Comment Mapping", index_col = 0, header = 0)
+        try:
+            self.course_info = pd.read_excel(self.grader_report_path, sheet_name = "Course Information", index_col = 0, header = 0, nrows = 7)
+            self.students = pd.read_excel(self.grader_report_path, sheet_name = "Student List", index_col = 0, header = 0, usecols = "A:C")
+            self.data_sna = pd.read_excel(self.grader_report_path, sheet_name = "Skills and Assessment", index_col = 0, header = 0)
+            self.data_pd = pd.read_excel(self.grader_report_path, sheet_name = "Personal Development", index_col = 0, header = 0, usecols = "A:I")
+            self.data_final_grades = pd.read_excel(self.grader_report_path, sheet_name = "Final Grades", index_col = 0, header = 0, usecols = "A,H:I")
+            self.data_comment_mapping = pd.read_excel(self.grader_report_path, sheet_name = "Comment Mapping", index_col = 0, header = 0)
+        except Exception as e:
+            self.__data_broken = True
+            output_text = "Error: Unable to read the grader report! Please check that you are using the base template designed for JARS."
+            print(colored(output_text, "white", "on_red"))
+            print(colored(f"Details: {e}", "red"))
+            if callback is not None:
+                callback(output_text)
+            return
         
         self.__prepare_data()
 
@@ -174,12 +184,28 @@ class GraderReport:
         Returns:
             bool: Whether the data is valid or not.
         """
+        if self.__data_broken:
+            output_text = "Error: Unable to validate the grader report due to data corruption or template incompliance. Please make sure to use the base template designed for JARS."
+            print(colored(output_text, "white", "on_red"))
+            if callback is not None:
+                callback(output_text)
+            return False
+
         print("[  ] Validating data...")
         valid = True
         count = 0
 
         print(f"Course Info:\n{self.course_info}\n")
-        print(f"Student List:\n{self.students}\n")
+        print(f"Student List:\n{self.students}\nStudent Count: {self.count_students()}\n")
+
+        if self.count_students() == 0:
+            count += 1
+            valid = False
+            output_text = f"Warning [{count}]: No students found in the grader report! Please check 'Student List' sheet on the grader report. You MUST fill the Student Name, Short Name, and Gender columns."
+            if callback is not None:
+                callback(output_text)
+            print(colored(output_text, "red"))
+
 
         # Check if all course information is filled
         for item in self.course_info.index:
