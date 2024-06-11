@@ -5,7 +5,8 @@ $(document).ready(function() {
             autoWidth: true,
             lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
             pageLength: 10,
-            buttons: [
+            buttons: 
+            [
                 'copy', 
                 {
                     extend: 'csv', 
@@ -40,15 +41,16 @@ $(document).ready(function() {
 });
 
 // Toggle color mode
-document.getElementById('btnToggleColorMode').addEventListener('click',()=>{
+document.getElementById('btnToggleColorMode').addEventListener('click', () =>
+{
     if (document.documentElement.getAttribute('data-bs-theme') == 'dark')
     {
-        document.documentElement.setAttribute('data-bs-theme','light')
+        document.documentElement.setAttribute('data-bs-theme', 'light')
         document.getElementById('btnToggleColorMode').innerHTML = 'Switch to Dark Mode';
     }
     else
     {
-        document.documentElement.setAttribute('data-bs-theme','dark')
+        document.documentElement.setAttribute('data-bs-theme', 'dark')
         document.getElementById('btnToggleColorMode').innerHTML = 'Switch to Light Mode';
     }
 });
