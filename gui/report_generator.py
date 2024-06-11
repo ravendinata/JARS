@@ -10,6 +10,7 @@ import config
 import components.report_generator.semester_report as processor
 import components.common.grader_report as grader_report
 import components.report_generator.comment_generator_test as cgen_test
+import components.utility as util
 from gui.dialog import OutputDialog
 from components.report_generator.comment_generator import CommentGenerator
 
@@ -161,6 +162,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.rdo_map_mode = ctk.CTkRadioButton(self, text = "Comment Map", variable = self.cgen_mode_var, value = "map", command = self.__map_cgen_mode_selected)
         self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated", variable = self.cgen_mode_var, value = "ai", command = self.__ai_cgen_mode_selected)
         self.rdo_map_mode.select()
+        self.btn_test_api_key = ctk.CTkButton(self, text = "Test API Key", width = 100, fg_color = "grey", command = self.__test_api_key)
 
         # Options section
         self.lbl_options = ctk.CTkLabel(self, text = "Options:")
@@ -266,6 +268,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_comment_mode.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
         self.rdo_map_mode.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
         self.rdo_ai_mode.grid(row = 7, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.btn_test_api_key.grid(row = 7, column = 2, sticky = tk.EW, padx = 2, pady = 2)
 
         self.lbl_options.grid(row = 8, column = 0, sticky = tk.W, pady = 2)
         self.switch_autocorrect.grid(row = 8, column = 1, sticky = tk.W, padx =  5, pady = 2)
@@ -392,6 +395,15 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                 self.rdo_ai_mode.deselect()
                 self.rdo_map_mode.select()
                 self.rdo_ai_mode.configure(state = tk.DISABLED)
+                self.__update_status("Aborting report generation!")
+                return
+            else:
+                print("API key found!\nValidating API key with Google…")
+                genai_api_key_validated = util.validate_genai_api_key()
+
+            if not genai_api_key_validated:
+                tk.messagebox.showerror("Invalid API Key", "The API key provided is invalid. Please check the key in the configuration file and try again.")
+                self.__update_status("Warning: Invalid API key. Please check the configuration file or use the configurator to set a valid API key.")
                 self.__update_status("Aborting report generation!")
                 return
 
@@ -521,6 +533,23 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.__update_status("Microsoft Office detected. PDF creation is enabled.")
             print("  Microsoft Office detected. PDF creation is enabled.")
 
+    def __test_api_key(self):
+        """
+        Tests the GenAI API key.
+        
+        This function does not return anything. It displays a message box with the result of the API key validation.
+        """
+        print("Testing API key…")
+        self.__update_status("Testing API key…", clear = True)
+
+        if util.validate_genai_api_key():
+            tk.messagebox.showinfo("API Key Valid", "The API key is valid. You're good to go!")
+            self.__update_status("API key is valid. You're good to go!")
+            print("> Valid.")
+        else:
+            tk.messagebox.showerror("API Key Invalid", "The API key is invalid. Please check the key in the configuration file and try again.")
+            self.__update_status("Warning: Invalid API key. Please check the configuration file or use the configurator to set a valid API key.")
+            print("> Invalid.")
 
     def __open_configurator(self):
         """Opens the configuration window."""
