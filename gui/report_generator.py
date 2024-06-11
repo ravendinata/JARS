@@ -199,6 +199,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, fg_color = "grey", command = self.__test_source)
         self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 100, fg_color = "grey", command = self.__validate)
         self.btn_scan_word = ctk.CTkButton(self, text = "Re-Scan MS Word", width = 100, fg_color = "grey", command = self.__scan_word)
+        self.btn_configure = ctk.CTkButton(self, text = "Settings…", width = 100, fg_color = "purple", command = self.__open_configurator)
 
         # Progress tracker
         self.lbl_progress = ctk.CTkLabel(self, text = "Progress:")
@@ -229,6 +230,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_validate: "Validate the grader report for errors.",
             self.rdo_map_mode: "Use the comment map to generate student comments.",
             self.rdo_ai_mode: "Use AI to generate student comments. Note: This is an experimental feature and may not work as expected. This requires an API key to be set in the configuration file. An API key has been pre-supplied for you but in case the key is not working, please contact the developer or supply your own key. Check the JARS GitHub page for guide on obtaining an API key.",
+            self.btn_test_api_key: "Test the Google Gemini AI API key set in the configuration.",
+            self.btn_configure: "Open the configurator to set API keys and other settings.",
             self.switch_autocorrect: "Automatically corrects spelling and grammar errors in the generated comments. This requires internet connection as it uses Google's Gemini AI to autocorrect the comments.",
         }
 
@@ -287,7 +290,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.btn_validate.grid(row = 15, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
         self.btn_process.grid(row = 15, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
 
-        self.btn_scan_word.grid(row = 16, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
+        self.btn_configure.grid(row = 16, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
+        self.btn_scan_word.grid(row = 16, column = 1, sticky = tk.W, padx = 2, pady = (2, 5))
 
     # UI functions
     def __browse_file(self):
@@ -516,6 +520,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.switch_pdf.configure(state = tk.NORMAL)
             self.__update_status("Microsoft Office detected. PDF creation is enabled.")
             print("  Microsoft Office detected. PDF creation is enabled.")
+
+
+    def __open_configurator(self):
+        """Opens the configuration window."""
+        from gui.configurator import ConfiguratorWindow
+        ConfiguratorWindow(master = self.root)
 
     def __on_progress_update(self, current, total, status_message):
         """

@@ -22,7 +22,7 @@ from gui.report_formatter import ReportFormatterWindow
 from gui.report_generator import ReportGeneratorWindow
 from gui.inmanage_verifier import InManageVerifierWindow
 from gui.moodle_database import MoodleDatabaseWindow
-
+from gui.configurator import ConfiguratorWindow
 
 global office_version
 global moodle_reachable
@@ -47,10 +47,13 @@ class LauncherFrame(ctk.CTkFrame):
         self.btn_report_formatter = ctk.CTkButton(self, text = "Report Formatter", height = 30, command = self.__open_report_formatter)
         self.btn_report_generator = ctk.CTkButton(self, text = "Report Generator", height = 30, command = self.__open_report_generator)
         self.btn_inmanage_verifier = ctk.CTkButton(self, text = "InManage Verifier", height = 30, command = self.__open_inmanage_verifier, fg_color = "purple")
+        
         self.btn_moodle_database = ctk.CTkButton(self, text = "Moodle Database Explorer", height = 30, command = self.__open_moodle_database, fg_color = "darkorange1")
         if not moodle_reachable:
             self.btn_moodle_database.configure(image = icon_attention)
             tktip.ToolTip(self.btn_moodle_database, "Cannot reach Moodle Database. Hence, function is disabled. Details are in console. Please check your connection settings or contact administrator.")
+        
+        self.btn_configurator = ctk.CTkButton(self, text = "Settings…", height = 30, command = self.__open_configurator, fg_color = "purple")
 
         # Exit button
         self.btn_exit = ctk.CTkButton(self, text = "Exit", command = self.master.destroy, fg_color = "grey")
@@ -64,8 +67,10 @@ class LauncherFrame(ctk.CTkFrame):
         self.btn_report_generator.grid(row = 3, column = 1, padx = 2, pady = (5, 2))
         self.btn_inmanage_verifier.grid(row = 4, column = 0, columnspan = 2, padx = 2, pady = 2)
         self.btn_moodle_database.grid(row = 5, column = 0, columnspan = 2, padx = 2, pady = (2, 5))
+
+        self.btn_configurator.grid(row = 6, column = 0, columnspan = 2, padx = 2, pady = 5)
         
-        self.btn_exit.grid(row = 6, column = 0, columnspan = 2, padx = 2, pady = (10, 5))
+        self.btn_exit.grid(row = 7, column = 0, columnspan = 2, padx = 2, pady = (10, 5))
 
     def __open_report_formatter(self):
         ReportFormatterWindow(master = self.master)
@@ -81,6 +86,9 @@ class LauncherFrame(ctk.CTkFrame):
             MoodleDatabaseWindow(master = self.master)
         else:
             tk.messagebox.showerror("Connection Error", "Connection to Moodle database failed. Please check your connection settings or contact administrator.")
+
+    def __open_configurator(self):
+        ConfiguratorWindow(master = self.master, caller = "main")
 
 
 class Window(ctk.CTk): 
