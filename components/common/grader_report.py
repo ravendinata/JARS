@@ -85,7 +85,14 @@ class GraderReport:
         Returns:
             str: The value of the student grade for the SNA.
         """
-        data = self.data_sna.loc[student, assessment]
+        try:
+            data = self.data_sna.loc[student, assessment]
+        except KeyError:
+            print(colored(f"Error: {student} not found in the Skills and Assessment sheet! Please check that the student is included in the sheet.", "red"))
+            return "SMFS"
+        except Exception as e:
+            print(colored(f"Error: An error occurred while getting grade for {student}! Details: {e}", "red"))
+            return ""
 
         if raw:
             return data
@@ -109,7 +116,14 @@ class GraderReport:
         Returns:
             str: The value of the student grade for the PD item.
         """
-        data = self.data_pd.loc[student, item]
+        try:
+            data = self.data_pd.loc[student, item]
+        except KeyError:
+            print(colored(f"Error: {student} not found in the Personal Development sheet! Please check that the student is included in the sheet.", "red"))
+            return "SMFS"
+        except Exception as e:
+            print(colored(f"Error: An error occurred while getting grade for {student}! Details: {e}", "red"))
+            return 0
 
         if raw:
             return data
@@ -136,7 +150,14 @@ class GraderReport:
         Returns:
             str: The value of the student final grade.
         """
-        data = self.data_final_grades.loc[student, format]
+        try:
+            data = self.data_final_grades.loc[student, format]
+        except KeyError:
+            print(colored(f"Error: {student} not found in the Final Grades sheet! Please check that the student is included in the sheet.", "red"))
+            return "SMFS"
+        except Exception as e:
+            print(colored(f"Error: An error occurred while getting final grade for {student}! Details: {e}", "red"))
+            return 0
 
         if raw:
             return data
@@ -219,17 +240,26 @@ class GraderReport:
 
         # Check if all students have a final grade
         for student in self.students.index:
-            if self.get_final_grade(student, "Final Score", raw = True) == 0:
+            final_grade_result = self.get_final_grade(student, "Final Score", raw = True)
+            if final_grade_result == 0:
                 count += 1
                 valid = False
                 output_text = f"Warning [{count}]: {student} has no final score! Please check the grader report."
                 if callback is not None:
                     callback(output_text)
                 print(colored(output_text, "red"))
+            elif final_grade_result == "SMFS":
+                count += 1
+                valid = False
+                output_text = f"Warning [{count}]: {student} is not found in the 'Final Grades' sheet! Please check that the student is included in the sheet."
+                if callback is not None:
+                    callback(output_text)
+                break
 
         # Check if all students have a letter grade
         for student in self.students.index:
-            if self.get_final_grade(student, "Letter Grade", raw = True) == 0:
+            letter_grade_result = self.get_final_grade(student, "Letter Grade", raw = True)
+            if letter_grade_result == 0:
                 count += 1
                 valid = False
                 output_text = f"Warning [{count}]: {student} has no letter grade! Please check the grader report."
@@ -240,24 +270,40 @@ class GraderReport:
         # Check if all students have a grade for each SNA
         for student in self.students.index:
             for assessment in self.data_sna.columns:
-                if self.get_grade_sna(student, assessment, raw = True) == "X":
+                sna_result = self.get_grade_sna(student, assessment, raw = True)
+                if sna_result == "X":
                     count += 1
                     valid = False
                     output_text = f"Warning [{count}]: {student} has no grade for goal '{assessment}'! Please check the grader report."
                     if callback is not None:
                         callback(output_text)
                     print(colored(output_text, "red"))
+                elif sna_result == "SMFS":
+                    count += 1
+                    valid = False
+                    output_text = f"Warning [{count}]: {student} is not found in the 'Skills and Assessment' sheet! Please check that the student is included in the sheet."
+                    if callback is not None:
+                        callback(output_text)
+                    break
 
         # Check if all students have a grade for each PD item
         for student in self.students.index:
             for item in self.data_pd.columns:
-                if self.get_grade_pd(student, item, raw = True) == 0:
+                pd_result = self.get_grade_pd(student, item, raw = True)
+                if pd_result == 0:
                     count += 1
                     valid = False
                     output_text = f"Warning [{count}]: {student} has no grade for personal development item '{item}'! Please check the grader report."
                     if callback is not None:
                         callback(output_text)
                     print(colored(output_text, "red"))
+                elif pd_result == "SMFS":
+                    count += 1
+                    valid = False
+                    output_text = f"Warning [{count}]: {student} is not found in the 'Personal Development' sheet! Please check that the student is included in the sheet."
+                    if callback is not None:
+                        callback(output_text)
+                    break
 
         self.data_valid = valid
         print(colored(f"Validation Pass: {valid}", "red" if not valid else "green"), "\n", colored(f"Warnings: {count}\n", "yellow") if not valid else "")
