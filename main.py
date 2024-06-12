@@ -17,6 +17,7 @@ from ctypes import windll
 from PIL import Image
 from win32com.client.dynamic import Dispatch
 
+import config
 import moodle.database as moodle
 from gui.report_formatter import ReportFormatterWindow
 from gui.report_generator import ReportGeneratorWindow
