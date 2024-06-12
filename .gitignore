@@ -9,3 +9,4 @@ ai/
 # Ignored Files
 *.spec
 config.json
+test.py
