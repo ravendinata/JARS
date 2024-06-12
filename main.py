@@ -141,6 +141,11 @@ except Exception as e:
 
 print("> System checks completed.")
 
+# Apply GUI settings
+print("> Applying GUI settings…")
+ctk.set_appearance_mode(config.get_config("appearance_mode"))
+ctk.set_default_color_theme(config.get_config("color_theme"))
+
 windll.shcore.SetProcessDpiAwareness(1)
 window = Window()
 window.mainloop()

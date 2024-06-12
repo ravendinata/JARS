@@ -79,7 +79,7 @@ class InManageVerifierFrame(ctk.CTkFrame):
         # Output text box
         self.lbl_output = ctk.CTkLabel(self, text = "Result:")
         self.txt_output = ctk.CTkTextbox(self, width = 250, height = 75, state = tk.DISABLED, wrap = "word")
-        self.lbl_info = ctk.CTkLabel(self, text = "-")
+        self.lbl_info = ctk.CTkLabel(self, text = "-", text_color = "white")
 
         # Buttons
         self.btn_verify = ctk.CTkButton(self, text = "Verify", command = self.__verify)
