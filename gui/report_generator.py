@@ -132,17 +132,17 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """
         # Grader report file path
         self.lbl_source = ctk.CTkLabel(self, text = "Grader Report File:")
-        self.txt_source_path = ctk.CTkEntry(self, width = 250)
+        self.txt_source_path = ctk.CTkEntry(self, width = 450)
         self.btn_browse_source = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__browse_file)
 
         # Output file path
         self.lbl_output = ctk.CTkLabel(self, text = "Output Folder:")
-        self.txt_output_path = ctk.CTkEntry(self, width = 250)
+        self.txt_output_path = ctk.CTkEntry(self, width = 450)
         self.btn_browse_output = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__save_file)
 
         # Signature file path
         self.lbl_signature = ctk.CTkLabel(self, text = "Signature File:")
-        self.txt_signature_path = ctk.CTkEntry(self, width = 250, placeholder_text = "Leave blank to not include signature")
+        self.txt_signature_path = ctk.CTkEntry(self, width = 450, placeholder_text = "Leave blank to not include signature")
         self.btn_browse_signature = ctk.CTkButton(self, text = "Browse…", width = 100, command = self.__browse_signature)
 
         # Generate all or generate for student
@@ -150,18 +150,18 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_generate = ctk.CTkLabel(self, text = "Generate:")
         self.rdo_generate_all = ctk.CTkRadioButton(self, text = "All", variable = self.mode_var, value = "all", command = self.__opt_all_selected)
         self.rdo_generate_student = ctk.CTkRadioButton(self, text = "Student", variable = self.mode_var, value = "student", command = self.__opt_student_selected)
-        self.rdo_generate_all.select()
 
         # Student name
         self.lbl_student_name = ctk.CTkLabel(self, text = "Student Name:")
-        self.txt_student_name = ctk.CTkEntry(self, width = 250, state = tk.DISABLED)
+        self.txt_student_name = ctk.CTkEntry(self, width = 450)
 
         # Comment generator mode
         self.cgen_mode_var = tk.StringVar()
         self.lbl_comment_mode = ctk.CTkLabel(self, text = "Comment Generator Mode:")
         self.rdo_map_mode = ctk.CTkRadioButton(self, text = "Comment Map", variable = self.cgen_mode_var, value = "map", command = self.__map_cgen_mode_selected)
         self.rdo_ai_mode = ctk.CTkRadioButton(self, text = "AI-generated", variable = self.cgen_mode_var, value = "ai", command = self.__ai_cgen_mode_selected)
-        self.rdo_map_mode.select()
+
+        # Test AI API key button
         self.btn_test_api_key = ctk.CTkButton(self, text = "Test API Key", width = 100, fg_color = "grey", command = self.__test_api_key)
 
         # Options section
@@ -171,23 +171,15 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.autocorrect_var = tk.IntVar()
         self.switch_autocorrect = ctk.CTkSwitch(self, text = "Autocorrect", variable = self.autocorrect_var, onvalue = 1, offvalue = 0)
 
-        # Insert date switch button
-        self.inject_date = tk.IntVar()
-        self.switch_date = ctk.CTkSwitch(self, text = "Insert Date", command = self.__toggle_date_entry, variable = self.inject_date, onvalue = 1, offvalue = 0)
-
         # Force generation switch button
         self.force_var = tk.IntVar()
         self.switch_force = ctk.CTkSwitch(self, text = "Force Generate", variable = self.force_var, onvalue = 1, offvalue = 0)
 
-        # Create PDF switch button
-        self.create_pdf = tk.IntVar()
-        self.switch_pdf = ctk.CTkSwitch(self, text = "Create PDF", variable = self.create_pdf, onvalue = 1, offvalue = 0)
-        if not office_version:
-            self.switch_pdf.configure(state = tk.DISABLED)
-            self.switch_pdf.deselect()
-
+        # Insert date switch button
+        self.inject_date = tk.IntVar()
+        self.switch_date = ctk.CTkSwitch(self, text = "Insert Date. Report Date     ⟶   ", command = self.__toggle_date_entry, variable = self.inject_date, onvalue = 1, offvalue = 0)
+        
         # Report date
-        self.lbl_date = ctk.CTkLabel(self, text = "Report Date:")
         today = date.today()
         self.date_report = tkcal.DateEntry(self, width = 25, 
                                            background = "black", foreground = "white", 
@@ -195,24 +187,28 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                                            font = ("Arial", 12), 
                                            date_pattern = "dd/mm/yyyy",
                                            state = tk.DISABLED)
-        
-        # Generate button
-        self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
-        self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 100, fg_color = "grey", command = self.__test_source)
-        self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 100, fg_color = "grey", command = self.__validate)
-        self.btn_scan_word = ctk.CTkButton(self, text = "Re-Scan MS Word", width = 100, fg_color = "grey", command = self.__scan_word)
-        self.btn_configure = ctk.CTkButton(self, text = "Settings…", width = 100, fg_color = "purple", command = self.__open_configurator)
+
+        # Create PDF switch button
+        self.create_pdf = tk.IntVar()
+        self.switch_pdf = ctk.CTkSwitch(self, text = "Create PDF", variable = self.create_pdf, onvalue = 1, offvalue = 0)
 
         # Progress tracker
         self.lbl_progress = ctk.CTkLabel(self, text = "Progress:")
-        self.progress_bar = ctk.CTkProgressBar(self, width = 250, mode = "determinate")
+        self.progress_bar = ctk.CTkProgressBar(self, width = 450, mode = "determinate")
         self.lbl_count = ctk.CTkLabel(self, text = "0/0")
         self.progress_bar.set(0)
 
         # Status section
         self.lbl_status = ctk.CTkLabel(self, text = "Status:")
-        self.txt_status = ctk.CTkTextbox(self, width = 300, height = 100, state = tk.DISABLED, wrap = "word")
+        self.txt_status = ctk.CTkTextbox(self, width = 600, height = 150, state = tk.DISABLED, wrap = "word")
         self.txt_status.tag_config("warning", foreground = "red")
+
+        # Generate button
+        self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
+        self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 150, fg_color = "grey", command = self.__test_source)
+        self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 150, fg_color = "grey", command = self.__validate)
+        self.btn_scan_word = ctk.CTkButton(self, text = "Re-Scan MS Word", width = 150, fg_color = "grey", command = self.__scan_word)
+        self.btn_configure = ctk.CTkButton(self, text = "Settings…", width = 150, fg_color = "purple", command = self.__open_configurator)
 
         # Tooltips
         tooltip_font = ("Arial", 10)
@@ -246,55 +242,69 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         GUI LAYOUTING
         """
         self.lbl_source.grid(row = 0, column = 0, sticky = tk.W, pady = 2)
-        self.txt_source_path.grid(row = 0, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.btn_browse_source.grid(row = 0, column = 2, sticky = tk.EW, padx = 2, pady = 2)
+        self.txt_source_path.grid(row = 0, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
+        self.btn_browse_source.grid(row = 0, column = 3, sticky = tk.EW, padx = 2, pady = 2)
 
         self.lbl_output.grid(row = 1, column = 0, sticky = tk.W, pady = 2)
-        self.txt_output_path.grid(row = 1, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.btn_browse_output.grid(row = 1, column = 2, sticky = tk.EW, padx = 2, pady = 2)
+        self.txt_output_path.grid(row = 1, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
+        self.btn_browse_output.grid(row = 1, column = 3, sticky = tk.EW, padx = 2, pady = 2)
 
         self.lbl_signature.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
-        self.txt_signature_path.grid(row = 2, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.btn_browse_signature.grid(row = 2, column = 2, sticky = tk.EW, padx = 2, pady = 2)
+        self.txt_signature_path.grid(row = 2, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
+        self.btn_browse_signature.grid(row = 2, column = 3, sticky = tk.EW, padx = 2, pady = 2)
 
         self.lbl_generate.grid(row = 3, column = 0, sticky = tk.W, pady = 2)
         self.rdo_generate_all.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
         
-        self.rdo_generate_student.grid(row = 4, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.rdo_generate_student.grid(row = 3, column = 2, sticky = tk.W, padx =  5, pady = 2)
 
         self.lbl_student_name.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
-        self.txt_student_name.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.txt_student_name.grid(row = 5, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
 
         self.lbl_comment_mode.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
         self.rdo_map_mode.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.rdo_ai_mode.grid(row = 7, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.btn_test_api_key.grid(row = 7, column = 2, sticky = tk.EW, padx = 2, pady = 2)
+        self.rdo_ai_mode.grid(row = 6, column = 2, sticky = tk.W, padx =  5, pady = 2)
+        self.btn_test_api_key.grid(row = 6, column = 3, sticky = tk.EW, padx = 2, pady = 2)
 
-        self.lbl_options.grid(row = 8, column = 0, sticky = tk.W, pady = 2)
-        self.switch_autocorrect.grid(row = 8, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.lbl_options.grid(row = 7, column = 0, sticky = tk.W, pady = 2)
+        self.switch_autocorrect.grid(row = 7, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.switch_force.grid(row = 7, column = 2, sticky = tk.W, padx = 5, pady = 2)
+        
+        self.switch_date.grid(row = 8, column = 1, sticky = tk.EW, padx = 5, pady = 2)
+        self.date_report.grid(row = 8, column = 2, sticky = tk.EW, padx = (5, 10), pady = 2)
+        
+        self.switch_pdf.grid(row = 9, column = 1, sticky = tk.W, padx = 5, pady = 2)
+        
+        self.lbl_progress.grid(row = 12, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 12, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 12, column = 3, sticky = tk.EW, padx = 2, pady = 0)
+        
+        self.lbl_status.grid(row = 13, column = 0, sticky = tk.NW, pady = 0)
+        self.txt_status.grid(row = 13, column = 1, columnspan = 3, sticky = tk.EW, padx =  5, pady = 0)
+        
+        self.btn_test_source.grid(row = 14, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 14, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 14, column = 3, sticky = tk.EW, padx = 2, pady = (20, 2))
+        
+        self.btn_configure.grid(row = 15, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
+        self.btn_scan_word.grid(row = 15, column = 1, sticky = tk.W, padx = 2, pady = (2, 5))
 
-        self.switch_date.grid(row = 9, column = 1, sticky = tk.EW, padx = 5, pady = 2)
+        """
+        POST LAYOUTING SETUP
+        """
+        # Select generate all by default and disable student name entry
+        self.rdo_generate_all.select()
+        self.txt_student_name.insert(0, "This field is disabled because you selected to generate all reports.")
+        self.txt_student_name.configure(state = tk.DISABLED, text_color = "grey")
 
-        self.switch_force.grid(row = 10, column = 1, sticky = tk.W, padx = 5, pady = 2)
+        # Select AI mode by default and disable autocorrect switch
+        self.rdo_ai_mode.select()
+        self.switch_autocorrect.configure(state = tk.DISABLED)
 
-        self.switch_pdf.grid(row = 11, column = 1, sticky = tk.W, padx = 5, pady = 2)
-
-        self.lbl_date.grid(row = 12, column = 0, sticky = tk.W, pady = 2)
-        self.date_report.grid(row = 12, column = 1, sticky = tk.W, padx = 5, pady = 2)
-
-        self.lbl_progress.grid(row = 13, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 13, column = 1, sticky = tk.W, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 13, column = 2, sticky = tk.EW, padx = 2, pady = 0)
-
-        self.lbl_status.grid(row = 14, column = 0, sticky = tk.NW, pady = 0)
-        self.txt_status.grid(row = 14, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
-
-        self.btn_test_source.grid(row = 15, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 15, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 15, column = 2, sticky = tk.EW, padx = 2, pady = (20, 2))
-
-        self.btn_configure.grid(row = 16, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
-        self.btn_scan_word.grid(row = 16, column = 1, sticky = tk.W, padx = 2, pady = (2, 5))
+        # Check if MS Word is installed and disable PDF switch if not found
+        if not office_version:
+            self.switch_pdf.configure(state = tk.DISABLED)
+            self.switch_pdf.deselect()
 
     # UI functions
     def __browse_file(self):
@@ -330,11 +340,14 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
     def __opt_all_selected(self):
         """Disables the student name entry when the generate all option is selected."""
-        self.txt_student_name.configure(state = tk.DISABLED)
+        self.txt_student_name.delete(0, tk.END)
+        self.txt_student_name.insert(0, "This field is disabled because you selected to generate all reports.")
+        self.txt_student_name.configure(state = tk.DISABLED, text_color = "grey")
 
     def __opt_student_selected(self):
         """Enables the student name entry when the generate for student option is selected."""
-        self.txt_student_name.configure(state = tk.NORMAL)
+        self.txt_student_name.configure(state = tk.NORMAL, text_color = ("black", "white"))
+        self.txt_student_name.delete(0, tk.END)
         self.txt_student_name.focus_set()
 
     def __map_cgen_mode_selected(self):
