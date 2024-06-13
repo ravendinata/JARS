@@ -501,7 +501,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                 return
             else:
                 print("API key found!\nValidating API key with Google…")
-                genai_api_key_validated = util.validate_genai_api_key()
+                genai_api_key_validated = self.__test_api_key(suppress_dialog = True)
 
             if not genai_api_key_validated:
                 tk.messagebox.showerror("Invalid API Key", "The API key provided is invalid. Please check the key in the configuration file and try again.")
@@ -652,23 +652,30 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.__update_status("Microsoft Office detected. PDF creation is enabled.")
             print("  Microsoft Office detected. PDF creation is enabled.")
 
-    def __test_api_key(self):
+    def __test_api_key(self, suppress_dialog = False):
         """
         Tests the GenAI API key.
         
         This function does not return anything. It displays a message box with the result of the API key validation.
         """
+        valid = False
+        output_text = "API key is invalid. Please check the configuration file or use the configurator to set a valid API key. Make sure you are connected to the internet."
+        
         print("Testing API key…")
         self.__update_status("Testing API key…", clear = True)
 
         if util.validate_genai_api_key():
-            tk.messagebox.showinfo("API Key Valid", "The API key is valid. You're good to go!")
-            self.__update_status("API key is valid. You're good to go!")
+            valid = True
+            output_text = "API key is valid. You're good to go!"
             print("> Valid.")
         else:
-            tk.messagebox.showerror("API Key Invalid", "The API key is invalid. Please check the key in the configuration file and try again.")
-            self.__update_status("Warning: Invalid API key. Please check the configuration file or use the configurator to set a valid API key.")
             print("> Invalid.")
+
+        self.__update_status(output_text)
+        if not suppress_dialog:
+            tk.messagebox.showinfo("API Key Test", output_text)
+
+        return valid
 
     def __open_configurator(self):
         """Opens the configuration window."""
