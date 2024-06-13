@@ -112,6 +112,8 @@ pydantic==2.7.4
     # via google-generativeai
 pydantic-core==2.18.4
     # via pydantic
+pyfiglet==1.0.2
+    # via -r requirements.in
 pymysql==1.1.0
     # via -r requirements.in
 pypdf==3.17.3

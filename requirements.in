@@ -7,6 +7,7 @@ nltk
 openpyxl
 pandas
 pillow
+pyfiglet
 pypdf
 python_docx
 PyMySQL
