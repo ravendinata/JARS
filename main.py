@@ -1,20 +1,21 @@
 """
 This program is a GUI variant of the JARS program.
 
-It is meant to be used as a standalone application.
-The GUI application is only suitable for processing a single file at a time.
-But it is more user-friendly and easier to use than the console application.
+It is meant to be used as a standalone application being more user-friendly 
+and easier to use than the console application.
 """
 
-__version__ = "1.2.3-beta"
+__version__ = "1.2.5"
 __author__ = "Raven Limadinata"
 
 import customtkinter as ctk
+import pyfiglet
 import tkinter as tk
 import tktooltip as tktip
 import wmi
 from ctypes import windll
 from PIL import Image
+from termcolor import colored
 from win32com.client.dynamic import Dispatch
 
 import config
@@ -41,7 +42,7 @@ class LauncherFrame(ctk.CTkFrame):
         # Define widgets
         # Text widgets
         self.lbl_title = ctk.CTkLabel(self, text = "JARS Report Processor", font = ("Arial", 20, "bold"))
-        self.lbl_subtitle = ctk.CTkLabel(self, text = "JAC Academic Reporting System | Version 1.2.3-beta", font = ("Arial", 10))
+        self.lbl_subtitle = ctk.CTkLabel(self, text = "JAC Academic Reporting System | Version 1.2.5", font = ("Arial", 10))
         self.lbl_prompt = ctk.CTkLabel(self, text = "Select a tool to open:")
         
         # Buttons
