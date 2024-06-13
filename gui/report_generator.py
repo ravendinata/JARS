@@ -6,6 +6,7 @@ import tkinter as tk
 import tktooltip as tktip
 import tkcalendar as tkcal
 from tkinter import ttk
+from windows_toasts import InteractableWindowsToaster, Toast, ToastAudio, AudioSource
 
 import config
 import components.report_generator.semester_report as processor
@@ -526,6 +527,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.__update_status("Report generation completed successfully.")
 
         OutputDialog(master = self.root, title = "Report Generation Complete", file_path = output_file_path, content = "Report generation completed successfully.")
+        toaster = InteractableWindowsToaster("JARS Report Generator", "jac.acreportingsystem.crep")
+        
+        toast_finish = Toast()
+        toast_finish.text_fields = ["Report generation completed successfully."]
+        toast_finish.audio = ToastAudio(AudioSource.Call7)
+        
+        toaster.show_toast(toast_finish)
 
     def __test_source(self):
         """
