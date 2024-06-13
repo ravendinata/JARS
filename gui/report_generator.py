@@ -5,6 +5,7 @@ import customtkinter as ctk
 import tkinter as tk
 import tktooltip as tktip
 import tkcalendar as tkcal
+from tkinter import ttk
 
 import config
 import components.report_generator.semester_report as processor
@@ -24,7 +25,7 @@ class ReportGeneratorWindow(ctk.CTkToplevel):
 
         # Frame Setup
         self.processor_frame = ReportGeneratorFrame(master = self, root = master, office_version = office_version)
-        self.processor_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = 10)
+        self.processor_frame.grid(padx = 10, pady = 10)
         master.eval(f"tk::PlaceWindow {self} center")
 
         # Hide master window
@@ -177,7 +178,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         # Insert date switch button
         self.inject_date = tk.IntVar()
-        self.switch_date = ctk.CTkSwitch(self, text = "Insert Date. Report Date     ⟶   ", command = self.__toggle_date_entry, variable = self.inject_date, onvalue = 1, offvalue = 0)
+        self.switch_date = ctk.CTkSwitch(self, text = "Insert Date. Report Date      ⟶   ", command = self.__toggle_date_entry, variable = self.inject_date, onvalue = 1, offvalue = 0)
         
         # Report date
         today = date.today()
@@ -210,6 +211,26 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.btn_scan_word = ctk.CTkButton(self, text = "Re-Scan MS Word", width = 150, fg_color = "grey", command = self.__scan_word)
         self.btn_configure = ctk.CTkButton(self, text = "Settings…", width = 150, fg_color = "purple", command = self.__open_configurator)
 
+        # Tree View
+        self.lbl_treeview = ctk.CTkLabel(self, text = "Grader Report Explorer")
+        self.lbl_tv_search = ctk.CTkLabel(self, text = "Search:", width = 50)
+        self.txt_tv_search = ctk.CTkEntry(self, width = 300)
+        style = ttk.Style()
+        
+        if ctk.get_appearance_mode() == "Dark":
+            style.theme_use("alt")
+            style.configure("JARS.Treeview", rowheight = 35, background = "gray24", fieldbackground = "gray14", foreground = "white")
+        else:
+            style.configure("JARS.Treeview", rowheight = 35)
+
+        self.treeview = ttk.Treeview(self, columns = ("value"), style = "JARS.Treeview")
+        self.treeview.column("#0", width = 300)
+        self.treeview.column("value", width = 300)
+        self.treeview.heading("#0", text = "Key")
+        self.treeview.heading("value", text = "Value")
+
+        self.vsb_treeview = ttk.Scrollbar(self, orient = "vertical", command = self.treeview.yview)
+
         # Tooltips
         tooltip_font = ("Arial", 10)
         tooltips = {
@@ -241,53 +262,61 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """
         GUI LAYOUTING
         """
+        self.columnconfigure(1, weight = 1)
+        self.rowconfigure(1, weight = 1)
+
         self.lbl_source.grid(row = 0, column = 0, sticky = tk.W, pady = 2)
         self.txt_source_path.grid(row = 0, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
         self.btn_browse_source.grid(row = 0, column = 3, sticky = tk.EW, padx = 2, pady = 2)
+        self.lbl_treeview.grid(row = 0, column = 4, columnspan = 3, sticky = tk.EW, padx = 10, pady = 2)
 
         self.lbl_output.grid(row = 1, column = 0, sticky = tk.W, pady = 2)
         self.txt_output_path.grid(row = 1, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
         self.btn_browse_output.grid(row = 1, column = 3, sticky = tk.EW, padx = 2, pady = 2)
+        self.lbl_tv_search.grid(row = 1, column = 4, sticky = tk.W, padx = (10, 2), pady = 2)
+        self.txt_tv_search.grid(row = 1, column = 5, columnspan = 2, sticky = tk.EW, padx = (2, 10), pady = 2)
 
         self.lbl_signature.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
         self.txt_signature_path.grid(row = 2, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
         self.btn_browse_signature.grid(row = 2, column = 3, sticky = tk.EW, padx = 2, pady = 2)
+        self.treeview.grid(row = 2, column = 4, rowspan = 11, columnspan = 2, sticky = tk.NSEW, padx = (10, 0), pady = 2)
+        self.vsb_treeview.grid(row = 2, column = 6, rowspan = 11, sticky = tk.NS, padx = (0, 10), pady = 2)
 
         self.lbl_generate.grid(row = 3, column = 0, sticky = tk.W, pady = 2)
         self.rdo_generate_all.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
         
         self.rdo_generate_student.grid(row = 3, column = 2, sticky = tk.W, padx =  5, pady = 2)
 
-        self.lbl_student_name.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
-        self.txt_student_name.grid(row = 5, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
+        self.lbl_student_name.grid(row = 4, column = 0, sticky = tk.W, pady = 2)
+        self.txt_student_name.grid(row = 4, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
 
-        self.lbl_comment_mode.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
-        self.rdo_map_mode.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.rdo_ai_mode.grid(row = 6, column = 2, sticky = tk.W, padx =  5, pady = 2)
-        self.btn_test_api_key.grid(row = 6, column = 3, sticky = tk.EW, padx = 2, pady = 2)
+        self.lbl_comment_mode.grid(row = 5, column = 0, sticky = tk.W, pady = 2)
+        self.rdo_map_mode.grid(row = 5, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.rdo_ai_mode.grid(row = 5, column = 2, sticky = tk.W, padx =  5, pady = 2)
+        self.btn_test_api_key.grid(row = 5, column = 3, sticky = tk.EW, padx = 2, pady = 2)
 
-        self.lbl_options.grid(row = 7, column = 0, sticky = tk.W, pady = 2)
-        self.switch_autocorrect.grid(row = 7, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.switch_force.grid(row = 7, column = 2, sticky = tk.W, padx = 5, pady = 2)
+        self.lbl_options.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
+        self.switch_autocorrect.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
+        self.switch_force.grid(row = 6, column = 2, sticky = tk.W, padx = 5, pady = 2)
+
+        self.switch_date.grid(row = 7, column = 1, sticky = tk.EW, padx = 5, pady = 2)
+        self.date_report.grid(row = 7, column = 2, sticky = tk.EW, padx = (5, 10), pady = 2)
+
+        self.switch_pdf.grid(row = 8, column = 1, sticky = tk.W, padx = 5, pady = 2)
         
-        self.switch_date.grid(row = 8, column = 1, sticky = tk.EW, padx = 5, pady = 2)
-        self.date_report.grid(row = 8, column = 2, sticky = tk.EW, padx = (5, 10), pady = 2)
-        
-        self.switch_pdf.grid(row = 9, column = 1, sticky = tk.W, padx = 5, pady = 2)
-        
-        self.lbl_progress.grid(row = 12, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 12, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 12, column = 3, sticky = tk.EW, padx = 2, pady = 0)
-        
-        self.lbl_status.grid(row = 13, column = 0, sticky = tk.NW, pady = 0)
-        self.txt_status.grid(row = 13, column = 1, columnspan = 3, sticky = tk.EW, padx =  5, pady = 0)
-        
-        self.btn_test_source.grid(row = 14, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 14, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 14, column = 3, sticky = tk.EW, padx = 2, pady = (20, 2))
-        
-        self.btn_configure.grid(row = 15, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
-        self.btn_scan_word.grid(row = 15, column = 1, sticky = tk.W, padx = 2, pady = (2, 5))
+        self.lbl_progress.grid(row = 9, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 9, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 9, column = 3, sticky = tk.EW, padx = 2, pady = 0)
+
+        self.lbl_status.grid(row = 10, column = 0, sticky = tk.NW, pady = 0)
+        self.txt_status.grid(row = 10, column = 1, columnspan = 3, sticky = tk.EW, padx =  5, pady = 0)
+
+        self.btn_test_source.grid(row = 11, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 11, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 11, column = 3, sticky = tk.EW, padx = 2, pady = (20, 2))
+
+        self.btn_configure.grid(row = 12, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
+        self.btn_scan_word.grid(row = 12, column = 1, sticky = tk.W, padx = 2, pady = (2, 5))
 
         """
         POST LAYOUTING SETUP
@@ -306,6 +335,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.switch_pdf.configure(state = tk.DISABLED)
             self.switch_pdf.deselect()
 
+        # Bind search function to search entry
+        self.txt_tv_search.bind("<Return>", lambda event: self.__search_treeview())
+        self.txt_tv_search.bind("<KP_Enter>", lambda event: self.__search_treeview())
+
+        # Bind scrollbars to treeview
+        self.treeview.configure(yscrollcommand = self.vsb_treeview.set)
+
     # UI functions
     def __browse_file(self):
         """Opens a file dialog for browsing the source file."""
@@ -323,8 +359,60 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             valid = self._grader_report.validate(callback = self.__update_status)
             if not valid:
                 self.__update_status("\nWARNING: Grader report is invalid. Check information above for details.")
+                self.treeview.delete(*self.treeview.get_children())
+                self.treeview.insert("", tk.END, text = "Grader Report Invalid.")
             else:
                 self.__update_status("Grader report is valid. You're good to go!")
+                self.__populate_treeview()
+
+    def __populate_treeview(self):
+        """Populates the tree view with the grader report data."""
+        self.treeview.delete(*self.treeview.get_children()) # Clear treeview
+        
+        self.treeview.insert("", tk.END, text = "School Year", values = (self._grader_report.get_course_info("School Year")))
+        self.treeview.insert("", tk.END, text = "Semester", values = (self._grader_report.get_course_info("Semester")))
+        self.treeview.insert("", tk.END, text = "Subject", values = (self._grader_report.get_course_info("Subject")))
+        self.treeview.insert("", tk.END, text = "Grade", values = (self._grader_report.get_course_info("Grade")))
+
+        self.treeview.insert("", tk.END, text = "Total Students", values = (self._grader_report.count_students()))
+
+        # Show student list from dataframe
+        tv_student_list = self.treeview.insert("", tk.END, text = "Student List:")
+        for index, row in self._grader_report.students.iterrows():
+            # Generic Display
+            student = self.treeview.insert(tv_student_list, tk.END, text = index)
+            self.treeview.insert(student, tk.END, text = "Short Name", values = (row["Short Name"]))
+            self.treeview.insert(student, tk.END, text = "Gender", values = (row["Gender"]))
+            self.treeview.insert(student, tk.END, text = "Grade (Numeric)", values = (self._grader_report.get_final_grade(index, "Final Score")))
+            self.treeview.insert(student, tk.END, text = "Grade (Letter)", values = (self._grader_report.get_final_grade(index, "Letter Grade")))
+            
+            # PD Display
+            pd = self.treeview.insert(student, tk.END, text = "Personal Development")
+            for i, item in enumerate(self._grader_report.data_pd.columns):
+                self.treeview.insert(pd, tk.END, text = item, values = (self._grader_report.get_grade_pd(index, item)))
+
+            # SNA Display
+            sna = self.treeview.insert(student, tk.END, text = "Skills and Assessment")
+            for i, item in enumerate(self._grader_report.data_sna.columns):
+                self.treeview.insert(sna, tk.END, text = item, values = (self._grader_report.get_grade_sna(index, item)))
+
+    def __search_treeview(self):
+        """Searches the tree view for the specified text."""
+        search_text = self.txt_tv_search.get().lower()
+        if search_text == "":
+            return
+
+        selections = []
+        for child in self.treeview.get_children():
+            if search_text in self.treeview.item(child)["text"].lower():
+                selections.append(child)
+            else:
+                for subchild in self.treeview.get_children(child):
+                    if search_text in self.treeview.item(subchild)["text"].lower():
+                        selections.append(subchild)
+
+        if selections:
+            self.treeview.selection_set(selections)
 
     def __browse_signature(self):
         """Opens a file dialog for browsing the signature file."""

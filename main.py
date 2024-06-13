@@ -101,7 +101,7 @@ class Window(ctk.CTk):
         self.eval("tk::PlaceWindow . center")
 
         self.processor_frame = LauncherFrame(master = self)
-        self.processor_frame.pack(fill = tk.BOTH, expand = True, padx = 10, pady = 10)
+        self.processor_frame.grid(padx = 10, pady = 10)
 
 """
 CHECKS
