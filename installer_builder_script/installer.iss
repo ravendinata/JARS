@@ -30,6 +30,10 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
+[Registry]
+Root: HKCU; Subkey: "Software\Classes\AppUserModelId\jac.acreportingsystem.crep"; ValueType: "string"; ValueName: "DisplayName"; ValueData: "JARS Custom Report Processor"
+Root: HKCU; Subkey: "Software\Classes\AppUserModelId\jac.acreportingsystem.crep"; ValueType: "string"; ValueName: "IconUri"; ValueData: "{app}\resources\icon\jars.ico"
+
 [Files]
 Source: "Z:\Development\Custom Report Processor\dist\main\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "Z:\Development\Custom Report Processor\dist\main\config.json"; DestDir: "{app}"; Flags: ignoreversion
