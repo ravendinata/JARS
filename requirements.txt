@@ -4,6 +4,8 @@
 #
 #    pip-compile
 #
+annotated-types==0.7.0
+    # via pydantic
 babel==2.13.1
     # via tkcalendar
 blinker==1.7.0
@@ -106,6 +108,10 @@ pyasn1-modules==0.3.0
     # via google-auth
 pycparser==2.21
     # via cffi
+pydantic==2.7.4
+    # via google-generativeai
+pydantic-core==2.18.4
+    # via pydantic
 pymysql==1.1.0
     # via -r requirements.in
 pypdf==3.17.3
@@ -151,6 +157,8 @@ tqdm==4.66.1
 typing-extensions==4.8.0
     # via
     #   google-generativeai
+    #   pydantic
+    #   pydantic-core
     #   python-docx
     #   pywebview
 tzdata==2023.3
@@ -159,5 +167,22 @@ urllib3==1.25.11
     # via requests
 werkzeug==3.0.1
     # via flask
+windows-toasts==1.1.1
+    # via -r requirements.in
+winrt-runtime==2.0.1
+    # via
+    #   windows-toasts
+    #   winrt-windows-data-xml-dom
+    #   winrt-windows-foundation
+    #   winrt-windows-foundation-collections
+    #   winrt-windows-ui-notifications
+winrt-windows-data-xml-dom==2.0.1
+    # via windows-toasts
+winrt-windows-foundation==2.0.1
+    # via windows-toasts
+winrt-windows-foundation-collections==2.0.1
+    # via windows-toasts
+winrt-windows-ui-notifications==2.0.1
+    # via windows-toasts
 wmi==1.5.1
     # via -r requirements.in
