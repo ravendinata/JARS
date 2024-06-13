@@ -1,7 +1,7 @@
-from typing import Tuple
+import sys
+
 import customtkinter as ctk
 import tkinter as tk
-import tktooltip as tktip
 
 import config
 
@@ -111,7 +111,7 @@ class ConfiguratorFrame(ctk.CTkFrame):
         # Show success message
         if self.require_restart:
             tk.messagebox.showinfo("Success", "Configuration saved successfully.\nSome changes require the program to be restarted.\nProgram will now exit. Please manually restart the application.")
-            exit()
+            sys.exit()
         else:
             tk.messagebox.showinfo("Success", "Configuration saved successfully.")
 
