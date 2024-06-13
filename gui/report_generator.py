@@ -6,7 +6,7 @@ import tkinter as tk
 import tktooltip as tktip
 import tkcalendar as tkcal
 from tkinter import ttk
-from windows_toasts import InteractableWindowsToaster, Toast, ToastAudio, AudioSource
+from windows_toasts import InteractableWindowsToaster, Toast, ToastAudio, AudioSource, ToastButton
 
 import config
 import components.report_generator.semester_report as processor
@@ -532,8 +532,18 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         toast_finish = Toast()
         toast_finish.text_fields = ["Report generation completed successfully."]
         toast_finish.audio = ToastAudio(AudioSource.Call7)
+        toast_finish.AddAction(ToastButton("Open Folder", "open_folder"))
+        toast_finish.AddAction(ToastButton("Dismiss", "dismiss"))
+        toast_finish.on_activated = self.__toast_button_click
         
         toaster.show_toast(toast_finish)
+
+    def __toast_button_click(self, toastEvent):
+        """Event handler for the toast button click."""
+        if toastEvent.arguments == "open_folder":
+            os.startfile(self.txt_output_path.get())
+        elif toastEvent.arguments == "dismiss":
+            pass
 
     def __test_source(self):
         """
