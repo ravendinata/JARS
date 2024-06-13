@@ -106,6 +106,9 @@ class Window(ctk.CTk):
 """
 CHECKS
 """
+print(colored(pyfiglet.figlet_format("JARS CReP", font = "slant"), "magenta"))
+print(f"JARS Report Processor v{__version__}\n")
+
 print("> Running system checks…")
 
 # Check if MS Word is running
