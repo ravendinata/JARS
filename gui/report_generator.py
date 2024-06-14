@@ -1,4 +1,5 @@
 import os
+import threading
 from datetime import date, datetime, timedelta
 
 import customtkinter as ctk
@@ -241,7 +242,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_status.tag_config("warning", foreground = "red")
 
         # Generate button
-        self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
+        self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__threaded_process)
         self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 150, fg_color = "grey", command = self.__validate)
         self.btn_configure = ctk.CTkButton(self, text = "Settings…", width = 150, fg_color = "purple", command = self.__open_configurator)
 
@@ -496,6 +497,49 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             return "PDF creation is disabled because Microsoft Office is not installed."
         else:
             return "Enable this to convert the generated reports to PDF."
+        
+    def __check_threaded_process(self, process_thread):
+        """
+        Watches the progress of the threaded report generation process.
+        When the process is completed, it will re-enable the process button and show a completion message.
+        """
+        if process_thread.is_alive():
+            self.master.after(1000, self.__check_threaded_process, process_thread)
+        else:
+            self.btn_process.configure(state = tk.NORMAL)
+            self.btn_validate.configure(state = tk.NORMAL)
+
+            # Post-operation
+            self.lbl_count.configure(text = "Done!")
+            self.__update_status("Report generation completed successfully.")
+
+            # Show completion dialog
+            output_file_path = self.txt_output_path.get()
+            OutputDialog(master = self.root, 
+                         title = "Report Generation Complete", 
+                         file_path = output_file_path, 
+                         content = "Report generation completed successfully.")
+            
+            # Toast Notification
+            toaster = InteractableWindowsToaster("JARS Report Generator", "jac.acreportingsystem.crep")
+            
+            toast_finish = Toast()
+            toast_finish.text_fields = ["Report generation completed successfully."]
+            toast_finish.audio = ToastAudio(AudioSource.Call7)
+            toast_finish.AddAction(ToastButton("Open Folder", "open_folder"))
+            toast_finish.AddAction(ToastButton("Dismiss", "dismiss"))
+            toast_finish.on_activated = self.__toast_button_click
+            toast_finish.expiration_time = datetime.now() + timedelta(days = 1)
+            
+            toaster.show_toast(toast_finish)
+
+    def __threaded_process(self):
+        """Starts the report generation in a separate thread."""
+        process_thread = threading.Thread(target = self.__process)
+        self.btn_process.configure(state = tk.DISABLED)
+        self.btn_validate.configure(state = tk.DISABLED)
+        process_thread.start()
+        self.master.after(1000, self.__check_threaded_process, process_thread)
 
     def __process(self):
         """
@@ -557,23 +601,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
             proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
             output_file_path = f"{output_file_path}/{student_name}.docx"
-
-        # Post-operation
-        self.lbl_count.configure(text = "Done!")
-        self.__update_status("Report generation completed successfully.")
-
-        OutputDialog(master = self.root, title = "Report Generation Complete", file_path = output_file_path, content = "Report generation completed successfully.")
-        toaster = InteractableWindowsToaster("JARS Report Generator", "jac.acreportingsystem.crep")
-        
-        toast_finish = Toast()
-        toast_finish.text_fields = ["Report generation completed successfully."]
-        toast_finish.audio = ToastAudio(AudioSource.Call7)
-        toast_finish.AddAction(ToastButton("Open Folder", "open_folder"))
-        toast_finish.AddAction(ToastButton("Dismiss", "dismiss"))
-        toast_finish.on_activated = self.__toast_button_click
-        toast_finish.expiration_time = datetime.now() + timedelta(days = 1)
-        
-        toaster.show_toast(toast_finish)
 
     def __toast_button_click(self, toastEvent):
         """Event handler for the toast button click."""
