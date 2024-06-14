@@ -69,6 +69,9 @@ class Generator:
             print(status_message)
             self.generate_for_student(student_name = student, autocorrect = autocorrect, force = force)
         
+        if callback is not None:
+            callback(job_count, job_count, "")
+            
         print(f"Progress: 100%")
 
         if convert_to_pdf:
