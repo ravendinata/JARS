@@ -23,6 +23,8 @@ class ConfiguratorWindow(ctk.CTkToplevel):
             self.master.withdraw()
             self.bind("<Destroy>", self.__on_close)
 
+        self.grab_set()
+
     def __on_close(self, event):
         """Shows the master window when this window is destroyed."""
         if event.widget == self:
