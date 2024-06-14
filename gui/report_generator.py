@@ -130,6 +130,27 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self._grader_report = None
 
         """
+        MENUBAR SETUP
+        """
+        self.menubar = tk.Menu(self)
+
+        self.menu_utility = tk.Menu(self.menubar, tearoff = False)
+        self.menu_utility.add_command(label = "Test Grader Report Comment Mapper", command = self.__test_source)
+        self.menu_utility.add_command(label = "Validate Grader Report", command = self.__validate)
+        self.menu_utility.add_separator()
+        self.menu_utility.add_command(label = "Scan for MS Word Installation", command = self.__scan_word)
+
+        self.menu_preference = tk.Menu(self.menubar, tearoff = False)
+        self.menu_preference.add_command(label = "Settings…", command = self.__open_configurator, accelerator = "Ctrl+P")
+
+        self.menubar.add_cascade(label = "Utilities", menu = self.menu_utility)
+        self.menubar.add_cascade(label = "Preferences", menu = self.menu_preference)
+        self.master.config(menu = self.menubar)
+        # Menubar Shortcut Bindings
+        self.master.bind_all("<Control-p>", lambda event: self.__open_configurator())
+        self.master.bind_all("<Control-P>", lambda event: self.__open_configurator())
+
+        """
         WIDGETS SETUP
         """
         # Grader report file path
@@ -280,8 +301,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_signature.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
         self.txt_signature_path.grid(row = 2, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
         self.btn_browse_signature.grid(row = 2, column = 3, sticky = tk.EW, padx = 2, pady = 2)
-        self.treeview.grid(row = 2, column = 4, rowspan = 11, columnspan = 2, sticky = tk.NSEW, padx = (10, 0), pady = 2)
-        self.vsb_treeview.grid(row = 2, column = 6, rowspan = 11, sticky = tk.NS, padx = (0, 10), pady = 2)
+        self.treeview.grid(row = 2, column = 4, rowspan = 10, columnspan = 2, sticky = tk.NSEW, padx = (10, 0), pady = 2)
+        self.vsb_treeview.grid(row = 2, column = 6, rowspan = 10, sticky = tk.NS, padx = (0, 10), pady = 2)
 
         self.lbl_generate.grid(row = 3, column = 0, sticky = tk.W, pady = 2)
         self.rdo_generate_all.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
@@ -312,12 +333,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_status.grid(row = 10, column = 0, sticky = tk.NW, pady = 0)
         self.txt_status.grid(row = 10, column = 1, columnspan = 3, sticky = tk.EW, padx =  5, pady = 0)
 
-        self.btn_test_source.grid(row = 11, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 11, column = 1, sticky = tk.W, padx = 2, pady = (20, 2))
+        self.btn_configure.grid(row = 11, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 11, column = 1, sticky = tk.EW, padx = 2, pady = (20, 2))
         self.btn_process.grid(row = 11, column = 3, sticky = tk.EW, padx = 2, pady = (20, 2))
-
-        self.btn_configure.grid(row = 12, column = 0, sticky = tk.EW, padx = 2, pady = (2, 5))
-        self.btn_scan_word.grid(row = 12, column = 1, sticky = tk.W, padx = 2, pady = (2, 5))
 
         """
         POST LAYOUTING SETUP
