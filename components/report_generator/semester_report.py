@@ -263,6 +263,7 @@ class Generator:
             pd_table.cell(i + 1, 0).width = Cm(12)
             pd_grade = int(self.grader_report.get_grade_pd(student_name, item))
             pd_table.cell(i + 1, pd_grade).text = "✔"
+            pd_table.cell(i + 1, pd_grade).paragraphs[0].runs[0].font.name = "Segoe UI Symbol"
             pd_table.cell(i + 1, pd_grade).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
             
         for i in range(1, len(self.grader_report.data_pd.columns) + 1): # For each cell in row
