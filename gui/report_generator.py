@@ -1,5 +1,5 @@
 import os
-from datetime import date
+from datetime import date, datetime, timedelta
 
 import customtkinter as ctk
 import tkinter as tk
@@ -535,6 +535,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         toast_finish.AddAction(ToastButton("Open Folder", "open_folder"))
         toast_finish.AddAction(ToastButton("Dismiss", "dismiss"))
         toast_finish.on_activated = self.__toast_button_click
+        toast_finish.expiration_time = datetime.now() + timedelta(days = 1)
         
         toaster.show_toast(toast_finish)
 
