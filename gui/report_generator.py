@@ -141,14 +141,28 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.menu_utility.add_command(label = "Scan for MS Word Installation", command = self.__scan_word)
 
         self.menu_preference = tk.Menu(self.menubar, tearoff = False)
+        self.save_signature_path_var = tk.BooleanVar()
+        self.submenu_save_signature_path = self.menu_preference.add_checkbutton(label = "Save signature path", variable = self.save_signature_path_var, command = self.__save_signature_path, onvalue = 1, offvalue = 0)
+        self.always_on_pdf_var = tk.BooleanVar()
+        self.submenu_always_on_pdf = self.menu_preference.add_checkbutton(label = "Always create PDF", variable = self.always_on_pdf_var, command = self.__always_on_pdf, onvalue = 1, offvalue = 0)
+        self.menu_preference.add_separator()
         self.menu_preference.add_command(label = "Settings…", command = self.__open_configurator, accelerator = "Ctrl+P")
 
         self.menubar.add_cascade(label = "Utilities", menu = self.menu_utility)
         self.menubar.add_cascade(label = "Preferences", menu = self.menu_preference)
         self.master.config(menu = self.menubar)
+
         # Menubar Shortcut Bindings
         self.master.bind_all("<Control-p>", lambda event: self.__open_configurator())
         self.master.bind_all("<Control-P>", lambda event: self.__open_configurator())
+
+        # Set dynamic menu item states
+        if config.get_config("signature_path") == "" or config.get_config("signature_path") is None:
+            self.save_signature_path_var.set(False)
+        else:
+            self.save_signature_path_var.set(True)
+
+        self.always_on_pdf_var.set(config.get_config("always_create_pdf"))
 
         """
         WIDGETS SETUP
@@ -228,9 +242,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         # Generate button
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__process)
-        self.btn_test_source = ctk.CTkButton(self, text = "Test Comment Gen", width = 150, fg_color = "grey", command = self.__test_source)
         self.btn_validate = ctk.CTkButton(self, text = "Validate Grader Report", width = 150, fg_color = "grey", command = self.__validate)
-        self.btn_scan_word = ctk.CTkButton(self, text = "Re-Scan MS Word", width = 150, fg_color = "grey", command = self.__scan_word)
         self.btn_configure = ctk.CTkButton(self, text = "Settings…", width = 150, fg_color = "purple", command = self.__open_configurator)
 
         # Tree View
@@ -259,7 +271,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_browse_source: "Browse for the grader report file.",
             self.btn_browse_output: "Browse for the output folder.",
             self.btn_browse_signature: "Browse for your digitized signature image file.",
-            self.btn_scan_word: "Manually scan for MS Word installation. This is already done automatically on startup but you can use this if you have just installed Office, or the startup scan failed to discover your installation.",
             self.rdo_generate_all: "Generate reports for all students.",
             self.rdo_generate_student: "Generate report for a single student. Fill in the student name field to specify the student.",
             self.switch_force: "Enable this to force generate the reports and disregard grader report errors.",
@@ -267,7 +278,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.txt_student_name: "Enter the name of the student to generate the report for. This is only enabled when the generate for student option is selected.",
             self.date_report: "Select the date to insert in the report. This is only enabled when the insert date option is selected.",
             self.btn_process: "Start generating the reports.",
-            self.btn_test_source: "Create a validation list of all possible comment combinations and dumps it into an Excel file",
             self.btn_validate: "Validate the grader report for errors.",
             self.rdo_map_mode: "Use the comment map to generate student comments.",
             self.rdo_ai_mode: "Use AI to generate student comments. Note: This is an experimental feature and may not work as expected. This requires an API key to be set in the configuration file. An API key has been pre-supplied for you but in case the key is not working, please contact the developer or supply your own key. Check the JARS GitHub page for guide on obtaining an API key.",
@@ -340,6 +350,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """
         POST LAYOUTING SETUP
         """
+        # Populate signature path
+        if config.get_config("signature_path") != "" and config.get_config("signature_path") is not None:
+            self.txt_signature_path.insert(0, config.get_config("signature_path"))
+
         # Select generate all by default and disable student name entry
         self.rdo_generate_all.select()
         self.txt_student_name.insert(0, "This field is disabled because you selected to generate all reports.")
@@ -348,6 +362,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         # Select AI mode by default and disable autocorrect switch
         self.rdo_ai_mode.select()
         self.switch_autocorrect.configure(state = tk.DISABLED)
+
+        # Always on PDF switch
+        if self.always_on_pdf_var.get():
+            self.switch_pdf.select()
 
         # Check if MS Word is installed and disable PDF switch if not found
         if not office_version:
@@ -700,6 +718,29 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """Opens the configuration window."""
         from gui.configurator import ConfiguratorWindow
         ConfiguratorWindow(master = self.root)
+
+    def __save_signature_path(self):
+        """Saves the signature path to the configuration file."""
+        if self.save_signature_path_var.get():
+            new_config = config.set_config("signature_path", self.txt_signature_path.get())
+            config.save_config(new_config)
+            self.__update_status("Signature path saved to configuration file.")
+        else:
+            new_config = config.set_config("signature_path", "")
+            config.save_config(new_config)
+            self.__update_status("Signature path removed from configuration file.")
+
+    def __always_on_pdf(self):
+        """Saves the always create PDF setting to the configuration file."""
+        new_config = config.set_config("always_create_pdf", self.always_on_pdf_var.get())
+        config.save_config(new_config)
+
+        if self.always_on_pdf_var.get():
+            self.switch_pdf.select()
+        else:
+            self.switch_pdf.deselect()
+
+        self.__update_status("Always create PDF setting saved to configuration file.")
 
     def __on_progress_update(self, current, total, status_message):
         """
