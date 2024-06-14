@@ -32,7 +32,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Registry]
 Root: HKCU; Subkey: "Software\Classes\AppUserModelId\jac.acreportingsystem.crep"; ValueType: "string"; ValueName: "DisplayName"; ValueData: "JARS Custom Report Processor"
-Root: HKCU; Subkey: "Software\Classes\AppUserModelId\jac.acreportingsystem.crep"; ValueType: "string"; ValueName: "IconUri"; ValueData: "{app}\resources\icon\jars.ico"
+Root: HKCU; Subkey: "Software\Classes\AppUserModelId\jac.acreportingsystem.crep"; ValueType: "string"; ValueName: "IconUri"; ValueData: "{app}\resources\icons\jars.ico"
 
 [Files]
 Source: "Z:\Development\Custom Report Processor\dist\main\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
