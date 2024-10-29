@@ -20,11 +20,13 @@ class GraderReport:
         self.__data_broken = False
 
         try:
+            pd.options.display.float_format = '{:.2f}'.format
+
             self.course_info = pd.read_excel(self.grader_report_path, sheet_name = "Course Information", index_col = 0, header = 0, nrows = 7)
             self.students = pd.read_excel(self.grader_report_path, sheet_name = "Student List", index_col = 0, header = 0, usecols = "A:C")
             self.data_sna = pd.read_excel(self.grader_report_path, sheet_name = "Skills and Assessment", index_col = 0, header = 0)
             self.data_pd = pd.read_excel(self.grader_report_path, sheet_name = "Personal Development", index_col = 0, header = 0, usecols = "A:I")
-            self.data_final_grades = pd.read_excel(self.grader_report_path, sheet_name = "Final Grades", index_col = 0, header = 0, usecols = "A,H:I")
+            self.data_final_grades = pd.read_excel(self.grader_report_path, sheet_name = "Final Grades", index_col = 0, header = 0, usecols = "A,H:I", dtype = {"Final Score": float, "Letter Grade": str})
             self.data_comment_mapping = pd.read_excel(self.grader_report_path, sheet_name = "Comment Mapping", index_col = 0, header = 0)
         except Exception as e:
             self.__data_broken = True
@@ -322,11 +324,19 @@ class GraderReport:
         self.data_final_grades.fillna(0, inplace = True)
         self.data_pd.fillna(0, inplace = True)
 
+        def excel_rounding(x):
+            remainder = x % 1
+            sub = x - remainder
+            if remainder >= 0.5:
+                return int(sub + 1)
+            else:
+                return int(sub)
+
         # Data type conversion
         self.course_info = self.course_info.astype(str)
         self.students = self.students.astype(str)
         self.data_pd = self.data_pd.astype(int)
-        self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].round(0).astype(int)
+        self.data_final_grades["Final Score"] = self.data_final_grades["Final Score"].apply(excel_rounding)
         self.data_comment_mapping = self.data_comment_mapping.astype(str)
         
         # Convert SNA data to string and fill NaN values with "X"
