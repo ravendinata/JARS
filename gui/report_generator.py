@@ -22,8 +22,8 @@ class ReportGeneratorWindow(ctk.CTkToplevel):
         super().__init__(master, **kwargs)
 
         # Window Setup
-        self.title("Report Formatter")
         self.resizable(False, False)
+        self.title("Report Generator")
 
         # Frame Setup
         self.processor_frame = ReportGeneratorFrame(master = self, root = master, office_version = office_version)
