@@ -140,6 +140,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.force_var = tk.IntVar()
         self.menu_utility.add_checkbutton(label = "Force Generate", variable = self.force_var, onvalue = 1, offvalue = 0)
         self.menu_utility.add_separator()
+        self.menu_utility.add_command(label= "Reset Generator", command = self.__reset_generator, accelerator = "Ctrl+R")
         self.menu_utility.add_command(label = "Test Grader Report Comment Mapper", command = self.__test_source)
         self.menu_utility.add_command(label = "Validate Grader Report", command = self.__validate)
         self.menu_utility.add_separator()
@@ -161,6 +162,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         # Menubar Shortcut Bindings
         self.master.bind_all("<Control-p>", lambda event: self.__open_configurator())
         self.master.bind_all("<Control-P>", lambda event: self.__open_configurator())
+        self.master.bind_all("<Control-r>", lambda event: self.__reset_generator())
+        self.master.bind_all("<Control-R>", lambda event: self.__reset_generator())
 
         # Set dynamic menu item states
         if config.get_config("signature_path") == "" or config.get_config("signature_path") is None:
@@ -744,6 +747,29 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """Opens the configuration window."""
         from gui.configurator import ConfiguratorWindow
         ConfiguratorWindow(master = self.root)
+
+    def __reset_generator(self):
+        """Resets the generator settings."""
+        self.txt_source_path.delete(0, tk.END)
+        self.txt_output_path.delete(0, tk.END)
+        self.txt_student_name.delete(0, tk.END)
+        self.date_report.set_date(date.today())
+        self.switch_autocorrect.deselect()
+        self.switch_date.deselect()
+
+        if config.get_config("signature_path") != "" and config.get_config("signature_path") is not None:
+            self.txt_signature_path.insert(0, config.get_config("signature_path"))
+        else:
+            self.txt_signature_path.delete(0, tk.END)
+
+        if self.always_on_pdf_var.get():
+            self.switch_pdf.select()
+        else:
+            self.switch_pdf.deselect()
+
+        self.mode_var.set("all")
+        self.cgen_mode_var.set("map")
+        self.__update_status("Generator settings reset.")
 
     def __save_signature_path(self):
         """Saves the signature path to the configuration file."""
