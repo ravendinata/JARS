@@ -390,18 +390,22 @@ class AICommentGenerator:
             print(f"\nResponse: {response.text}")
             print(f"\nResponse Length (Chars): {len(response.text)} characters")
             print(f"Response Length (Words): {len(response.text.split())} words\n")
+            print(f"Input Tokens Used: {response.usage_metadata.prompt_token_count}")
+            print(f"Output Tokens Used: {response.usage_metadata.candidates_token_count}")
 
         if len(response.text) > max_length:
             if verbose:
                 print(colored("(!) Response too long. Rephrasing the response.", "light_cyan"))
             
             rephrase = True
-            final_response = self.rephrase(response.text, max_length = max_length)
+            final_response, rephrase_metadata = self.rephrase(response.text, max_length = max_length)
 
             if verbose:
                 print(f"\nRephrased Response: {final_response}\n")
                 print(f"Rephrased Response Length (Chars): {len(final_response)} characters")
                 print(f"Rephrased Response Length (Words): {len(final_response.split())} words\n")
+                print(f"Rephrased Response Tokens Used: {rephrase_metadata.prompt_token_count}")
+                print(f"Rephrased Response Tokens Used: {rephrase_metadata.candidates_token_count}")
 
             finish_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -411,12 +415,19 @@ class AICommentGenerator:
             final_response = " ".join(split_response)
             final_response = final_response.replace("  ", " ").replace(" .", ".").replace(" ,", ",").replace(" !", "!").replace(" '", "'").replace(".,", ".")
             finish_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            input_tokens = response.usage_metadata.prompt_token_count
+            output_tokens = response.usage_metadata.candidates_token_count
+        else:
+            input_tokens = rephrase_metadata.prompt_token_count
+            output_tokens = rephrase_metadata.candidates_token_count
         
         self.manifest.add_entry(student = nickname, 
                                 comment_orig = final_response if not rephrase else response.text, 
                                 comment_short = final_response if rephrase else "-", 
                                 length_chars = len(final_response),
                                 length_words = len(final_response.split()),
+                                input_tokens = input_tokens,
+                                output_tokens = output_tokens,
                                 status = "Done", 
                                 completed_at = finish_time,
                                 error = None if not rephrase else "Max Length Exceeded. Rephrased.")
@@ -452,7 +463,7 @@ class AICommentGenerator:
         final_response = " ".join(split_response)
         final_response = final_response.replace("  ", " ").replace(" .", ".").replace(" ,", ",").replace(" !", "!").replace(" '", "'").replace(".,", ".")
 
-        return final_response
+        return final_response, response.usage_metadata
     
     def grammar_check(self, text):
         """
