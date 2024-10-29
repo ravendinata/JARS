@@ -3,6 +3,7 @@ import nltk
 from datetime import datetime
 from termcolor import colored
 from google.ai.generativelanguage import Candidate
+from google.api_core.exceptions import ResourceExhausted
 
 import components.report_generator.manifest as manifest
 import config
@@ -317,7 +318,7 @@ class AICommentGenerator:
             base_prompt = file.read()
             return base_prompt
 
-    def generate_comment(self, nickname, gender, final_grade, sna_list, verbose = False):
+    def generate_comment(self, nickname, gender, final_grade, sna_list, verbose = False, retry_count = 0):
         """
         Generates a comment based on the student's result using AI.
         
@@ -363,13 +364,20 @@ class AICommentGenerator:
         base_prompt = self.get_base_prompt()
         parametric_prompt = f"The student's nickname is {nickname}. This student is a {gender_normalized} and achieved an overall grade of {final_grade}.\nGoals and grades for each goal:\n{assembled_result}"
         final_prompt = f"{base_prompt}\nMake it between 400 and {max_length} characters. Strictly no more than {max_length} characters.\n{parametric_prompt}"
-        
+
         if verbose:
             print(f"\nPrompt: {final_prompt}\n")
 
         try:
             response = self.model.generate_content(f"{final_prompt}", safety_settings = self.safety, generation_config = self.config)
+        except ResourceExhausted as e:
+            print(colored(f"(!) Error: Resource Exhausted. Retrying...", "red"))
+            if retry_count < 3:
+                print(colored(f"(i) Retry Count: {retry_count + 1} out of 3. Waiting for 30 seconds before retrying...", "yellow"))
+                time.sleep(30)
+                return self.generate_comment(nickname, gender, final_grade, sna_list, verbose = verbose, retry_count = retry_count + 1)
         except Exception as e:
+            print(type(e))
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
 
@@ -415,7 +423,7 @@ class AICommentGenerator:
 
         return final_response
 
-    def rephrase(self, source, max_length = 600):
+    def rephrase(self, source, max_length = 600, retry_count = 0):
         """
         Rephrases a pre-generated comment using AI.
         
@@ -429,6 +437,12 @@ class AICommentGenerator:
             response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} characters BUT DO NOT WRITE LESS THAN 400 CHARACTERS. Content: {source}.", 
                                                    safety_settings = self.safety, 
                                                    generation_config = self.config)
+        except ResourceExhausted as e:
+            print(colored(f"(!) Error: Resource Exhausted. Retrying...", "red"))
+            if retry_count < 3:
+                print(colored(f"(i) Retry Count: {retry_count + 1} out of 3. Waiting for 30 seconds before retrying...", "yellow"))
+                time.sleep(30)
+                return self.rephrase(source, max_length = max_length, retry_count = retry_count + 1)
         except Exception as e:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
