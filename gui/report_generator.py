@@ -82,7 +82,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         Switches:
             switch_autocorrect (CTkSwitch): The switch for enabling/disabling autocorrect.
             switch_date (CTkSwitch): The switch for enabling/disabling the report date.
-            switch_force (CTkSwitch): The switch for enabling/disabling force generation.
             switch_pdf (CTkSwitch): The switch for enabling/disabling PDF creation.
 
         Radio Buttons:
@@ -138,10 +137,14 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.menubar = tk.Menu(self)
 
         self.menu_utility = tk.Menu(self.menubar, tearoff = False)
+        self.force_var = tk.IntVar()
+        self.menu_utility.add_checkbutton(label = "Force Generate", variable = self.force_var, onvalue = 1, offvalue = 0)
+        self.menu_utility.add_separator()
         self.menu_utility.add_command(label = "Test Grader Report Comment Mapper", command = self.__test_source)
         self.menu_utility.add_command(label = "Validate Grader Report", command = self.__validate)
         self.menu_utility.add_separator()
         self.menu_utility.add_command(label = "Scan for MS Word Installation", command = self.__scan_word)
+
 
         self.menu_preference = tk.Menu(self.menubar, tearoff = False)
         self.save_signature_path_var = tk.BooleanVar()
@@ -211,10 +214,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.autocorrect_var = tk.IntVar()
         self.switch_autocorrect = ctk.CTkSwitch(self, text = "Autocorrect", variable = self.autocorrect_var, onvalue = 1, offvalue = 0)
 
-        # Force generation switch button
-        self.force_var = tk.IntVar()
-        self.switch_force = ctk.CTkSwitch(self, text = "Force Generate", variable = self.force_var, onvalue = 1, offvalue = 0)
-
         # Insert date switch button
         self.inject_date = tk.IntVar()
         self.switch_date = ctk.CTkSwitch(self, text = "Insert Date. Report Date      ⟶   ", command = self.__toggle_date_entry, variable = self.inject_date, onvalue = 1, offvalue = 0)
@@ -276,7 +275,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_browse_signature: "Browse for your digitized signature image file.",
             self.rdo_generate_all: "Generate reports for all students.",
             self.rdo_generate_student: "Generate report for a single student. Fill in the student name field to specify the student.",
-            self.switch_force: "Enable this to force generate the reports and disregard grader report errors.",
             self.switch_date: "Enable this to insert the date in the report. Please fill in the date field to specify the date to insert.",
             self.txt_student_name: "Enter the name of the student to generate the report for. This is only enabled when the generate for student option is selected.",
             self.date_report: "Select the date to insert in the report. This is only enabled when the insert date option is selected.",
@@ -332,7 +330,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         self.lbl_options.grid(row = 6, column = 0, sticky = tk.W, pady = 2)
         self.switch_autocorrect.grid(row = 6, column = 1, sticky = tk.W, padx =  5, pady = 2)
-        self.switch_force.grid(row = 6, column = 2, sticky = tk.W, padx = 5, pady = 2)
 
         self.switch_date.grid(row = 7, column = 1, sticky = tk.EW, padx = 5, pady = 2)
         self.date_report.grid(row = 7, column = 2, sticky = tk.EW, padx = (5, 10), pady = 2)
