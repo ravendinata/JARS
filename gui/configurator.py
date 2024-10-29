@@ -59,7 +59,7 @@ class ConfiguratorFrame(ctk.CTkFrame):
         self.cmb_color_theme.set(current_theme)
 
         # Google GenAI section
-        self.lbl_header_genai = ctk.CTkLabel(self, text = "Google GenAI settings:", font = ("Arial", 14, "bold"))
+        self.lbl_header_genai = ctk.CTkLabel(self, text = "Google GenAI (Gemini) settings:", font = ("Arial", 14, "bold"))
 
         # API Key setting
         self.lbl_api_key = ctk.CTkLabel(self, text = "API Key:")
