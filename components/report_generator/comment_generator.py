@@ -1,3 +1,6 @@
+import re
+import time
+
 import google.generativeai as genai
 import nltk
 from datetime import datetime
@@ -431,6 +434,11 @@ class AICommentGenerator:
                                 status = "Done", 
                                 completed_at = finish_time,
                                 error = None if not rephrase else "Max Length Exceeded. Rephrased.")
+        
+        if verbose:
+            print("Fixing gender strings if necessary...")
+
+        final_response = self.__fix_gender_strings(gender, final_response)
 
         return final_response
 
@@ -489,3 +497,31 @@ class AICommentGenerator:
         final_response = final_response.replace("  ", " ").replace(" .", ".").replace(" ,", ",").replace(" !", "!").replace(" '", "'").replace(".,", ".")
 
         return final_response
+    
+    def __fix_gender_strings(self, gender, comment):
+        """
+        Checks the pronouns, and adjectives in a comment based on
+        the student's gender as provided.
+
+        Args:
+            gender (str): The student's gender. Use ```M``` for male and ```F``` for female.
+            comment (str): The comment to check.
+
+        Returns:
+            str: The updated comment.
+        """
+        if gender not in ["M", "F"]:
+            raise ValueError
+
+        if gender == "M":
+            comment = re.sub(r"\bshe\b", "he", comment, flags = re.IGNORECASE)
+            comment = re.sub(r"\bShe\b", "He", comment)
+            comment = re.sub(r"\bher\b", "his", comment, flags = re.IGNORECASE)
+            comment = re.sub(r"\bHer\b", "His", comment)
+        else:
+            comment = re.sub(r"\bhe\b", "she", comment, flags = re.IGNORECASE)
+            comment = re.sub(r"\bHe\b", "She", comment)
+            comment = re.sub(r"\bhis\b", "her", comment, flags = re.IGNORECASE)
+            comment = re.sub(r"\bHis\b", "Her", comment)
+
+        return comment
