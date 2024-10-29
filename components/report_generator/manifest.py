@@ -23,6 +23,8 @@ class Manifest:
                                              "Shortened Comment", 
                                              "Final Comment Length (Chars)", 
                                              "Final Comment Length (Words)", 
+                                             "Input Tokens",
+                                             "Output Tokens",
                                              "Status", 
                                              "Completed At", 
                                              "Error"])
@@ -41,9 +43,11 @@ class Manifest:
         worksheet.column_dimensions["C"].width = 75
         worksheet.column_dimensions["D"].width = 25
         worksheet.column_dimensions["E"].width = 25
-        worksheet.column_dimensions["F"].width = 10
+        worksheet.column_dimensions["F"].width = 25
         worksheet.column_dimensions["G"].width = 25
-        worksheet.column_dimensions["H"].width = 40
+        worksheet.column_dimensions["H"].width = 10
+        worksheet.column_dimensions["I"].width = 25
+        worksheet.column_dimensions["J"].width = 40
 
         for row in worksheet.iter_rows(min_row = 2, max_row = worksheet.max_row, min_col = 2, max_col = 3):
             for cell in row:
@@ -58,6 +62,8 @@ class Manifest:
                   comment_short,
                   length_chars,
                   length_words,
+                  input_tokens,
+                  output_tokens,
                   status,
                   completed_at,
                   error = None):
@@ -83,6 +89,8 @@ class Manifest:
                         comment_short, 
                         length_chars,
                         length_words,
+                        input_tokens,
+                        output_tokens,
                         status, 
                         completed_at, 
                         error
