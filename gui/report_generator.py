@@ -22,10 +22,12 @@ class ReportGeneratorWindow(ctk.CTkToplevel):
         super().__init__(master, **kwargs)
 
         # Window Setup
-        self.resizable(False, False)
         self.title("Report Generator")
+        self.resizable(True, False)
 
         # Frame Setup
+        self.rowconfigure(0, weight = 1)
+        self.columnconfigure(0, weight = 1)
         self.processor_frame = ReportGeneratorFrame(master = self, root = master, office_version = office_version)
         self.processor_frame.grid(padx = 10, pady = 10)
         master.eval(f"tk::PlaceWindow {self} center")
@@ -296,7 +298,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         GUI LAYOUTING
         """
         self.columnconfigure(1, weight = 1)
-        self.rowconfigure(1, weight = 1)
+        self.columnconfigure(2, weight = 1)
 
         self.lbl_source.grid(row = 0, column = 0, sticky = tk.W, pady = 2)
         self.txt_source_path.grid(row = 0, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
