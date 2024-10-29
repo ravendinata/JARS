@@ -219,7 +219,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         # Insert date switch button
         self.inject_date = tk.IntVar()
-        self.switch_date = ctk.CTkSwitch(self, text = "Insert Date. Report Date      ⟶   ", command = self.__toggle_date_entry, variable = self.inject_date, onvalue = 1, offvalue = 0)
+        self.switch_date = ctk.CTkSwitch(self, text = "Insert Date | Report Date      ⟶   ", command = self.__toggle_date_entry, variable = self.inject_date, onvalue = 1, offvalue = 0)
         
         # Report date
         today = date.today()
