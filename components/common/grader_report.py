@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 from termcolor import colored
 
@@ -307,8 +309,18 @@ class GraderReport:
                         callback(output_text)
                     break
 
+        for student in self.students.index:
+            if not self.__check_sna_compliance(student):
+                count += 1
+                valid = False
+                output_text = f"Warning [{count}]: {student} does not meet the SNA compliance rules! Please check the grader report."
+                if callback is not None:
+                    callback(output_text)
+                print(colored(output_text, "red"))
+
         self.data_valid = valid
         print(colored(f"Validation Pass: {valid}", "red" if not valid else "green"), "\n", colored(f"Warnings: {count}\n", "yellow") if not valid else "")
+        callback(f"\nYou have {count} issues in your grader report. Please check the warnings above." if not valid else "")
         return valid
     
     # Private methods
@@ -363,3 +375,57 @@ class GraderReport:
         unwanted_columns = ["Normalized Grade", "Student Final Grade", "Sanity Check", "Add item…"]
         unwanted_columns += [column for column in self.data_sna.columns if column.startswith("Unnamed")]
         self.data_sna = self.data_sna.drop(columns = unwanted_columns)
+                        
+    def _load_sna_rules(self):
+        """Load SNA compliance rules from JSON file."""
+        rules_path = 'resources/sna_rules.json'
+        try:
+            with open(rules_path, 'r') as f:
+                return json.load(f)['rules']
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Rules file not found at {rules_path}")
+        except json.JSONDecodeError:
+            raise ValueError("Invalid JSON format in rules file")
+        
+    def __check_sna_compliance(self, student):
+        """
+        Check if the SNA data is compliant with the scoring guide.
+        
+        Args:
+            student: The student whose SNA compliance needs to be checked
+            
+        Returns:
+            bool: True if compliant, False otherwise
+        """
+        rules = self._load_sna_rules()
+        sna_count = str(self.count_sna())  # Convert to string to match JSON keys
+        student_final_grade = self.get_final_grade(student, "Final Score", raw = True)
+        
+        grade_counts = {'A': 0, 'B': 0, 'C': 0}
+        for assessment in self.data_sna.columns:
+            grade = self.get_grade_sna(student, assessment, raw = True)
+            if grade in grade_counts:
+                grade_counts[grade] += 1
+
+        if sna_count not in rules:
+            return False
+        
+        if student_final_grade == 'SMFS':
+            return False
+        
+        # Find matching grade range and check requirements
+        for grade_range, grade_reqs in rules[sna_count].items():
+            min_grade, max_grade = map(int, grade_range.split('-'))
+            if min_grade <= student_final_grade < max_grade:
+                # Check if all grade counts match requirements
+                for grade, req in grade_reqs.items():
+                    if type(req) == str:
+                        min_count, max_count = map(int, req.split('-'))
+                    else:
+                        min_count = max_count = int(req)
+                    actual_count = grade_counts[grade]
+                    if not (min_count <= actual_count <= max_count):
+                        return False
+                return True
+        
+        return False
