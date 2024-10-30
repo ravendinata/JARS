@@ -285,8 +285,10 @@ class AICommentGenerator:
         manifest (manifest.Manifest): The manifest instance for logging.
 
     Methods:
+        get_base_prompt(self): Gets the base prompt from a predefined file.
         generate_comment(self, nickname, gender, result, verbose = False): Generates a comment based on the student's result using AI.
         rephrase(self, source): Rephrases a pre-generated comment using AI.
+        grammar_check(self, text): Checks the grammar of a comment using Gemini AI.
     """
 
     def __init__(self, manifest: manifest.Manifest):
@@ -513,15 +515,14 @@ class AICommentGenerator:
         if gender not in ["M", "F"]:
             raise ValueError
 
-        if gender == "M":
-            comment = re.sub(r"\bshe\b", "he", comment, flags = re.IGNORECASE)
-            comment = re.sub(r"\bShe\b", "He", comment)
-            comment = re.sub(r"\bher\b", "his", comment, flags = re.IGNORECASE)
-            comment = re.sub(r"\bHer\b", "His", comment)
-        else:
-            comment = re.sub(r"\bhe\b", "she", comment, flags = re.IGNORECASE)
-            comment = re.sub(r"\bHe\b", "She", comment)
-            comment = re.sub(r"\bhis\b", "her", comment, flags = re.IGNORECASE)
-            comment = re.sub(r"\bHis\b", "Her", comment)
+        patterns = { 
+            # (old, new)
+            "M": [("she", "he"), ("her", "his")],
+            "F": [("he", "she"), ("his", "her")]
+        }
+
+        for old, new in patterns[gender]:
+            comment = re.sub(rf"\b{old}\b", new, comment, flags = re.IGNORECASE)
+            comment = re.sub(rf"\b{old.capitalize()}\b", new.capitalize(), comment)
 
         return comment
