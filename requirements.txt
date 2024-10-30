@@ -40,7 +40,7 @@ et-xmlfile==1.1.0
     # via openpyxl
 flask==3.0.2
     # via -r requirements.in
-google-ai-generativelanguage==0.4.0
+google-ai-generativelanguage==0.6.10
     # via google-generativeai
 google-api-core[grpc]==2.16.2
     # via
@@ -50,7 +50,7 @@ google-auth==2.27.0
     # via
     #   google-api-core
     #   google-generativeai
-google-generativeai==0.4.1
+google-generativeai==0.8.3
     # via -r requirements.in
 googleapis-common-protos==1.62.0
     # via
@@ -129,9 +129,7 @@ pytz==2023.3.post1
 pywebview==4.4.1
     # via -r requirements.in
 pywin32==306
-    # via
-    #   docx2pdf
-    #   wmi
+    # via docx2pdf
 regex==2023.10.3
     # via nltk
 requests==2.24.0
@@ -186,5 +184,3 @@ winrt-windows-foundation-collections==2.0.1
     # via windows-toasts
 winrt-windows-ui-notifications==2.0.1
     # via windows-toasts
-wmi==1.5.1
-    # via -r requirements.in
