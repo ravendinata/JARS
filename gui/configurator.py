@@ -1,4 +1,5 @@
 import sys
+import webbrowser
 
 import customtkinter as ctk
 import tkinter as tk
@@ -58,6 +59,10 @@ class ConfiguratorFrame(ctk.CTkFrame):
         current_theme = " ".join([word[0].upper() + word[1:] for word in current_theme.split()])
         self.cmb_color_theme.set(current_theme)
 
+        # Skip Moodle check setting
+        self.skip_moodle_check = tk.BooleanVar(value = config.get_config("skip_moodle_check"))
+        self.chk_skip_moodle_check = ctk.CTkCheckBox(self, variable = self.skip_moodle_check, text = "Skip Moodle database connection check")
+
         # Google GenAI section
         self.lbl_header_genai = ctk.CTkLabel(self, text = "Google GenAI (Gemini) settings:", font = ("Arial", 14, "bold"))
 
@@ -65,6 +70,10 @@ class ConfiguratorFrame(ctk.CTkFrame):
         self.lbl_api_key = ctk.CTkLabel(self, text = "API Key:")
         self.txt_api_key = ctk.CTkEntry(self, width = 300)
         self.txt_api_key.insert(0, config.get_config("genai_api_key"))
+        
+        # Redirect to Google AI dashboard URL
+        self.btn_genai_dashboard = ctk.CTkButton(self, text = "Get API key from Google AI Dashboard", fg_color = "grey",
+                                                 command = lambda: webbrowser.open("https://console.cloud.google.com/apis/credentials"))
 
         # Buttons
         self.btn_save = ctk.CTkButton(self, text = "Save", command = self.__save_config)
@@ -83,12 +92,16 @@ class ConfiguratorFrame(ctk.CTkFrame):
         self.lbl_color_theme.grid(row = 2, column = 0, sticky = tk.E, padx = (10, 2), pady = 5)
         self.cmb_color_theme.grid(row = 2, column = 1, sticky = tk.EW, padx = (2, 10), pady = 5)
 
-        self.lbl_header_genai.grid(row = 3, column = 0, columnspan = 2, sticky = tk.W, padx = 10, pady = 5)
+        self.chk_skip_moodle_check.grid(row = 3, column = 1, sticky = tk.EW, padx = (2, 10), pady = 5)
 
-        self.lbl_api_key.grid(row = 4, column = 0, sticky = tk.E, padx = (10, 2), pady = 5)
-        self.txt_api_key.grid(row = 4, column = 1, sticky = tk.EW, padx = (2, 10), pady = 5)
+        self.lbl_header_genai.grid(row = 4, column = 0, columnspan = 2, sticky = tk.W, padx = 10, pady = 5)
 
-        self.btn_save.grid(row = 5, column = 1, sticky = tk.E, padx = 10, pady = 5)
+        self.lbl_api_key.grid(row = 5, column = 0, sticky = tk.E, padx = (10, 2), pady = 5)
+        self.txt_api_key.grid(row = 5, column = 1, sticky = tk.EW, padx = (2, 10), pady = 5)
+        
+        self.btn_genai_dashboard.grid(row = 6, column = 0, columnspan = 2, sticky = tk.EW, padx = 10, pady = 5)
+
+        self.btn_save.grid(row = 7, column = 1, sticky = tk.E, padx = 10, pady = 5)
 
     def __save_config(self):
         """Saves the configuration to the config file."""
@@ -99,6 +112,7 @@ class ConfiguratorFrame(ctk.CTkFrame):
             new_settings = config.set_config("appearance_mode", self.cmb_appearance.get().lower())
             new_settings = config.set_config("color_theme", self.color_theme.get().lower().replace(" ", "-"), source = new_settings)
             new_settings = config.set_config("genai_api_key", self.txt_api_key.get(), source = new_settings)
+            new_settings = config.set_config("skip_moodle_check", self.skip_moodle_check.get(), source = new_settings)
 
             # Extra steps
             ctk.set_appearance_mode(self.cmb_appearance.get().lower())
