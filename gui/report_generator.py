@@ -399,12 +399,17 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.__update_status("Validating grader report…", clear = True)
             valid = self._grader_report.validate(callback = self.__update_status)
             if not valid:
-                self.__update_status("\nWARNING: Grader report is invalid. Check information above for details.")
-                self.treeview.delete(*self.treeview.get_children())
-                self.treeview.insert("", tk.END, text = "Grader Report Invalid.")
+                self.__update_status("\nWARNING: Grader report is invalid. Check information above for details. Report generation disabled.")
+                self.btn_process.configure(state = tk.DISABLED)
             else:
                 self.__update_status("Grader report is valid. You're good to go!")
-                self.__populate_treeview()
+                self.btn_process.configure(state = tk.NORMAL)
+            
+            self.__populate_treeview()
+
+            if tk.messagebox.askyesno("Same Folder for Output?", f"Do you want to use the same folder to store the generated reports too?\n>> {os.path.dirname(file_path)}"):
+                self.txt_output_path.delete(0, tk.END)
+                self.txt_output_path.insert(0, os.path.dirname(file_path))
 
     def __populate_treeview(self):
         """Populates the tree view with the grader report data."""
