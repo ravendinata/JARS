@@ -119,16 +119,20 @@ if error:
     print("  Microsoft Office not detected.")
 
 # Check if Moodle database is reachable
-try:
-    if moodle.test_connection(supress = True):
-        moodle_reachable = True
-        print("  Moodle database connection successful.")
-    else:
+if not config.get_config("skip_moodle_check"):
+    try:
+        if moodle.test_connection(supress = True):
+            moodle_reachable = True
+            print("  Moodle database connection successful.")
+        else:
+            moodle_reachable = False
+            print("  Cannot reach Moodle database.")
+    except Exception as e:
         moodle_reachable = False
-        print("  Cannot reach Moodle database.")
-except Exception as e:
+        print(f"  Moodle database connection failed due to excecption: {e}")
+else:
     moodle_reachable = False
-    print(f"  Moodle database connection failed due to excecption: {e}")
+    print("  Skipping Moodle database connection check.")
 
 print("> System checks completed.")
 
