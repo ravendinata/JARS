@@ -16,6 +16,7 @@ import components.report_generator.comment_generator_test as cgen_test
 import components.utility as util
 from gui.dialog import OutputDialog
 from components.report_generator.comment_generator import CommentGenerator
+from components.utility import check_word_status
 
 class ReportGeneratorWindow(ctk.CTkToplevel):
     def __init__(self, master, office_version, **kwargs):
@@ -680,35 +681,15 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         
         This function does not return anything. It updates the GUI and enables the PDF switch if MS Word is found.
         """
-        import wmi
-        from win32com.client import Dispatch
-
         if self.__office_version:
             tk.messagebox.showinfo("Microsoft Office Detected", "Microsoft Office has already been detected. No need to scan.")
             return
 
         print("> Manually Scanning for MS Word installation…")
 
-        # Check if MS Word is running
-        print("  Checking if an MS Word instance is running…")
-        word_is_open = False
-        c = wmi.WMI()
-        for process in c.Win32_Process():
-            if process.Name == "WINWORD.EXE":
-                word_is_open = True
-        
-        word_is_open = False
-        
-        # Check if Microsoft Office is installed
-        try:
-            print("  Checking if Microsoft Office is installed…")
-            word = Dispatch("Word.Application")
-            office_version = word.Version
-            if not word_is_open:
-                word.Quit()
-            print(f"  Microsoft Office {office_version} detected.")
-        except:
-            office_version = None
+        _, office_version, error = check_word_status()
+        if error:
+            print(f"  An error occurred: {error}")
             print("  Microsoft Office not detected.")
 
         # Set GUI
@@ -796,7 +777,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
     def __on_progress_update(self, current, total, status_message):
         """
-        CALLBACK: Updates the progress bar and other progress indicators.      
+        CALLBACK: Updates the progress bar and other progress indicators.    
         
         This is a callback function for the report processor. It is called when the report processor updates its progress.
         It updates the progress bar and the progress count label.

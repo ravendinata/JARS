@@ -1,3 +1,7 @@
+import pythoncom
+from win32com.client import Dispatch, GetActiveObject
+from win32com.client.dynamic import CDispatch
+
 import google.generativeai as genai
 from termcolor import colored
 
@@ -18,3 +22,39 @@ def validate_genai_api_key():
     except Exception as e:
         print(colored(f"(!) Error: {e}", "red"))
         return False
+
+def check_word_status():
+    """
+    Check MS Word installation and running status.
+    Returns tuple of (is_running: bool, office_version: str | None, error: str | None)
+    """
+    try:
+        # Initialize COM in thread
+        pythoncom.CoInitialize()
+        
+        # Check for running instances first using GetActiveObject
+        word_is_open = False
+        try:
+            GetActiveObject("Word.Application")
+            word_is_open = True
+            print("  An open MS Word instance is detected. Will not close it.")
+        except pythoncom.com_error:
+            pass
+
+        # Only create new instance if needed
+        if not word_is_open:
+            word = Dispatch("Word.Application")
+            if isinstance(word, CDispatch):
+                office_version = word.Version
+                word.Quit()
+                print(f"  Microsoft Office {office_version} detected.")
+                return word_is_open, office_version, None
+            else:
+                return word_is_open, None, "Failed to get Word.Application dispatch"
+                
+    except pythoncom.com_error as e:
+        return word_is_open, None, f"COM Error: {str(e)}"
+    except Exception as e:
+        return word_is_open, None, str(e)
+    finally:
+        pythoncom.CoUninitialize()

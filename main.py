@@ -12,7 +12,6 @@ import customtkinter as ctk
 import pyfiglet
 import tkinter as tk
 import tktooltip as tktip
-import wmi
 from ctypes import windll
 from PIL import Image
 from termcolor import colored
@@ -20,6 +19,7 @@ from win32com.client.dynamic import Dispatch
 
 import config
 import moodle.database as moodle
+from components.utility import check_word_status
 from gui.report_formatter import ReportFormatterWindow
 from gui.report_generator import ReportGeneratorWindow
 from gui.inmanage_verifier import InManageVerifierWindow
@@ -92,7 +92,6 @@ class LauncherFrame(ctk.CTkFrame):
     def __open_configurator(self):
         ConfiguratorWindow(master = self.master, caller = "main")
 
-
 class Window(ctk.CTk): 
     def __init__(self):
         super().__init__()
@@ -113,23 +112,10 @@ print(f"JARS Report Processor v{__version__}\n")
 print("> Running system checks…")
 
 # Check if MS Word is running
-word_is_open = False
-c = wmi.WMI()
-for process in c.Win32_Process():
-    if process.Name == "WINWORD.EXE":
-        word_is_open = True
-        print("  An open MS Word instance is detected. Will not close it.")
-
-# Check if Microsoft Office is installed
-try:
-    word = Dispatch("Word.Application")
-    office_version = word.Version
-    print(f"  Microsoft Office {office_version} detected.")
-    if not word_is_open:
-        word.Quit()
-except Exception as e:
-    print(f"  An error occurred when trying to detect Microsoft Office installation. Details: {e}")
-    office_version = None
+print("> Checking Microsoft Word status…")
+is_running, office_version, error = check_word_status()
+if error:
+    print(f"  An error occurred: {error}")
     print("  Microsoft Office not detected.")
 
 # Check if Moodle database is reachable
