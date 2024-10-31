@@ -73,7 +73,7 @@ class ConfiguratorFrame(ctk.CTkFrame):
         
         # Redirect to Google AI dashboard URL
         self.btn_genai_dashboard = ctk.CTkButton(self, text = "Get API key from Google AI Dashboard", fg_color = "grey",
-                                                 command = lambda: webbrowser.open("https://console.cloud.google.com/apis/credentials"))
+                                                 command = lambda: webbrowser.open("https://makersuite.google.com/app/apikey"))
 
         # Buttons
         self.btn_save = ctk.CTkButton(self, text = "Save", command = self.__save_config)
