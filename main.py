@@ -15,7 +15,6 @@ import tktooltip as tktip
 from ctypes import windll
 from PIL import Image
 from termcolor import colored
-from win32com.client.dynamic import Dispatch
 
 import config
 import moodle.database as moodle
