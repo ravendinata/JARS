@@ -81,9 +81,6 @@ class InManageVerifierFrame(ctk.CTkFrame):
         self.txt_output = ctk.CTkTextbox(self, width = 250, height = 75, state = tk.DISABLED, wrap = "word")
         self.lbl_info = ctk.CTkLabel(self, text = "-", text_color = "white")
 
-        # Buttons
-        self.btn_verify = ctk.CTkButton(self, text = "Verify", command = self.__verify)
-
         """
         GUI LAYOUTING
         """
@@ -111,8 +108,6 @@ class InManageVerifierFrame(ctk.CTkFrame):
         self.txt_output.grid(row = 7, column = 1, columnspan = 2, sticky = tk.EW, padx = 5, pady = 2)
 
         self.lbl_info.grid(row = 8, column = 2, sticky = tk.EW, padx = 5, pady = 2)
-
-        self.btn_verify.grid(row = 9, column = 2, sticky = tk.EW, padx = 5, pady = (10, 5))
 
     def __open_file(self):
         """Opens a file dialog to select a file."""
@@ -150,6 +145,8 @@ class InManageVerifierFrame(ctk.CTkFrame):
             self.txt_serial_number.delete(0, tk.END)
             self.txt_serial_number.insert(0, data.get("/Serial Number", "N/A"))
             self.txt_serial_number.configure(state = tk.DISABLED)
+
+            self.__verify()
 
     def __verify(self):
         """Verifies the integrity of the selected file."""
