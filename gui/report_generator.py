@@ -589,9 +589,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
             if config.get_config("genai_api_key") == "" or config.get_config("genai_api_key") is None:
                 tk.messagebox.showerror("API Key Not Found", "The AI-generated comment feature requires an API key. Please enter the API key in the configuration file and restart the program.")
-                self.rdo_ai_mode.deselect()
-                self.rdo_map_mode.select()
-                self.rdo_ai_mode.configure(state = tk.DISABLED)
                 self.__update_status("Aborting report generation!")
                 return queue.put(False)
             else:
@@ -727,6 +724,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         valid = False
         output_text = "API key is invalid. Please check the configuration file or use the configurator to set a valid API key. Make sure you are connected to the internet."
         
+        if config.get_config("genai_api_key") == "" or config.get_config("genai_api_key") is None:
+            print("API key not found.")
+            self.__update_status("API key not found in configuration file.")
+            tk.messagebox.showerror("API Key Not Found in Configuration File", "The API key is not found in the configuration file. Please set the API key in the configuration file or use the configurator to set the API key.")
+            return False
+
         print("Testing API key…")
         self.__update_status("Testing API key…", clear = True)
 
