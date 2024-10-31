@@ -1,6 +1,7 @@
 import os
 import threading
 from datetime import date, datetime, timedelta
+from queue import Queue
 
 import customtkinter as ctk
 import tkinter as tk
@@ -516,6 +517,12 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_process.configure(state = tk.NORMAL)
             self.btn_validate.configure(state = tk.NORMAL)
 
+            # Get return value from thread
+            result = self.thread_queue.get()
+            if not result:
+                self.__update_status("Report generation failed or was aborted.")
+                return
+
             # Post-operation
             self.lbl_count.configure(text = "Done!")
             self.__update_status("Report generation completed successfully.")
@@ -542,13 +549,14 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
     def __threaded_process(self):
         """Starts the report generation in a separate thread."""
-        process_thread = threading.Thread(target = self.__process)
+        self.thread_queue = Queue()
+        process_thread = threading.Thread(target = self.__process, args = (self.thread_queue,))
         self.btn_process.configure(state = tk.DISABLED)
         self.btn_validate.configure(state = tk.DISABLED)
         process_thread.start()
         self.master.after(1000, self.__check_threaded_process, process_thread)
 
-    def __process(self):
+    def __process(self, queue):
         """
         Processes the report based on the selected options.
         
@@ -558,7 +566,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """
         paths_valid = self.__test_paths()
         if not paths_valid:
-            return
+            return queue.put(False)
         
         output_file_path = self.txt_output_path.get()
         signature_file = self.txt_signature_path.get() if self.txt_signature_path.get() != "" else None
@@ -585,7 +593,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                 self.rdo_map_mode.select()
                 self.rdo_ai_mode.configure(state = tk.DISABLED)
                 self.__update_status("Aborting report generation!")
-                return
+                return queue.put(False)
             else:
                 print("API key found!\nValidating API key with Google…")
                 genai_api_key_validated = self.__test_api_key(suppress_dialog = True)
@@ -594,20 +602,27 @@ class ReportGeneratorFrame(ctk.CTkFrame):
                 tk.messagebox.showerror("Invalid API Key", "The API key provided is invalid. Please check the key in the configuration file and try again.")
                 self.__update_status("Warning: Invalid API key. Please check the configuration file or use the configurator to set a valid API key.")
                 self.__update_status("Aborting report generation!")
-                return
+                return queue.put(False)
 
             tk.messagebox.showwarning("Attention: Internet Required", "The AI-based comment generator utilizes Google's Gemini AI. Hence, you are required to connect to the internet when using this feature.")
         
         # Start report generation
         self.__update_status("Starting report generation…", clear = True)
         
-        if mode == "all":
-            proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
-        elif mode == "student":
-            student_name = self.txt_student_name.get()
-            self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
-            proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
-            output_file_path = f"{output_file_path}/{student_name}.docx"
+        try:
+            if mode == "all":
+                proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
+            elif mode == "student":
+                student_name = self.txt_student_name.get()
+                self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
+                proc.generate_for_student(student_name = student_name, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
+                output_file_path = f"{output_file_path}/{student_name}.docx"
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            self.__update_status("An error occurred during report generation. Check console/terminal for details.")
+            return queue.put(False)
+
+        return queue.put(True)  
 
     def __toast_button_click(self, toastEvent):
         """Event handler for the toast button click."""
