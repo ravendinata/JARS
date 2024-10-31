@@ -102,7 +102,7 @@ class GraderReport:
             return data
         
         if data == "X":
-            print(colored(f"Warning: {student} has no grade for {assessment}! Please check the grader report.", "red"))
+            print(colored(f"Error: {student} has no grade for {assessment}! Please check the grader report.", "red"))
             return ""
         else:
             return data
@@ -134,7 +134,7 @@ class GraderReport:
         
         if data == 0:
             print(colored(
-                f"Warning: {student} has no grade for {item}! Please check the grader report. "
+                f"Error: {student} has no grade for {item}! Please check the grader report. "
                 "Due to this, the grade will be set to NI to prevent software errors.", 
                 "red"))
             return 1
@@ -167,18 +167,11 @@ class GraderReport:
             return data
 
         if data == 0:
-            if format == "Final Score":
-                print(colored(
-                    f"Warning: {student} has no final score! Please check the grader report. "
-                    "Due to this, the final score will be left blank to prevent software errors.", 
-                    "red"
-                ))
-            elif format == "Letter Grade":
-                print(colored(
-                    f"Warning: {student} has no letter grade! Please check the grader report. "
-                    "Due to this, the letter grade will be left blank to X to prevent software errors.", 
-                    "red"
-                ))
+            print(colored(
+                f"Error: {student} has no {format}! Please check the grader report. "
+                "Due to this, the final score will be left blank to prevent software errors.", 
+                "red"
+            ))
             data = str(" ")
         
         return data
@@ -230,7 +223,6 @@ class GraderReport:
             if callback is not None:
                 callback(output_text)
             print(colored(output_text, "red"))
-
 
         # Check if all course information is filled
         for item in self.course_info.index:
@@ -399,7 +391,11 @@ class GraderReport:
         """
         rules = self._load_sna_rules()
         sna_count = str(self.count_sna())  # Convert to string to match JSON keys
-        student_final_grade = self.get_final_grade(student, "Final Score", raw = True)
+        student_final_grade = self.get_final_grade(student, "Final Score", raw = False)
+
+        if type(student_final_grade) == str:
+            print(colored("Skipping SNA compliance check due to missing final grade", "yellow"))
+            return False
         
         grade_counts = {'A': 0, 'B': 0, 'C': 0}
         for assessment in self.data_sna.columns:
@@ -408,9 +404,11 @@ class GraderReport:
                 grade_counts[grade] += 1
 
         if sna_count not in rules:
+            print(colored(f"Skipping SNA compliance check due to missing rules for {sna_count} SNAs", "yellow"))
             return False
         
         if student_final_grade == 'SMFS':
+            print(colored("Skipping SNA compliance check because student is not found in the grader report", "yellow"))
             return False
         
         # Find matching grade range and check requirements
