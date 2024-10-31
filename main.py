@@ -77,7 +77,10 @@ class LauncherFrame(ctk.CTkFrame):
         ReportFormatterWindow(master = self.master)
 
     def __open_report_generator(self):
-        ReportGeneratorWindow(master = self.master, office_version = office_version)
+        next = ReportGeneratorWindow(master = self.master, office_version = office_version)
+        if config.get_config("genai_api_key") == "" or config.get_config("genai_api_key") is None:
+            if tk.messagebox.askyesno("API Key Missing", "You have not set an API key for the AI comment generator. Do you want to open the settings page to set the key now?"):
+                ConfiguratorWindow(master = next.master)
 
     def __open_inmanage_verifier(self):
         InManageVerifierWindow(master = self.master)
