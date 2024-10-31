@@ -38,13 +38,13 @@ def setup_page(document: Document, page_size: str = 'a4'):
 def set_cell_border(cell, **kwargs):
     """
     Set a table cell's border properties. Usage example:
-    set_cell_border(
-        cell,
-        top={"sz": 12, "val": "single", "color": "#FF0000", "space": "0"},
-        bottom={"sz": 12, "color": "#00FF00", "val": "single"},
-        start={"sz": 24, "val": "dashed", "shadow": "true"},
-        end={"sz": 12, "val": "dashed"},
-    )
+    >>> set_cell_border(
+    >>>     cell,
+    >>>     top={"sz": 12, "val": "single", "color": "#FF0000", "space": "0"},
+    >>>     bottom={"sz": 12, "color": "#00FF00", "val": "single"},
+    >>>     start={"sz": 24, "val": "dashed", "shadow": "true"},
+    >>>     end={"sz": 12, "val": "dashed"},
+    >>> )
 
     Args:
         cell (docx.table._Cell): The cell to set the border of.
