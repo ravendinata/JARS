@@ -415,6 +415,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         """Populates the tree view with the grader report data."""
         self.treeview.delete(*self.treeview.get_children()) # Clear treeview
         
+        self.treeview.insert("", tk.END, text = "Grader Report Version", values = (self._grader_report._version))
         self.treeview.insert("", tk.END, text = "School Year", values = (self._grader_report.get_course_info("School Year")))
         self.treeview.insert("", tk.END, text = "Semester", values = (self._grader_report.get_course_info("Semester")))
         self.treeview.insert("", tk.END, text = "Subject", values = (self._grader_report.get_course_info("Subject")))

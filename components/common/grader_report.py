@@ -2,6 +2,7 @@ import json
 
 import pandas as pd
 from termcolor import colored
+from openpyxl import load_workbook
 
 class GraderReport:
     def __init__(self, grader_report_path, skip_validation = False, callback = None):
@@ -20,6 +21,13 @@ class GraderReport:
 
         self.grader_report_path = grader_report_path
         self.__data_broken = False
+
+        # Get the file version from the status property
+        props = load_workbook(self.grader_report_path).properties
+        self._version = props.version
+
+        if self._version != "1.2":
+            print(colored(f"Warning: Grader report version is {self._version}. Please make sure to use the latest version of the grader report template.", "yellow"))
 
         try:
             pd.options.display.float_format = '{:.2f}'.format
@@ -213,6 +221,7 @@ class GraderReport:
         valid = True
         count = 0
 
+        print(f"Grader Report Version: {self._version}\n")
         print(f"Course Info:\n{self.course_info}\n")
         print(f"Student List:\n{self.students}\nStudent Count: {self.count_students()}\n")
 
