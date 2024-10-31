@@ -217,13 +217,13 @@ class GraderReport:
                 callback(output_text)
             return False
 
-        print("[  ] Validating data...")
+        print("[  ] Validating data...\n")
         valid = True
         count = 0
 
         print(f"Grader Report Version: {self._version}\n")
         print(f"Course Info:\n{self.course_info}\n")
-        print(f"Student List:\n{self.students}\nStudent Count: {self.count_students()}\n")
+        print(f"Student List:\n{self.students}\n\nStudent Count: {self.count_students()}\n")
 
         if self.count_students() == 0:
             count += 1
