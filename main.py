@@ -5,7 +5,7 @@ It is meant to be used as a standalone application being more user-friendly
 and easier to use than the console application.
 """
 
-__version__ = "1.2.5"
+__version__ = "1.2.7"
 __author__ = "Raven Limadinata"
 
 import customtkinter as ctk
@@ -41,7 +41,7 @@ class LauncherFrame(ctk.CTkFrame):
         # Define widgets
         # Text widgets
         self.lbl_title = ctk.CTkLabel(self, text = "JARS Report Processor", font = ("Arial", 20, "bold"))
-        self.lbl_subtitle = ctk.CTkLabel(self, text = "JAC Academic Reporting System | Version 1.2.5", font = ("Arial", 10))
+        self.lbl_subtitle = ctk.CTkLabel(self, text = f"JAC Academic Reporting System | Version {__version__}", font = ("Arial", 10))
         self.lbl_prompt = ctk.CTkLabel(self, text = "Select a tool to open:")
         
         # Buttons
