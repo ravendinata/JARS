@@ -147,7 +147,6 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.menu_utility.add_separator()
         self.menu_utility.add_command(label = "Scan for MS Word Installation", command = self.__scan_word)
 
-
         self.menu_preference = tk.Menu(self.menubar, tearoff = False)
         self.save_signature_path_var = tk.BooleanVar()
         self.submenu_save_signature_path = self.menu_preference.add_checkbutton(label = "Save signature path", variable = self.save_signature_path_var, command = self.__save_signature_path, onvalue = 1, offvalue = 0)
@@ -285,7 +284,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_process: "Start generating the reports.",
             self.btn_validate: "Validate the grader report for errors.",
             self.rdo_map_mode: "Use the comment map to generate student comments.",
-            self.rdo_ai_mode: "Use AI to generate student comments. Note: This is an experimental feature and may not work as expected. This requires an API key to be set in the configuration file. An API key has been pre-supplied for you but in case the key is not working, please contact the developer or supply your own key. Check the JARS GitHub page for guide on obtaining an API key.",
+            self.rdo_ai_mode: "Use AI to generate student comments. Note: AI is dumb and may not work as expected. This requires an API key to be set in the configuration file. Please supply your own key. Check the JARS GitHub page for guide on obtaining an API key.",
             self.btn_test_api_key: "Test the Google Gemini AI API key set in the configuration.",
             self.btn_configure: "Open the configurator to set API keys and other settings.",
             self.switch_autocorrect: "Automatically corrects spelling and grammar errors in the generated comments. This requires internet connection as it uses Google's Gemini AI to autocorrect the comments.",
