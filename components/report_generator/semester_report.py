@@ -2,7 +2,8 @@ import datetime
 
 from docx import Document
 from docx.shared import Cm, Pt
-from docx.enum.table import WD_TABLE_ALIGNMENT, WD_ALIGN_VERTICAL
+from docx.enum.table import WD_ALIGN_VERTICAL, WD_TABLE_ALIGNMENT
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 import docx2pdf
 
@@ -301,7 +302,7 @@ class Generator:
                                                                           verbose = True
                                                                          )
             
-        tc_table.cell(0, 0).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.LEFT
+        tc_table.cell(0, 0).paragraphs[0].alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
         tc_table.cell(0, 0).width = Cm(17)
 
         # Acknowledgement Section
@@ -328,7 +329,7 @@ class Generator:
         
         ak_table.cell(0, 3).text = "Date"
         if self.date is not None:
-            ak_table.cell(0, 3).add_paragraph(self.date.strftime("%d %B %Y"))
+            ak_table.cell(0, 3).add_paragraph(self.date.strftime("%B %d, %Y"))
         
         ak_table.cell(0, 0).width = Cm(4)
         ak_table.cell(0, 1).width = Cm(2)
