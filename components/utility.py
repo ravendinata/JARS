@@ -35,7 +35,7 @@ def check_word_status():
         # Check for running instances first using GetActiveObject
         word_is_open = False
         try:
-            GetActiveObject("Word.Application")
+            word = GetActiveObject("Word.Application")
             word_is_open = True
             print("  An open MS Word instance is detected. Will not close it.")
         except pythoncom.com_error:
@@ -44,13 +44,16 @@ def check_word_status():
         # Only create new instance if needed
         if not word_is_open:
             word = Dispatch("Word.Application")
-            if isinstance(word, CDispatch):
-                office_version = word.Version
+            print("  No open MS Word instance detected. Will create new instance to check version.")
+
+        if isinstance(word, CDispatch):
+            office_version = word.Version
+            if not word_is_open:
                 word.Quit()
-                print(f"  Microsoft Office {office_version} detected.")
-                return word_is_open, office_version, None
-            else:
-                return word_is_open, None, "Failed to get Word.Application dispatch"
+            print(f"  Microsoft Office {office_version} detected.")
+            return word_is_open, office_version, None
+        else:
+            return word_is_open, None, "Failed to get Word.Application dispatch"
                 
     except pythoncom.com_error as e:
         return word_is_open, None, f"COM Error: {str(e)}"
