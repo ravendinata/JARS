@@ -298,7 +298,7 @@ class AICommentGenerator:
         genai.configure(api_key = config.get_config("genai_api_key"))
 
         self.config = genai.GenerationConfig(candidate_count = 1, temperature = 0.2, max_output_tokens = 225, top_k = 20, top_p = 0.8)
-        self.model = genai.GenerativeModel('gemini-1.5-flash')
+        self.model = genai.GenerativeModel('gemini-2.0-flash')
         self.manifest = manifest
 
         self.safety = [
