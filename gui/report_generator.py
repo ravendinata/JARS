@@ -235,6 +235,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.create_pdf = tk.IntVar()
         self.switch_pdf = ctk.CTkSwitch(self, text = "Create PDF", variable = self.create_pdf, onvalue = 1, offvalue = 0)
 
+        # Delay switch button
+        self.delay_var = tk.IntVar()
+        self.switch_delay = ctk.CTkSwitch(self, text = "AI Processing Delay", variable = self.delay_var, onvalue = 1, offvalue = 0)
+
         # Progress tracker
         self.lbl_progress = ctk.CTkLabel(self, text = "Progress:")
         self.progress_bar = ctk.CTkProgressBar(self, width = 450, mode = "determinate")
@@ -289,6 +293,7 @@ class ReportGeneratorFrame(ctk.CTkFrame):
             self.btn_test_api_key: "Test the Google Gemini AI API key set in the configuration.",
             self.btn_configure: "Open the configurator to set API keys and other settings.",
             self.switch_autocorrect: "Automatically corrects spelling and grammar errors in the generated comments. This requires internet connection as it uses Google's Gemini AI to autocorrect the comments.",
+            self.switch_delay: "Enable this to delay report generation between each student. This may help prevent Gemini AI from rate-limiting your requests. This might slow down overall the report generation process and waiting for the rate limit to reset might be a better option.",
         }
 
         self.ttip_pdf = tktip.ToolTip(self.switch_pdf, msg = self.__pdf_tooltip_message, font = tooltip_font)
@@ -340,16 +345,18 @@ class ReportGeneratorFrame(ctk.CTkFrame):
 
         self.switch_pdf.grid(row = 8, column = 1, sticky = tk.W, padx = 5, pady = 2)
         
-        self.lbl_progress.grid(row = 9, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 9, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 9, column = 3, sticky = tk.EW, padx = 2, pady = 0)
+        self.switch_delay.grid(row = 9, column = 1, sticky = tk.W, padx = 5, pady = 2)
+        
+        self.lbl_progress.grid(row = 10, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 10, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 10, column = 3, sticky = tk.EW, padx = 2, pady = 0)
 
-        self.lbl_status.grid(row = 10, column = 0, sticky = tk.NW, pady = 0)
-        self.txt_status.grid(row = 10, column = 1, columnspan = 3, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_status.grid(row = 11, column = 0, sticky = tk.NW, pady = 0)
+        self.txt_status.grid(row = 11, column = 1, columnspan = 3, sticky = tk.EW, padx =  5, pady = 0)
 
-        self.btn_configure.grid(row = 11, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 11, column = 1, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 11, column = 3, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_configure.grid(row = 12, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 12, column = 1, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 12, column = 3, sticky = tk.EW, padx = 2, pady = (20, 2))
 
         """
         POST LAYOUTING SETUP
@@ -478,6 +485,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_student_name.delete(0, tk.END)
         self.txt_student_name.insert(0, "This field is disabled because you selected to generate all reports.")
         self.txt_student_name.configure(state = tk.DISABLED, text_color = "grey")
+        
+        if self.cgen_mode_var.get() == "ai":
+            self.switch_delay.configure(state = tk.NORMAL)
 
     def __opt_student_selected(self):
         """Enables the student name entry when the generate for student option is selected."""
@@ -485,13 +495,18 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_student_name.delete(0, tk.END)
         self.txt_student_name.focus_set()
 
+        self.switch_delay.configure(state = tk.DISABLED)
+
     def __map_cgen_mode_selected(self):
         """Enables autocorrect toggle"""
         self.switch_autocorrect.configure(state = tk.NORMAL)
+        self.switch_delay.configure(state = tk.DISABLED)
 
     def __ai_cgen_mode_selected(self):
         """Disables autocorrect toggle"""
         self.switch_autocorrect.configure(state = tk.DISABLED)
+        if self.mode_var.get() == "all":
+            self.switch_delay.configure(state = tk.NORMAL)
 
     def __toggle_date_entry(self):
         """Enables or disables the date entry field when the insert date option is selected or not."""
@@ -609,7 +624,9 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         
         try:
             if mode == "all":
-                proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, convert_to_pdf = pdf)
+                delay = True if self.delay_var.get() == 1 else False
+                proc.generate_all(callback = self.__on_progress_update, autocorrect = autocorrect, force = force, 
+                                  convert_to_pdf = pdf, delay = delay)
             elif mode == "student":
                 student_name = self.txt_student_name.get()
                 self.__on_progress_update(0, 1, f"Generating report for {student_name}…")
