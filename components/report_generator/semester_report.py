@@ -1,4 +1,5 @@
 import datetime
+import time
 
 from docx import Document
 from docx.shared import Cm, Pt
@@ -50,7 +51,7 @@ class Generator:
 
         print("[OK] Report generator initialized!")
 
-    def generate_all(self, autocorrect = True, callback = None, force = False, convert_to_pdf = False):
+    def generate_all(self, autocorrect = True, callback = None, force = False, convert_to_pdf = False, delay = False):
         """
         Generates reports for all students in the grader report.
         This function basically calls generate_for_student() for each student in the grader report.
@@ -62,18 +63,38 @@ class Generator:
         """
         job_count = len(self.grader_report.students.index)
         
+        job_start = datetime.datetime.now()
+        print(f"[  ] Job started at {job_start.strftime('%Y-%m-%d %H:%M:%S')}. Generating reports for {job_count} students…")
         for i, student in enumerate(self.grader_report.students.index):
             status_message = f"Generating report for {student}…"
+            print("\n========================")
+            print(status_message)
+            print("========================")
             if callback is not None:
                 callback(i, job_count, status_message)
-            print(f"Progress: {round(i / job_count * 100, 2)}%")
-            print(status_message)
+            
+            start_time = datetime.datetime.now()
             self.generate_for_student(student_name = student, autocorrect = autocorrect, force = force)
+            end_time = datetime.datetime.now()
+            
+            processing_time = end_time - start_time
+            print(f"[OK] Report for {student} generated in {processing_time.total_seconds()} seconds.")
+            print(f"Progress: {round(i / job_count * 100, 2)}%")
+
+            if processing_time.total_seconds() < 4 and i < job_count - 1 and delay:
+                wait_time = 4 - processing_time.total_seconds()
+                print(f"[-'] Waiting for {wait_time} seconds before processing next student to avoid rate limiting…")
+                time.sleep(wait_time)
         
         if callback is not None:
             callback(job_count, job_count, "")
             
+        job_end = datetime.datetime.now()
+        time_taken = job_end - job_start
+        time_taken_formatted = f"{time_taken.seconds // 60} minutes {time_taken.seconds % 60} seconds"
         print(f"Progress: 100%")
+        print(f"[OK] Job completed at {job_end.strftime('%Y-%m-%d %H:%M:%S')}. Time taken: {time_taken_formatted}")
+        callback(job_count, job_count, f"Job completed at {job_end.strftime('%Y-%m-%d %H:%M:%S')}. Time taken: {time_taken_formatted}")
 
         if convert_to_pdf:
             docx2pdf.convert(self.output_path)
