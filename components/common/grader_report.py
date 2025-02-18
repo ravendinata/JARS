@@ -24,7 +24,7 @@ class GraderReport:
 
         # Get the file version from the status property
         props = load_workbook(self.grader_report_path).properties
-        self._version = props.version
+        self._version = props.version if props.version is not None else "1.0"
 
         if self._version != "1.2":
             print(colored(f"Warning: Grader report version is {self._version}. Please make sure to use the latest version of the grader report template.", "yellow"))
