@@ -248,7 +248,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         # Status section
         self.lbl_status = ctk.CTkLabel(self, text = "Status:")
         self.txt_status = ctk.CTkTextbox(self, width = 600, height = 150, state = tk.DISABLED, wrap = "word")
-        self.txt_status.tag_config("warning", foreground = "red")
+        self.txt_status.tag_config("error", foreground = "red")
+        self.txt_status.tag_config("warning", foreground = "orange")
+        self.txt_status.tag_config("success", foreground = "green")
+        self.txt_status.tag_config("info", foreground = "cyan")
 
         # Generate button
         self.btn_process = ctk.CTkButton(self, text = "Generate", width = 100, command = self.__threaded_process)
@@ -398,12 +401,13 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.txt_source_path.insert(0, file_path)
 
         if os.path.isfile(file_path):
+            self.__update_status("Loading grader report…", clear = True)
             self._grader_report = grader_report.GraderReport(file_path, skip_validation = True, callback = self.__update_status)
             if not self._grader_report:
                 tk.messagebox.showerror("Error", "An error occurred while loading the grader report. Check console/terminal for details.")
                 return
 
-            self.__update_status("Validating grader report…", clear = True)
+            self.__update_status("Validating grader report…")
             valid = self._grader_report.validate(callback = self.__update_status)
             if not valid:
                 self.btn_process.configure(state = tk.DISABLED)
@@ -849,8 +853,14 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         if clear:
             self.txt_status.delete("1.0", tk.END)
 
-        if "warning" in status_message.lower():
+        if "error" in status_message.lower():
+            tag = "error"
+        elif "warning" in status_message.lower():
             tag = "warning"
+        elif "success" in status_message.lower():
+            tag = "success"
+        elif "info" in status_message.lower():
+            tag = "info"
 
         self.txt_status.insert(tk.END, f"{status_message}\n", tags = tag)
         self.txt_status.configure(state = tk.DISABLED)

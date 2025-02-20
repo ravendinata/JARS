@@ -27,6 +27,7 @@ class GraderReport:
         self._version = props.version if props.version is not None else "1.0"
 
         if self._version != "1.2":
+            callback(f"Warning: Grader report version is {self._version}. Please make sure to use the latest version of the grader report template.")
             print(colored(f"Warning: Grader report version is {self._version}. Please make sure to use the latest version of the grader report template.", "yellow"))
 
         try:
@@ -228,7 +229,7 @@ class GraderReport:
         if self.count_students() == 0:
             count += 1
             valid = False
-            output_text = f"Warning [{count}]: No students found in the grader report! Please check 'Student List' sheet on the grader report. You MUST fill the Student Name, Short Name, and Gender columns."
+            output_text = f"Error [{count}]: No students found in the grader report! Please check 'Student List' sheet on the grader report. You MUST fill the Student Name, Short Name, and Gender columns."
             if callback is not None:
                 callback(output_text)
             print(colored(output_text, "red"))
@@ -238,7 +239,7 @@ class GraderReport:
             if str(self.get_course_info(item)) == "": # Check if the value is empty
                 count += 1
                 valid = False
-                output_text = f"Warning [{count}]: Course information '{item}' is not filled! Please check the grader report."
+                output_text = f"Error [{count}]: Course information '{item}' is not filled! Please check the grader report."
                 if callback is not None:
                     callback(output_text)
                 print(colored(output_text, "red"))
@@ -249,14 +250,14 @@ class GraderReport:
             if final_grade_result == 0:
                 count += 1
                 valid = False
-                output_text = f"Warning [{count}]: {student} has no final score! Please check the grader report."
+                output_text = f"Error [{count}]: {student} has no final score! Please check the grader report."
                 if callback is not None:
                     callback(output_text)
                 print(colored(output_text, "red"))
             elif final_grade_result == "SMFS":
                 count += 1
                 valid = False
-                output_text = f"Warning [{count}]: {student} is not found in the 'Final Grades' sheet! Please check that the student is included in the sheet."
+                output_text = f"Error [{count}]: {student} is not found in the 'Final Grades' sheet! Please check that the student is included in the sheet."
                 if callback is not None:
                     callback(output_text)
                 break
@@ -267,7 +268,7 @@ class GraderReport:
             if letter_grade_result == 0:
                 count += 1
                 valid = False
-                output_text = f"Warning [{count}]: {student} has no letter grade! Please check the grader report."
+                output_text = f"Error [{count}]: {student} has no letter grade! Please check the grader report."
                 if callback is not None:
                     callback(output_text)
                 print(colored(output_text, "red"))
@@ -279,14 +280,14 @@ class GraderReport:
                 if sna_result == "X":
                     count += 1
                     valid = False
-                    output_text = f"Warning [{count}]: {student} has no grade for goal '{assessment}'! Please check the grader report."
+                    output_text = f"Error [{count}]: {student} has no grade for goal '{assessment}'! Please check the grader report."
                     if callback is not None:
                         callback(output_text)
                     print(colored(output_text, "red"))
                 elif sna_result == "SMFS":
                     count += 1
                     valid = False
-                    output_text = f"Warning [{count}]: {student} is not found in the 'Skills and Assessment' sheet! Please check that the student is included in the sheet."
+                    output_text = f"Error [{count}]: {student} is not found in the 'Skills and Assessment' sheet! Please check that the student is included in the sheet."
                     if callback is not None:
                         callback(output_text)
                     break
@@ -298,14 +299,14 @@ class GraderReport:
                 if pd_result == 0:
                     count += 1
                     valid = False
-                    output_text = f"Warning [{count}]: {student} has no grade for personal development item '{item}'! Please check the grader report."
+                    output_text = f"Error [{count}]: {student} has no grade for personal development item '{item}'! Please check the grader report."
                     if callback is not None:
                         callback(output_text)
                     print(colored(output_text, "red"))
                 elif pd_result == "SMFS":
                     count += 1
                     valid = False
-                    output_text = f"Warning [{count}]: {student} is not found in the 'Personal Development' sheet! Please check that the student is included in the sheet."
+                    output_text = f"Error [{count}]: {student} is not found in the 'Personal Development' sheet! Please check that the student is included in the sheet."
                     if callback is not None:
                         callback(output_text)
                     break
@@ -314,13 +315,13 @@ class GraderReport:
             if not self.__check_sna_compliance(student):
                 count += 1
                 valid = False
-                output_text = f"Warning [{count}]: {student} does not meet the SNA compliance rules! Please check the grader report."
+                output_text = f"Error [{count}]: {student} does not meet the SNA compliance rules! Please check the grader report."
                 if callback is not None:
                     callback(output_text)
                 print(colored(output_text, "red"))
 
         self.data_valid = valid
-        print(colored(f"Validation Pass: {valid}", "red" if not valid else "green"), "\n", colored(f"Warnings: {count}\n", "yellow") if not valid else "")
+        print(colored(f"Validation Pass: {valid}", "red" if not valid else "green"), "\n", colored(f"Errors: {count}\n", "yellow") if not valid else "")
         callback(f"\nYou have {count} issues in your grader report. Please check the warnings above." if not valid else "")
         return valid
     
