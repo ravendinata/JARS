@@ -5,7 +5,7 @@ It is meant to be used as a standalone application being more user-friendly
 and easier to use than the console application.
 """
 
-__version__ = "1.2.7"
+__version__ = "1.2.8"
 __author__ = "Raven Limadinata"
 
 import customtkinter as ctk
