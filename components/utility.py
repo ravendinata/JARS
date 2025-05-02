@@ -16,7 +16,7 @@ def validate_genai_api_key():
     """
     try:
         genai.configure(api_key = config.get_config("genai_api_key"))
-        model = genai.GenerativeModel('gemini-pro')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         model.generate_content("This is a test.")
         return True
     except Exception as e:
