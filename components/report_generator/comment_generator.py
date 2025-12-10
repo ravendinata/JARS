@@ -1,12 +1,13 @@
 import re
 import time
 
-import google.generativeai as genai
+import google.genai as genai
 import nltk
 from datetime import datetime
 from termcolor import colored
-from google.ai.generativelanguage import Candidate
-from google.api_core.exceptions import ResourceExhausted
+from google.genai import types
+from google.genai.types import FinishReason
+from google.genai.errors import ClientError
 
 import components.report_generator.manifest as manifest
 import config
@@ -295,22 +296,8 @@ class AICommentGenerator:
         """
         Initialize the AICommentGenerator instance.
         """
-        genai.configure(api_key = config.get_config("genai_api_key"))
-
-        self.config = genai.GenerationConfig(candidate_count = 1, temperature = 0.2, max_output_tokens = 225, top_k = 20, top_p = 0.8)
-        self.model = genai.GenerativeModel('gemini-2.0-flash')
+        self.aiclient = genai.Client(api_key = config.get_config("genai_api_key"))
         self.manifest = manifest
-
-        self.safety = [
-            {
-                "category": "HARM_CATEGORY_HATE_SPEECH",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            },
-            {
-                "category": "HARM_CATEGORY_HARASSMENT",
-                "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-            }
-        ]
 
     def get_base_prompt(self):
         """
@@ -374,29 +361,66 @@ class AICommentGenerator:
             print(f"\nPrompt: {final_prompt}\n")
 
         try:
-            response = self.model.generate_content(f"{final_prompt}", safety_settings = self.safety, generation_config = self.config)
-        except ResourceExhausted as e:
-            print(colored(f"(!) Error: Resource Exhausted. Retrying...", "red"))
-            if retry_count < 3:
-                print(colored(f"(i) Retry Count: {retry_count + 1} out of 3. Waiting for 30 seconds before retrying...", "yellow"))
-                time.sleep(30)
-                return self.generate_comment(nickname, gender, final_grade, sna_list, verbose = verbose, retry_count = retry_count + 1)
+            response = self.aiclient.models.generate_content(
+                model = "gemini-2.0-flash",
+                contents = final_prompt,
+                config = types.GenerateContentConfig(
+                    system_instruction = "You are a primary school teacher writing a report comment for a student based on their performance in various goals. The comment should be positive, encouraging, and tailored to the student's achievements and areas for improvement.",
+                    temperature = 0.2,
+                    top_k = 20,
+                    top_p = 0.8,
+                    candidate_count = 1,
+                    safety_settings = [
+                        types.SafetySetting(
+                            category = "HARM_CATEGORY_HATE_SPEECH",
+                            threshold = "BLOCK_MEDIUM_AND_ABOVE"
+                        ),
+                        types.SafetySetting(
+                            category = "HARM_CATEGORY_HARASSMENT",
+                            threshold = "BLOCK_MEDIUM_AND_ABOVE"
+                        )
+                    ]
+                ),
+            )
+
+        except ClientError as e:
+            if e.code == 429:
+                print(colored(f"(!) Client Error: Resource Exhausted. Retrying...", "red"))
+                if retry_count < 3:
+                    print(colored(f"(i) Retry Count: {retry_count + 1} out of 3. Waiting for 30 seconds before retrying...", "yellow"))
+                    time.sleep(30)
+                    return self.generate_comment(nickname, gender, final_grade, sna_list, verbose = verbose, retry_count = retry_count + 1)
+                else:
+                    return f"AI Comment Generation Error! Reason: Resource Exhausted after multiple retries.\nPlease regenerate report for this student manually."
+            else:
+                print(colored(f"(!) Client Error: {e}", "red"))
+                return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
         except Exception as e:
             print(type(e))
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
 
-        if response.candidates[0].finish_reason is not Candidate.FinishReason.STOP:
+        if response.candidates[0].finish_reason is not FinishReason.STOP:
             print(colored(f"(!) Server stopped because: {response.candidates[0].finish_reason.name}. Aborting.\n", "light_cyan"))
             return f"AI Comment Generation Error! Reason: Server stopped because: {response.candidates[0].finish_reason.name}."
 
         if verbose:
+            input_tokens = response.usage_metadata.prompt_token_count
+            output_tokens = response.usage_metadata.candidates_token_count
+            total_tokens = response.usage_metadata.total_token_count
+            
+            # Cost Estimation for Gemini 2.0 Flash
+            input_cost_per_1M_tokens = 0.1  # USD
+            output_cost_per_1M_tokens = 0.4  # USD
+            estimated_cost = (input_tokens / 1_000_000) * input_cost_per_1M_tokens + (output_tokens / 1_000_000) * output_cost_per_1M_tokens
+
             print(f"\nCandidates: {response.candidates}")
             print(f"\nResponse: {response.text}")
             print(f"\nResponse Length (Chars): {len(response.text)} characters")
             print(f"Response Length (Words): {len(response.text.split())} words\n")
-            print(f"Input Tokens Used: {response.usage_metadata.prompt_token_count}")
-            print(f"Output Tokens Used: {response.usage_metadata.candidates_token_count}")
+            print(f"Input Tokens Used: {input_tokens}")
+            print(f"Output Tokens Used: {output_tokens}")
+            print(f"Total Tokens Used: {total_tokens} > Estimated Cost: ${estimated_cost:.6f}\n")
 
         if len(response.text) > max_length:
             if verbose:
@@ -458,12 +482,16 @@ class AICommentGenerator:
             response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} characters BUT DO NOT WRITE LESS THAN 400 CHARACTERS. Content: {source}.", 
                                                    safety_settings = self.safety, 
                                                    generation_config = self.config)
-        except ResourceExhausted as e:
-            print(colored(f"(!) Error: Resource Exhausted. Retrying...", "red"))
-            if retry_count < 3:
-                print(colored(f"(i) Retry Count: {retry_count + 1} out of 3. Waiting for 30 seconds before retrying...", "yellow"))
-                time.sleep(30)
-                return self.rephrase(source, max_length = max_length, retry_count = retry_count + 1)
+        except ClientError as e:
+            if e.code == 429:
+                print(colored(f"(!) Error: Resource Exhausted. Retrying...", "red"))
+                if retry_count < 3:
+                    print(colored(f"(i) Retry Count: {retry_count + 1} out of 3. Waiting for 30 seconds before retrying...", "yellow"))
+                    time.sleep(30)
+                    return self.rephrase(source, max_length = max_length, retry_count = retry_count + 1)
+            else:
+                print(colored(f"(!) Error: {e}", "red"))
+                return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."
         except Exception as e:
             print(colored(f"(!) Error: {e}", "red"))
             return f"AI Comment Generation Error! Reason: {e}\nPlease regenerate report for this student manually."

@@ -2,7 +2,7 @@ import pythoncom
 from win32com.client import Dispatch, GetActiveObject
 from win32com.client.dynamic import CDispatch
 
-import google.generativeai as genai
+import google.genai as genai
 from termcolor import colored
 
 import config
@@ -15,9 +15,14 @@ def validate_genai_api_key():
         bool: Whether the API key is valid.
     """
     try:
-        genai.configure(api_key = config.get_config("genai_api_key"))
-        model = genai.GenerativeModel('gemini-2.0-flash')
-        model.generate_content("This is a test.")
+        aiclient = genai.Client(api_key = config.get_config("genai_api_key"))
+        models = aiclient.models.list()
+
+        if models:
+            print(colored(f"(i) GenAI API Key is valid.", "green"))
+        else:
+            print(colored("(!) GenAI API Key is invalid or no models available.", "red"))
+            return False
         return True
     except Exception as e:
         print(colored(f"(!) Error: {e}", "red"))

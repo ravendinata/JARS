@@ -18,7 +18,7 @@ certifi==2022.12.7
     # via requests
 cffi==1.16.0
     # via clr-loader
-chardet==3.0.4
+charset-normalizer==3.4.4
     # via requests
 click==8.1.7
     # via
@@ -40,28 +40,12 @@ et-xmlfile==1.1.0
     # via openpyxl
 flask==3.0.2
     # via -r requirements.in
-google-ai-generativelanguage==0.6.10
-    # via google-generativeai
-google-api-core[grpc]==2.16.2
-    # via
-    #   google-ai-generativelanguage
-    #   google-generativeai
 google-auth==2.27.0
     # via
-    #   google-api-core
-    #   google-generativeai
-google-generativeai==0.8.3
+    #   google-auth
+    #   google-genai
+google-genai==1.1.0
     # via -r requirements.in
-googleapis-common-protos==1.62.0
-    # via
-    #   google-api-core
-    #   grpcio-status
-grpcio==1.60.1
-    # via
-    #   google-api-core
-    #   grpcio-status
-grpcio-status==1.60.1
-    # via google-api-core
 idna==2.10
     # via requests
 itsdangerous==2.1.2
@@ -88,16 +72,6 @@ pandas==2.1.3
     # via -r requirements.in
 pillow==10.2.0
     # via -r requirements.in
-proto-plus==1.23.0
-    # via google-ai-generativelanguage
-protobuf==4.25.2
-    # via
-    #   google-ai-generativelanguage
-    #   google-api-core
-    #   google-generativeai
-    #   googleapis-common-protos
-    #   grpcio-status
-    #   proto-plus
 proxy-tools==0.1.0
     # via pywebview
 pyasn1==0.5.1
@@ -109,7 +83,7 @@ pyasn1-modules==0.3.0
 pycparser==2.21
     # via cffi
 pydantic==2.7.4
-    # via google-generativeai
+    # via google-genai
 pydantic-core==2.18.4
     # via pydantic
 pyfiglet==1.0.2
@@ -132,9 +106,9 @@ pywin32==306
     # via docx2pdf
 regex==2023.10.3
     # via nltk
-requests==2.24.0
+requests==2.32.5
     # via
-    #   google-api-core
+    #   google-genai
     #   language-tool-python
 rsa==4.9
     # via google-auth
@@ -151,12 +125,10 @@ tkinter-tooltip==2.1.0
 tqdm==4.66.1
     # via
     #   docx2pdf
-    #   google-generativeai
     #   language-tool-python
     #   nltk
 typing-extensions==4.8.0
     # via
-    #   google-generativeai
     #   pydantic
     #   pydantic-core
     #   python-docx
@@ -165,6 +137,8 @@ tzdata==2023.3
     # via pandas
 urllib3==1.25.11
     # via requests
+websockets==14.2
+    # via google-genai
 werkzeug==3.0.1
     # via flask
 windows-toasts==1.1.1

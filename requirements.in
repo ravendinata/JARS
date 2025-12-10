@@ -1,7 +1,7 @@
 customtkinter
 docx2pdf
 flask
-google-generativeai
+google-genai
 language_tool_python
 nltk
 openpyxl
