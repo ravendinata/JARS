@@ -352,9 +352,9 @@ class Generator:
         if self.date is not None:
             ak_table.cell(0, 3).add_paragraph(self.date.strftime("%B %d, %Y"))
         
-        ak_table.cell(0, 0).width = Cm(4)
+        ak_table.cell(0, 0).width = Cm(6.5)
         ak_table.cell(0, 1).width = Cm(2)
-        ak_table.cell(0, 2).width = Cm(7)
+        ak_table.cell(0, 2).width = Cm(4.5)
         ak_table.cell(0, 3).width = Cm(4)
         document_helper.set_cell_border(ak_table.cell(0, 1), end = {"sz": 1, "val": "none"})
         document_helper.set_cell_border(ak_table.cell(0, 2), start = {"sz": 1, "val": "none"})
@@ -362,8 +362,8 @@ class Generator:
         ak_table.cell(1, 0).paragraphs[0].add_run("Parent:").bold = True
         ak_table.cell(1, 1).merge(ak_table.cell(1, 2)).text = "Signature"
         ak_table.cell(1, 3).text = "Date"
-        ak_table.cell(1, 0).width = Cm(4)
-        ak_table.cell(1, 1).width = Cm(9)
+        ak_table.cell(1, 0).width = Cm(6.5)
+        ak_table.cell(1, 1).width = Cm(6.5)
         ak_table.cell(1, 3).width = Cm(4)
 
         # Legend Section
@@ -372,18 +372,37 @@ class Generator:
         lg_header.paragraph_format.space_before = section_spacing
         lg_header.paragraph_format.space_after = Pt(0)
 
-        lg_table = document.add_table(rows = 3, cols = 12)
+        lg_table = document.add_table(rows = 3, cols = 13)
         lg_table.style = "Table Grid"
         lg_table.alignment = WD_TABLE_ALIGNMENT.CENTER
         lg_table.autofit = False
         lg_table.allow_autofit = False
 
+        # Skills and Assessment legend header
         lg_table.cell(0, 0).merge(lg_table.cell(0, 5)).text = "Skills and Assessment"
         lg_table.cell(0, 0).paragraphs[0].runs[0].bold = True
-        lg_table.cell(0, 0).width = Cm(8.5)
-        lg_table.cell(0, 6).merge(lg_table.cell(0, 11)).text = "Personal Development"
-        lg_table.cell(0, 6).paragraphs[0].runs[0].bold = True
-        lg_table.cell(0, 6).width = Cm(8.5)
+        lg_table.cell(0, 0).width = Cm(8.4)
+
+        # Small spacer between two legends
+        lg_table.cell(0, 6).width = Cm(0.2)
+        lg_table.cell(0, 6).text = ""
+        document_helper.set_cell_border(lg_table.cell(0, 6), top = {"sz": 1, "val": "none"}, bottom = {"sz": 1, "val": "none"})
+        document_helper.set_cell_margin(lg_table.cell(0, 6), margin_left_mm = 0, margin_right_mm = 0)
+        
+        lg_table.cell(1, 6).width = Cm(0.2)
+        lg_table.cell(1, 6).text = ""
+        document_helper.set_cell_border(lg_table.cell(1, 6), top = {"sz": 1, "val": "none"}, bottom = {"sz": 1, "val": "none"})
+        document_helper.set_cell_margin(lg_table.cell(1, 6), margin_left_mm = 0, margin_right_mm = 0)
+        
+        lg_table.cell(2, 6).width = Cm(0.2)
+        lg_table.cell(2, 6).text = ""
+        document_helper.set_cell_border(lg_table.cell(2, 6), top = {"sz": 1, "val": "none"}, bottom = {"sz": 1, "val": "none"})
+        document_helper.set_cell_margin(lg_table.cell(2, 6), margin_left_mm = 0, margin_right_mm = 0)
+
+        # Personal Development legend header
+        lg_table.cell(0, 7).merge(lg_table.cell(0, 12)).text = "Personal Development"
+        lg_table.cell(0, 7).paragraphs[0].runs[0].bold = True
+        lg_table.cell(0, 7).width = Cm(8.4)
 
         # Skills and Assessment legend
         lg_table.cell(1, 0).text = "A"
@@ -391,52 +410,59 @@ class Generator:
         lg_table.cell(2, 0).text = "B"
         lg_table.cell(2, 1).text = "85-94"
         lg_table.cell(1, 0).width = Cm(0.8)
-        lg_table.cell(1, 1).width = Cm(2)
+        lg_table.cell(1, 1).width = Cm(1.8)
         lg_table.cell(2, 0).width = Cm(0.8)
-        lg_table.cell(2, 1).width = Cm(2)
+        lg_table.cell(2, 1).width = Cm(1.8)
+        document_helper.set_cell_margin(lg_table.cell(1, 0), margin_left_mm = 0, margin_right_mm = 0)
+        document_helper.set_cell_margin(lg_table.cell(1, 1), margin_left_mm = 0, margin_right_mm = 0)
+        document_helper.set_cell_margin(lg_table.cell(2, 0), margin_left_mm = 0, margin_right_mm = 0)
+        document_helper.set_cell_margin(lg_table.cell(2, 1), margin_left_mm = 0, margin_right_mm = 0)
 
         lg_table.cell(1, 2).text = "C"
         lg_table.cell(1, 3).text = "75-84"
         lg_table.cell(2, 2).text = "D"
         lg_table.cell(2, 3).text = "40-74"
         lg_table.cell(1, 2).width = Cm(0.8)
-        lg_table.cell(1, 3).width = Cm(2)
+        lg_table.cell(1, 3).width = Cm(1.8)
         lg_table.cell(2, 2).width = Cm(0.8)
-        lg_table.cell(2, 3).width = Cm(2)
+        lg_table.cell(2, 3).width = Cm(1.8)
 
         lg_table.cell(1, 4).merge(lg_table.cell(2, 4)).text = "E"
         lg_table.cell(1, 5).merge(lg_table.cell(2, 5)).text = "Below 40"
         lg_table.cell(1, 4).width = Cm(0.8)
-        lg_table.cell(1, 5).width = Cm(2.1)
+        lg_table.cell(1, 5).width = Cm(2)
 
-        lg_table.cell(1, 6).text = "E"
-        lg_table.cell(1, 7).text = "Excellent"
-        lg_table.cell(2, 6).text = "VG"
-        lg_table.cell(2, 7).text = "Very Good"
-        lg_table.cell(1, 6).width = Cm(0.8)
-        lg_table.cell(1, 7).width = Cm(1.9)
-        lg_table.cell(2, 6).width = Cm(0.8)
-        lg_table.cell(2, 7).width = Cm(1.9)
+        lg_table.cell(1, 7).text = "E"
+        lg_table.cell(1, 8).text = "Excellent"
+        lg_table.cell(2, 7).text = "VG"
+        lg_table.cell(2, 8).text = "Very Good"
+        lg_table.cell(1, 7).width = Cm(0.8)
+        lg_table.cell(1, 8).width = Cm(1.8)
+        lg_table.cell(2, 7).width = Cm(0.8)
+        lg_table.cell(2, 8).width = Cm(1.8)
 
-        lg_table.cell(1, 8).text = "G"
-        lg_table.cell(1, 9).text = "Good"
-        lg_table.cell(2, 8).text = "S"
-        lg_table.cell(2, 9).text = "Satisfactory"
-        lg_table.cell(1, 8).width = Cm(0.8)
-        lg_table.cell(1, 9).width = Cm(2)
-        lg_table.cell(2, 8).width = Cm(0.8)
-        lg_table.cell(2, 9).width = Cm(2)
+        lg_table.cell(1, 9).text = "G"
+        lg_table.cell(1, 10).text = "Good"
+        lg_table.cell(2, 9).text = "S"
+        lg_table.cell(2, 10).text = "Satisfactory"
+        lg_table.cell(1, 9).width = Cm(0.8)
+        lg_table.cell(1, 10).width = Cm(2)
+        lg_table.cell(2, 9).width = Cm(0.8)
+        lg_table.cell(2, 10).width = Cm(2)
 
-        lg_table.cell(1, 10).merge(lg_table.cell(2, 10)).text = "NI"
-        lg_table.cell(1, 11).merge(lg_table.cell(2, 11)).text = "Needs Improvement"
-        lg_table.cell(1, 10).width = Cm(0.8)
-        lg_table.cell(1, 11).width = Cm(2.2)
+        lg_table.cell(1, 11).merge(lg_table.cell(2, 11)).text = "NI"
+        lg_table.cell(1, 12).merge(lg_table.cell(2, 12)).text = "Needs Improvement"
+        lg_table.cell(1, 11).width = Cm(0.8)
+        lg_table.cell(1, 12).width = Cm(2.2)
 
         for i in range(0, 3): # Adjust cell formatting for legend table
-            for j in range(0, 12):
+            for j in range(0, 13):
                 lg_table.cell(i, j).vertical_alignment = WD_ALIGN_VERTICAL.CENTER
                 lg_table.cell(i, j).paragraphs[0].alignment = WD_TABLE_ALIGNMENT.CENTER
                 lg_table.cell(i, j).paragraphs[0].runs[0].font.size = Pt(9)
+
+        # Watermark setup
+        document_helper.add_image_watermark(document, config.get_config("watermark_path"), opacity = 0.1, width_pt = 600, height_pt = 600)
 
         # CONTENT ENDS HERE
         # Document processing ends
