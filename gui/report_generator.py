@@ -239,6 +239,10 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.delay_var = tk.IntVar()
         self.switch_delay = ctk.CTkSwitch(self, text = "AI Processing Delay", variable = self.delay_var, onvalue = 1, offvalue = 0)
 
+        # Watermark switch button
+        self.watermark_var = tk.IntVar()
+        self.switch_watermark = ctk.CTkSwitch(self, text = "Use Watermark", variable = self.watermark_var, onvalue = 1, offvalue = 0)
+
         # Progress tracker
         self.lbl_progress = ctk.CTkLabel(self, text = "Progress:")
         self.progress_bar = ctk.CTkProgressBar(self, width = 450, mode = "determinate")
@@ -349,17 +353,19 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.switch_pdf.grid(row = 8, column = 1, sticky = tk.W, padx = 5, pady = 2)
         
         self.switch_delay.grid(row = 9, column = 1, sticky = tk.W, padx = 5, pady = 2)
+
+        self.switch_watermark.grid(row = 10, column = 1, sticky = tk.W, padx = 5, pady = 2)
         
-        self.lbl_progress.grid(row = 10, column = 0, sticky = tk.W, pady = 0)
-        self.progress_bar.grid(row = 10, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
-        self.lbl_count.grid(row = 10, column = 3, sticky = tk.EW, padx = 2, pady = 0)
+        self.lbl_progress.grid(row = 11, column = 0, sticky = tk.W, pady = 0)
+        self.progress_bar.grid(row = 11, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_count.grid(row = 11, column = 3, sticky = tk.EW, padx = 2, pady = 0)
 
-        self.lbl_status.grid(row = 11, column = 0, sticky = tk.NW, pady = 0)
-        self.txt_status.grid(row = 11, column = 1, columnspan = 3, sticky = tk.EW, padx =  5, pady = 0)
+        self.lbl_status.grid(row = 12, column = 0, sticky = tk.NW, pady = 0)
+        self.txt_status.grid(row = 12, column = 1, columnspan = 3, sticky = tk.EW, padx =  5, pady = 0)
 
-        self.btn_configure.grid(row = 12, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_validate.grid(row = 12, column = 1, sticky = tk.EW, padx = 2, pady = (20, 2))
-        self.btn_process.grid(row = 12, column = 3, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_configure.grid(row = 13, column = 0, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_validate.grid(row = 13, column = 1, sticky = tk.EW, padx = 2, pady = (20, 2))
+        self.btn_process.grid(row = 13, column = 3, sticky = tk.EW, padx = 2, pady = (20, 2))
 
         """
         POST LAYOUTING SETUP
@@ -592,7 +598,11 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         signature_file = self.txt_signature_path.get() if self.txt_signature_path.get() != "" else None
         date = self.date_report.get_date() if self.inject_date.get() == 1 else None
 
-        proc = processor.Generator(output_file_path, self._grader_report, date, signature_file, self.cgen_mode_var.get())
+        proc = processor.Generator(output_path = output_file_path, 
+                                   grader_report = self._grader_report, 
+                                   date = date, signature_path = signature_file, 
+                                   cgen_mode = self.cgen_mode_var.get(), 
+                                   use_watermark = True if self.watermark_var.get() == 1 else False)
 
         mode = self.mode_var.get()
         autocorrect = True if self.autocorrect_var.get() == 1 else False

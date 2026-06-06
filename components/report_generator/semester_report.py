@@ -23,13 +23,22 @@ class Generator:
     This class is responsible for generating a standardized DOCX file from a templated XLSX grader report.
     """
 
-    def __init__(self, output_path, grader_report: GraderReport, date: datetime = None, signature_path = None, cgen_mode = "map"):
+    def __init__(self, output_path, 
+                 grader_report: GraderReport, 
+                 date: datetime = None, 
+                 signature_path = None, 
+                 cgen_mode = "map", 
+                 use_watermark = True):
         """
         Initialize the generator instance.
 
         Args:
             output_path (str): The path of the output file.
             grader_report (GraderReport): The grader report instance. Should be initialized before passing to this class.
+            date (datetime): The date for the report.
+            signature_path (str): The path to the signature image.
+            cgen_mode (str): The comment generation mode. Can be "map" or "ai".
+            use_watermark (bool): Whether to use a watermark in the generated reports.
 
         Returns:
             Generator: The report initialized generator instance.
@@ -45,7 +54,7 @@ class Generator:
         self.date = date
         self.signature_path = signature_path
         self.cgen_mode = cgen_mode
-
+        self.use_watermark = use_watermark
         if self.cgen_mode == "ai":
             self.manifest = manifest.Manifest(f"{self.output_path}/Manifest {init_time}.xlsx")
 
@@ -462,7 +471,8 @@ class Generator:
                 lg_table.cell(i, j).paragraphs[0].runs[0].font.size = Pt(9)
 
         # Watermark setup
-        document_helper.add_image_watermark(document, config.get_config("watermark_path"), opacity = 0.1, width_pt = 600, height_pt = 600)
+        if self.use_watermark:
+            document_helper.add_image_watermark(document, config.get_config("watermark_path"), opacity = 0.1, width_pt = 600, height_pt = 600)
 
         # CONTENT ENDS HERE
         # Document processing ends
