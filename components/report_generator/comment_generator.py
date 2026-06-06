@@ -385,7 +385,7 @@ class AICommentGenerator:
 
         except ClientError as e:
             if e.code == 429:
-                print(colored(f"(!) Client Error: Resource Exhausted. Retrying...", "red"))
+                print(colored(f"(!) Client Error: Resource Exhausted. Retrying... @ {e}", "red"))
                 if retry_count < 3:
                     print(colored(f"(i) Retry Count: {retry_count + 1} out of 3. Waiting for 30 seconds before retrying...", "yellow"))
                     time.sleep(30)
