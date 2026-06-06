@@ -328,8 +328,8 @@ class ReportGeneratorFrame(ctk.CTkFrame):
         self.lbl_signature.grid(row = 2, column = 0, sticky = tk.W, pady = 2)
         self.txt_signature_path.grid(row = 2, column = 1, columnspan = 2, sticky = tk.EW, padx =  5, pady = 2)
         self.btn_browse_signature.grid(row = 2, column = 3, sticky = tk.EW, padx = 2, pady = 2)
-        self.treeview.grid(row = 2, column = 4, rowspan = 10, columnspan = 2, sticky = tk.NSEW, padx = (10, 0), pady = 2)
-        self.vsb_treeview.grid(row = 2, column = 6, rowspan = 10, sticky = tk.NS, padx = (0, 10), pady = 2)
+        self.treeview.grid(row = 2, column = 4, rowspan = 11, columnspan = 2, sticky = tk.NSEW, padx = (10, 0), pady = 2)
+        self.vsb_treeview.grid(row = 2, column = 6, rowspan = 11, sticky = tk.NS, padx = (0, 10), pady = 2)
 
         self.lbl_generate.grid(row = 3, column = 0, sticky = tk.W, pady = 2)
         self.rdo_generate_all.grid(row = 3, column = 1, sticky = tk.W, padx =  5, pady = 2)
