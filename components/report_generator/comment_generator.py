@@ -341,17 +341,17 @@ class AICommentGenerator:
 
         match goals_counts:
             case 3:
-                max_length = 800
-            case 4:
                 max_length = 700
+            case 4:
+                max_length = 800
             case 5:
-                max_length = 600
-            case 6:
                 max_length = 500
-            case 7 | 8 | 9 | 10:
+            case 6:
                 max_length = 400
+            case 7 | 8 | 9 | 10:
+                max_length = 300
             case _:
-                max_length = 900
+                max_length = 600
 
         base_prompt = self.get_base_prompt()
         parametric_prompt = f"The student's nickname is {nickname}. This student is a {gender_normalized} and achieved an overall grade of {final_grade}.\nGoals and grades for each goal:\n{assembled_result}"
