@@ -362,7 +362,7 @@ class AICommentGenerator:
 
         try:
             response = self.aiclient.models.generate_content(
-                model = "gemini-2.0-flash",
+                model = "gemini-2.5-flash-lite",
                 contents = final_prompt,
                 config = types.GenerateContentConfig(
                     system_instruction = "You are a primary school teacher writing a report comment for a student based on their performance in various goals. The comment should be positive, encouraging, and tailored to the student's achievements and areas for improvement.",
