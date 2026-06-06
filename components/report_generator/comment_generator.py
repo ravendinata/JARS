@@ -479,9 +479,27 @@ class AICommentGenerator:
             str: The rephrased comment.
         """
         try:
-            response = self.model.generate_content(f"Shorten the following content. Use simple english and do not add personal opinions. The content should be less than {max_length} characters BUT DO NOT WRITE LESS THAN 400 CHARACTERS. Content: {source}.", 
-                                                   safety_settings = self.safety, 
-                                                   generation_config = self.config)
+            response = self.aiclient.models.generate_content(
+                model = "gemini-2.5-flash-lite",
+                contents = f"Shorten the following content but keep the original meaning and structure. Basically, remove redundant information and simplify the language. Keep all conjunctions. Use simple english and do not add personal opinions. The content should be less than {max_length} characters BUT DO NOT WRITE LESS THAN 400 CHARACTERS. Content: {source}.",
+                config = types.GenerateContentConfig(
+                    system_instruction = "You are a primary school teacher writing a report comment for a student based on their performance in various goals. The comment should be positive, encouraging, and tailored to the student's achievements and areas for improvement.",
+                    temperature = 0.2,
+                    top_k = 20,
+                    top_p = 0.8,
+                    candidate_count = 1,
+                    safety_settings = [
+                        types.SafetySetting(
+                            category = "HARM_CATEGORY_HATE_SPEECH",
+                            threshold = "BLOCK_MEDIUM_AND_ABOVE"
+                        ),
+                        types.SafetySetting(
+                            category = "HARM_CATEGORY_HARASSMENT",
+                            threshold = "BLOCK_MEDIUM_AND_ABOVE"
+                        )
+                    ]
+                ),
+            )
         except ClientError as e:
             if e.code == 429:
                 print(colored(f"(!) Error: Resource Exhausted. Retrying...", "red"))
